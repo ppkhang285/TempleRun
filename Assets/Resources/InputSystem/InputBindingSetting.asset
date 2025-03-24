@@ -28,7 +28,7 @@ MonoBehaviour:
   - action: 0
     key: 0
     isMouse: 1
-  - action: 6
+  - action: 1
     key: 0
     isMouse: 1
   - action: 4

@@ -37,6 +37,26 @@ namespace Utils
             TurnRight,
         }
 
+        public enum SegmentBiome
+        {
+            Temple,
+            Cliff,
+            Plank,
+        }
+
+        public enum SegmentType
+        {
+            Straight,
+            Turn_Left,
+            Turn_Right,
+            Flame_Tower,
+            Turn_Both,
+            Tree,
+            Hole,
+            LongHole_Start,
+            LongHole_End,
+            LongHole_Middle,
+        }
        
     }
 
