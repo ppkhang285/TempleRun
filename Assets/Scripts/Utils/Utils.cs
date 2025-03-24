@@ -8,6 +8,8 @@ namespace Utils
     public static class Paths
     {
         public static readonly string INPUT_BINDING_SETTING = "InputSystem/InputBindingSetting";
+        public static readonly string DIFFICULTY_DATA = "GameSetting/DifficultData";
+        public static readonly string SPAWN_CONFIG_DATA = "GameSetting/SpawnConfig";
     }
 
 
@@ -37,7 +39,7 @@ namespace Utils
             TurnRight,
         }
 
-        public enum SegmentBiome
+        public enum MapBiome
         {
             Temple,
             Cliff,
@@ -46,16 +48,17 @@ namespace Utils
 
         public enum SegmentType
         {
+            NONE,
+            START,
             Straight,
             Turn_Left,
             Turn_Right,
-            Flame_Tower,
             Turn_Both,
-            Tree,
-            Hole,
-            LongHole_Start,
-            LongHole_End,
-            LongHole_Middle,
+            Slide,
+            Jump,
+            NarrowLeft,
+            NarrowRight,
+
         }
        
     }

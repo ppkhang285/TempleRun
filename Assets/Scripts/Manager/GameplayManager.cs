@@ -7,8 +7,10 @@ public class GameplayManager : MonoBehaviour
 {
 
 
-    public InputManager inputManager;
+    public GameObject mapRoot;
 
+    public InputManager inputManager { get; private set; }
+    public MapController mapController { get; private set; }
 
 
     void Start()
@@ -23,13 +25,24 @@ public class GameplayManager : MonoBehaviour
     private void Inintialize()
     {
 
-
         inputManager = new InputManager();
+
+        if (mapRoot == null)
+        {
+            Debug.LogError("MapRoot is null");
+           
+        }
+        mapController = new MapController(mapRoot.transform);
     }
     
     void Update()
     {
-       if (InputManager.Instance.GetInput(InputAction.TurnLeft))
+       
+    }
+
+    private void TestInput()
+    {
+        if (InputManager.Instance.GetInput(InputAction.TurnLeft))
         {
             Debug.Log("Turn Left");
         }
@@ -45,5 +58,10 @@ public class GameplayManager : MonoBehaviour
         {
             Debug.Log("Move Right");
         }
+    }
+
+    public void TestEditr()
+    {
+        Debug.Log("Test Editor");
     }
 }

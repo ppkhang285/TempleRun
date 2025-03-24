@@ -13,15 +13,36 @@ public class MapController
     private Transform mapRoot;
     private MapGenerator mapGenerator;
 
+    private List<MapSegment> mapSegments;
+    
+
 
 
     public MapController(Transform mapRoot)
     {
         this.mapRoot = mapRoot;
-
         mapGenerator = new MapGenerator();
+        
+        Initialize();
 
     }
+
+
+    private void Update()
+    {
+
+    }
+
+
+    
+
+    private void Initialize()
+    {
+        mapSegments = new List<MapSegment>();
+
+    }
+
+
 
 
 
