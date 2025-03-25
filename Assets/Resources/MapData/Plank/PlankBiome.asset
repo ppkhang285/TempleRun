@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dba1e2c6c1fe9a341b84793c018624df, type: 3}
   m_Name: PlankBiome
   m_EditorClassIdentifier: 
-  biome: 0
+  biome: 2
+  height: 3
   segmentTypeList: []

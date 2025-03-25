@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d8c7be49e414614799002371dc6436a, type: 3}
   m_Name: NarrowRight
   m_EditorClassIdentifier: 
-  segmentType: 7
+  segmentType: 9
   biome: 0
   prefabList:
   - prefab: {fileID: 1224437829780918199, guid: 3b44168a13d951b4fa6316f915edce0c,

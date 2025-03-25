@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: TempleBiome
   m_EditorClassIdentifier: 
   biome: 0
+  height: 5
   segmentTypeList:
   - {fileID: 11400000, guid: 1a4cfb57eda18444db0866ee0d4d4b31, type: 2}
   - {fileID: 11400000, guid: 163116f205cf81d4184d8ecfeb07ece4, type: 2}

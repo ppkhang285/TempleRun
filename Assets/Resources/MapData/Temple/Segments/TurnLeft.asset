@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d8c7be49e414614799002371dc6436a, type: 3}
   m_Name: TurnLeft
   m_EditorClassIdentifier: 
-  segmentType: 1
+  segmentType: 3
   biome: 0
   prefabList:
   - prefab: {fileID: 7388453860380070631, guid: fb3ee2a68f817514ab97c324ce95e7f8,

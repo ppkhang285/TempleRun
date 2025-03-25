@@ -5,7 +5,7 @@ using static Utils.Enums;
 public class MapSegment 
 {
     private SegmentType segmentType;
-    private Transform transform;
+    public Transform transform { get; private set; }
     
     public MapSegment(SegmentType segmentType, Transform transform)
     {
@@ -14,9 +14,11 @@ public class MapSegment
     }
 
 
-    public void MoveSegment(float speed)
+   
+
+    public void MoveSegment(float speed, Vector3 direction)
     {
-        //transform.position += Vector3.left * speed * Time.deltaTime;
+        transform.position += direction * speed * Time.deltaTime;
     }
 
 }

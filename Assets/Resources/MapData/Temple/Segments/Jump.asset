@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d8c7be49e414614799002371dc6436a, type: 3}
   m_Name: Jump
   m_EditorClassIdentifier: 
-  segmentType: 5
+  segmentType: 7
   biome: 0
   prefabList:
   - prefab: {fileID: 1259157954337246633, guid: 473216affafd3814ab02d9884f80ee87,

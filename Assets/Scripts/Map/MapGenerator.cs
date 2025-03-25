@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static Utils.Enums;
 using Utils;
+using System.Linq;
 
 
 /// <summary>
@@ -16,15 +17,18 @@ public class MapGenerator
     private SegmentRule segmentRule;
 
     private MapBiome currentBiome;
-    private List<SegmentType> segmentList;
+    private Dictionary<MapBiome, MapBiomeData> biomeDataDict;   
 
 
+    private Queue<SegmentType> currentSegmentQ;
 
-    public MapGenerator()
+    private const int MAX_SEGMENT = 11;
+
+    public MapGenerator(SpawnConfigData spawnConfigData)
     {
+        this.spawnConfigData = spawnConfigData;
 
 
-        LoadSpawnConfigData();
         LoadDifficultData();
 
         Initialize();
@@ -35,23 +39,23 @@ public class MapGenerator
     private void Initialize()
     {
         segmentRule = new SegmentRule();
-        segmentList = new List<SegmentType>();
+        currentSegmentQ = new Queue<SegmentType>();
 
-
+       
         currentBiome = spawnConfigData.startBiome;
-        segmentList.Add(SegmentType.START);
+        biomeDataDict = spawnConfigData.GetBiomeDataDict();
+        AddSegment(SegmentType.START);
     }
 
 
-    private void LoadSpawnConfigData()
+    // Getter method
+ 
+    public MapBiome GetCurrentBiome()
     {
-        spawnConfigData = Resources.Load<SpawnConfigData>(Paths.SPAWN_CONFIG_DATA);
-        if (spawnConfigData == null)
-        {
-            Debug.Log("Cannot load SpawnConfigData:  SpawnConfigData is null");
-        }
-        Debug.Log("Load SpawnConfigData successfully");
+        return currentBiome;
     }
+
+
 
     private void LoadDifficultData()
     {
@@ -64,15 +68,87 @@ public class MapGenerator
     }
 
 
-    private SegmentType GetNextSegmentType()
+
+
+
+
+    public SegmentType GenerateNewSegmentType()
     {
-        return SegmentType.NONE;
+        SegmentType nextSegmentType = ProceduralGenerate();
+
+        AddSegment(nextSegmentType);
+
+        Debug.Log(nextSegmentType);
+
+        return nextSegmentType;
     }
 
     private SegmentType ProceduralGenerate()
     {
+
+        // Get list of segment type belong to current biome
+        List<SegmentType> segmentList = new List<SegmentType>();
+        MapBiomeData biomeData = biomeDataDict[currentBiome];
+
+        for(int i = 0; i < biomeData.segmentTypeList.Count; i++)
+        {
+            segmentList.Add(biomeData.segmentTypeList[i].segmentType);
+        }
+
+        // Put list to SegmentRule to filter out list of next valid segment type 
+        segmentList = segmentRule.Filter(segmentList, currentSegmentQ.ToList());
+
+        // Get random segment type from list
+
+        SegmentType nextSegmentType = GetRandomType(segmentList);
+
+        return nextSegmentType;
+    }
+
+
+    private SegmentType GetRandomType(List<SegmentType> segmentList)
+    {
+        int weightSum = 0;
+
+
+
+        DifficultProfile biomeProfile = difficultData.profiles.Find(x => x.profile.difficulty == GameplayManager.Instance.currentDifficulty).profile;
+
+        Dictionary<SegmentType, int> segmentWeightDict = biomeProfile.GetSegmentWeightDict();
+
+        for (int i = 0; i < segmentList.Count; i++)
+        {
+
+            weightSum += segmentWeightDict[segmentList[i]];
+        }
+
+        int randomIndex = Random.Range(0, weightSum);
+        for (int i = 0; i < segmentList.Count; i++)
+        {
+            randomIndex -= segmentWeightDict[segmentList[i]];
+            if (randomIndex <= 0)
+            {
+                return segmentList[i];
+            }
+        }
+
         return SegmentType.NONE;
     }
 
-   
+    public void AddSegment(SegmentType segmentType)
+    {
+        if (currentSegmentQ.Count > MAX_SEGMENT)
+        {
+            DeleteOldSegment();
+        }
+        currentSegmentQ.Enqueue(segmentType);
+    }
+
+    public void DeleteOldSegment()
+    {
+        currentSegmentQ.Dequeue();
+    }
+
+
+
 }

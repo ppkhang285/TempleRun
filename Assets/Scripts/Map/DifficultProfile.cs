@@ -21,11 +21,23 @@ public class DifficultProfile : ScriptableObject
 
     public List<SegmentTypeWithWeight> data;
 
-    
+    public Dictionary<SegmentType, int> GetSegmentWeightDict()
+    {
+        Dictionary<SegmentType, int> segmentTypeDict = new Dictionary<SegmentType, int>();
+        for (int i = 0; i < data.Count; i++)
+        {
+            if (!segmentTypeDict.ContainsKey(data[i].segmentType))
+            {
+                segmentTypeDict.Add(data[i].segmentType, data[i].weight);
+            }
+        }
+        return segmentTypeDict;
+    }
 
-    
 
-    
+
+
+
 
 
 }
