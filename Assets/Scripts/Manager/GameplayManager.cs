@@ -56,7 +56,7 @@ public class GameplayManager : MonoBehaviour
         mapController = new MapController(mapRoot.transform);
 
         // Gameplay Attribute setting
-        currentDirecion = MoveDirection.FORWARD;
+        currentDirecion = MoveDirection.LEFT;
         moving_speed = 5.0f;
         currentDifficulty = 1;
 

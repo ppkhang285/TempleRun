@@ -110,9 +110,12 @@ public class MapController
 
         float height = biomeDataDict[biome].height;
         Vector3 position = GetNewPosition(segmentPref) + Vector3.up * height;
+        Quaternion rotation = Constants.ROTATION_VECTOR[GameplayManager.Instance.currentDirecion];
+
 
         GameObject segmentInstance = GameObject.Instantiate(segmentPref, Vector3.down * 10, Quaternion.identity, mapRoot);
         segmentInstance.transform.position = position;
+        segmentInstance.transform.rotation = rotation;
 
         MapSegment segment = new MapSegment(segmentType, segmentInstance.transform);
         mapSegments.Add(segment);
@@ -123,11 +126,17 @@ public class MapController
 
     private Vector3 GetNewPosition(GameObject newPref)
     {
+        Vector3 directionVector = Constants.DIRECTION_VECTOR[GameplayManager.Instance.currentDirecion];
+
         Vector3 newSize = newPref.GetComponent<MeshRenderer>().bounds.size;
         Vector3 lastPosition = mapSegments[mapSegments.Count - 1].transform.position;
         Vector3 lastSize = mapSegments[mapSegments.Count - 1].transform.GetComponent<MeshRenderer>().bounds.size;
 
-        Vector3 newPosition = lastPosition +  Vector3.right * ( newSize.x / 2 + lastSize.x / 2);
+        Debug.Log(lastSize);
+        Debug.Log(newSize);
+
+
+        Vector3 newPosition = lastPosition + directionVector * (newSize.x + lastSize.x) / 2;
         newPosition.y = 0;
 
         return newPosition;
