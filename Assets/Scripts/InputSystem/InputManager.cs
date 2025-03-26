@@ -49,12 +49,13 @@ public class InputManager
         // Keyboard
         if (!binding.isMouse)
         {
-            bool keyPressed = binding.key != KeyCode.None && Input.GetKeyDown(binding.key);
+            bool keyPressed = binding.key != KeyCode.None && Input.GetKey(binding.key);
             return keyPressed;
         }
         else
         {
-            return HandleMoveWithMouse(action);
+            return false;
+            //return HandleMoveWithMouse(action);
         }
         
     }

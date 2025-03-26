@@ -9,7 +9,7 @@ public class GameplayManager : MonoBehaviour
 
     // Inspector
     public GameObject mapRoot;
-
+    public GameObject playerPrefabs;
 
     // Managers
     public InputManager inputManager { get; private set; }
@@ -20,6 +20,8 @@ public class GameplayManager : MonoBehaviour
     public float moving_speed { get; private set; } // Moving speed of character (moving speed of map segments)
     public MoveDirection currentDirecion { get; private set; }
     public int currentDifficulty { get; private set; }
+    public Player player { get; private set; }
+
 
     void Awake()
     {
@@ -46,6 +48,8 @@ public class GameplayManager : MonoBehaviour
     private void Inintialize()
     {
 
+        //Cursor.visible = false;
+
         inputManager = new InputManager();
 
         if (mapRoot == null)
@@ -66,11 +70,16 @@ public class GameplayManager : MonoBehaviour
     private void InitSpawnObject()
     {
         mapController.InitEnviroment();
+
+        //Spawn Player
+        GameObject playerObj = Instantiate(playerPrefabs, Vector3.up * 8, Quaternion.identity);
+        player = playerObj.GetComponent<Player>();
     }
-    
+
     void Update()
     {
         mapController.Update();
+        player.MyUpdate();
     }
 
     // Setter
