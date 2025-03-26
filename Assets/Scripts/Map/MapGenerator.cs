@@ -78,7 +78,7 @@ public class MapGenerator
 
         AddSegment(nextSegmentType);
 
-        Debug.Log(nextSegmentType);
+        //Debug.Log(nextSegmentType);
 
         return nextSegmentType;
     }

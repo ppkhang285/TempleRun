@@ -128,12 +128,14 @@ public class MapController
     {
         Vector3 directionVector = Constants.DIRECTION_VECTOR[GameplayManager.Instance.currentDirecion];
 
-        Vector3 newSize = newPref.GetComponent<MeshRenderer>().bounds.size;
-        Vector3 lastPosition = mapSegments[mapSegments.Count - 1].transform.position;
-        Vector3 lastSize = mapSegments[mapSegments.Count - 1].transform.GetComponent<MeshRenderer>().bounds.size;
 
-        Debug.Log(lastSize);
-        Debug.Log(newSize);
+        // Change to -> Get size from Collider
+        Vector3 newSize = newPref.GetComponent<MeshFilter>().sharedMesh.bounds.size;
+        Vector3 lastPosition = mapSegments[mapSegments.Count - 1].transform.position;
+        Vector3 lastSize = mapSegments[mapSegments.Count - 1].transform.GetComponent<MeshFilter>().sharedMesh.bounds.size;
+
+        //Debug.Log(lastSize);
+        //Debug.Log(newSize);
 
 
         Vector3 newPosition = lastPosition + directionVector * (newSize.x + lastSize.x) / 2;
