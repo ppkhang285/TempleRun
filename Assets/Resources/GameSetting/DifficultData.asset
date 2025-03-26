@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b88260b8e8ec5cb488a3cde0ccee132d, type: 3}
+  m_Name: DifficultData
+  m_EditorClassIdentifier: 
+  maxDifficulty: 5
+  profiles:
+  - profile: {fileID: 11400000, guid: f185da6ccf357dd49a603649c78f310d, type: 2}
+    difficultyThreshold: 500
+  - profile: {fileID: 11400000, guid: 6a2787fcf53328d4eadbcf29669fc0a3, type: 2}
+    difficultyThreshold: 1000
+  - profile: {fileID: 11400000, guid: a655295dab38c814fb1c5da0efb9ad63, type: 2}
+    difficultyThreshold: 2000
+  - profile: {fileID: 11400000, guid: d885210c9bbdd3447ad9dfada065f12f, type: 2}
+    difficultyThreshold: 5000
+  - profile: {fileID: 11400000, guid: 0188d16100d7df8469c2407ac88fa7c8, type: 2}
+    difficultyThreshold: 999999

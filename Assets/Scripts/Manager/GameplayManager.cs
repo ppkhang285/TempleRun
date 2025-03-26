@@ -5,17 +5,40 @@ using static Utils.Enums;
 
 public class GameplayManager : MonoBehaviour
 {
+    public static GameplayManager Instance { get; private set; }
+
+    // Inspector
+    public GameObject mapRoot;
 
 
-    public InputManager inputManager;
+    // Managers
+    public InputManager inputManager { get; private set; }
+    public MapController mapController { get; private set; }
 
 
+    // Gameplay attributes
+    public float moving_speed { get; private set; } // Moving speed of character (moving speed of map segments)
+    public MoveDirection currentDirecion { get; private set; }
+    public int currentDifficulty { get; private set; }
 
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            //DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
     void Start()
     {
 
 
         Inintialize();
+        InitSpawnObject();
     }
 
   
@@ -23,13 +46,47 @@ public class GameplayManager : MonoBehaviour
     private void Inintialize()
     {
 
-
         inputManager = new InputManager();
+
+        if (mapRoot == null)
+        {
+            Debug.LogError("MapRoot is null");
+           
+        }
+        mapController = new MapController(mapRoot.transform);
+
+        // Gameplay Attribute setting
+        currentDirecion = MoveDirection.FORWARD;
+        moving_speed = 5.0f;
+        currentDifficulty = 1;
+
+
+    }
+
+    private void InitSpawnObject()
+    {
+        mapController.InitEnviroment();
     }
     
     void Update()
     {
-       if (InputManager.Instance.GetInput(InputAction.TurnLeft))
+        mapController.Update();
+    }
+
+    // Setter
+    public void SetMovingSpeed(float speed)
+    {
+        moving_speed = speed;
+    }
+
+    public void SetMoveDirection(MoveDirection direction)
+    {
+        currentDirecion = direction;
+    }
+
+    private void TestInput()
+    {
+        if (InputManager.Instance.GetInput(InputAction.TurnLeft))
         {
             Debug.Log("Turn Left");
         }
@@ -45,5 +102,11 @@ public class GameplayManager : MonoBehaviour
         {
             Debug.Log("Move Right");
         }
+    }
+
+    [Button]
+    public void SpawnSegment()
+    {
+        mapController.SpawnNewSegment();
     }
 }

@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dba1e2c6c1fe9a341b84793c018624df, type: 3}
+  m_Name: TempleBiome
+  m_EditorClassIdentifier: 
+  biome: 0
+  height: 5
+  segmentTypeList:
+  - {fileID: 11400000, guid: 1a4cfb57eda18444db0866ee0d4d4b31, type: 2}
+  - {fileID: 11400000, guid: 163116f205cf81d4184d8ecfeb07ece4, type: 2}
+  - {fileID: 11400000, guid: ba16f7977465ab64c967d89da6741a16, type: 2}
+  - {fileID: 11400000, guid: d4976a812c5c6f74a9f577b3503b47ec, type: 2}
+  - {fileID: 11400000, guid: 44c368db2d8d7d64ca56667b023b4751, type: 2}
+  - {fileID: 11400000, guid: 01853ff8c0f33d549a493af4fc801fdc, type: 2}
+  - {fileID: 11400000, guid: 06e0cda8682bb954488a75b7147e7ea5, type: 2}
+  - {fileID: 11400000, guid: c432d26f26c90a74cb798eb78524ca0d, type: 2}

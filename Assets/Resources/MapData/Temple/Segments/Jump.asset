@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d8c7be49e414614799002371dc6436a, type: 3}
+  m_Name: Jump
+  m_EditorClassIdentifier: 
+  segmentType: 7
+  biome: 0
+  prefabList:
+  - prefab: {fileID: 1259157954337246633, guid: 473216affafd3814ab02d9884f80ee87,
+      type: 3}
+    weight: 1
+  - prefab: {fileID: 34008378659158408, guid: 82d2083f7eeb61a439579d89a932bcf4, type: 3}
+    weight: 1
+  - prefab: {fileID: 1563360348375434959, guid: 6296102d5e54ee54e89ae5f96485614a,
+      type: 3}
+    weight: 1
+  - prefab: {fileID: 1996745817106489323, guid: 58ce82f22ced32e45b95a1e581c0cf16,
+      type: 3}
+    weight: 1
