@@ -21,4 +21,13 @@ public class MapSegment
         transform.position += direction * speed * Time.deltaTime;
     }
 
+    public void OnDestroy()
+    {
+        if (transform != null)
+        {
+            GameObject.Destroy(transform.gameObject);
+        }
+        
+    }
+
 }
