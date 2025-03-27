@@ -38,7 +38,7 @@ public class InputManager
         }
 
     }
-    public bool GetInput(InputAction action)
+    public bool GetInput(InputAction action, bool isKeyDown = false)
     {
         if (!bindingMap.ContainsKey(action))
             return false;
@@ -49,7 +49,17 @@ public class InputManager
         // Keyboard
         if (!binding.isMouse)
         {
-            bool keyPressed = binding.key != KeyCode.None && Input.GetKey(binding.key);
+            bool keyPressed = false;
+            if (!isKeyDown)
+            {
+                keyPressed = binding.key != KeyCode.None && Input.GetKey(binding.key);
+            }
+            else
+            {
+                keyPressed = binding.key != KeyCode.None && Input.GetKeyDown(binding.key);
+                
+            }
+
             return keyPressed;
         }
         else

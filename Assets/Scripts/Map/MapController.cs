@@ -67,7 +67,7 @@ public class MapController
 
         // Spawn Start Segment (Start_Gate)
         SpawnStartSegment();
-
+        SpawnNewSegment();
     }
 
     public void SpawnEnviroment()

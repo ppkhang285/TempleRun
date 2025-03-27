@@ -20,7 +20,7 @@ public class Player : MonoBehaviour
     // Attributes
 
     private BoxCollider currentCollider;
-    private bool jumped;
+    public bool jumping;
 
 
     private void Start()
@@ -39,22 +39,24 @@ public class Player : MonoBehaviour
 
     private void Initialize()
     {
-        characterPhysic = new CharacterPhysic(transform);
-        jumped = false; 
+        characterPhysic = new CharacterPhysic(transform, this);
+        jumping = false; 
+        runningCollider.enabled = true;
+        slidingCollider.gameObject.SetActive(false);
     }
 
     private void HandleMoving()
     {
         Vector3 moveDirection = Constants.DIRECTION_VECTOR[GameplayManager.Instance.currentDirecion];
 
-        if (InputManager.Instance.GetInput(InputAction.MoveLeft))
+        if (InputManager.Instance.GetInput(InputAction.MoveLeft) && !characterPhysic.CollideLeft() )
         {
             
             Quaternion rotation = Constants.ROTATION_VECTOR[MoveDirection.LEFT];
 
             transform.position += rotation * moveDirection * Constants.CHARACTER_VERTICAL_VELOCITY * Time.deltaTime;
         }
-        else if (InputManager.Instance.GetInput(InputAction.MoveRight))
+        else if (InputManager.Instance.GetInput(InputAction.MoveRight) && !characterPhysic.CollideRight())
         {
             Quaternion rotation = Constants.ROTATION_VECTOR[MoveDirection.RIGHT];
 
@@ -66,19 +68,34 @@ public class Player : MonoBehaviour
     {
         if (characterPhysic.CollideWithGround())
         {
-            jumped = false;
+            jumping = false;
         }
 
-        if (!jumped && InputManager.Instance.GetInput(InputAction.Jump))
+        if (!jumping && InputManager.Instance.GetInput(InputAction.Jump, true))
         {
-            characterPhysic.AddForce(Vector3.up * Constants.CHARACTER_JUMP_FORCE);
-            jumped = true;
+          
+            characterPhysic.Jump();
+            jumping = true;
         }
 
         
     }
 
+    private void HandleSlide()
+    {
+
+    }
 
 
-    
+    public void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("SpawnTrigger"))
+        {
+            GameplayManager.Instance.SpawnSegment();
+        }
+    }
 }
+
+
+
+

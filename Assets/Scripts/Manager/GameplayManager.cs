@@ -61,7 +61,7 @@ public class GameplayManager : MonoBehaviour
 
         // Gameplay Attribute setting
         currentDirecion = MoveDirection.FORWARD;
-        moving_speed = 5.0f;
+        moving_speed = 10.0f;
         currentDifficulty = 1;
 
 
@@ -93,25 +93,7 @@ public class GameplayManager : MonoBehaviour
         currentDirecion = direction;
     }
 
-    private void TestInput()
-    {
-        if (InputManager.Instance.GetInput(InputAction.TurnLeft))
-        {
-            Debug.Log("Turn Left");
-        }
-        if (InputManager.Instance.GetInput(InputAction.TurnRight))
-        {
-            Debug.Log("Turn Right");
-        }
-        if (InputManager.Instance.GetInput(InputAction.MoveLeft))
-        {
-            Debug.Log("Move Left");
-        }
-        if (InputManager.Instance.GetInput(InputAction.MoveRight))
-        {
-            Debug.Log("Move Right");
-        }
-    }
+    
 
     [Button]
     public void SpawnSegment()

@@ -55,7 +55,7 @@ GameObject:
   m_Component:
   - component: {fileID: 893226848943523820}
   - component: {fileID: 893226848943523823}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: rightwallTrigger
   m_TagString: WallTrigger
   m_Icon: {fileID: 0}
@@ -100,7 +100,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3364951999421925807}
   - component: {fileID: 3364951999421925800}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: leftWalltrigger
   m_TagString: WallTrigger
   m_Icon: {fileID: 0}
@@ -226,7 +226,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8871413503880450617}
   - component: {fileID: 8871413503880450618}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: groundTrigger
   m_TagString: GroundTrigger
   m_Icon: {fileID: 0}
