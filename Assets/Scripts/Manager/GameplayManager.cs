@@ -61,7 +61,7 @@ public class GameplayManager : MonoBehaviour
 
         // Gameplay Attribute setting
         currentDirecion = MoveDirection.FORWARD;
-        moving_speed = 10.0f;
+        moving_speed = 20.0f;
         currentDifficulty = 1;
 
 
@@ -72,7 +72,7 @@ public class GameplayManager : MonoBehaviour
         mapController.InitEnviroment();
 
         //Spawn Player
-        GameObject playerObj = Instantiate(playerPrefabs, Vector3.up * 8, Quaternion.identity);
+        GameObject playerObj = Instantiate(playerPrefabs, Vector3.up * 10, Quaternion.identity);
         player = playerObj.GetComponent<Player>();
     }
 

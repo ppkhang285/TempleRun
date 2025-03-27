@@ -141,8 +141,11 @@ public class MapController
 
 
         // Change to -> Get size from Collider
+
+
         Vector3 newSize = newPref.transform.GetChild(0).Find("sizeObj").GetComponent<BoxCollider>().size;
         Vector3 lastSize = mapSegments[mapSegments.Count - 1].transform.GetChild(0).Find("sizeObj").GetComponent<BoxCollider>().size;
+
 
         Vector3 lastPosition = mapSegments[mapSegments.Count - 1].transform.position;
         //Debug.Log(lastSize);

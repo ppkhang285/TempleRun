@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7961625580994371102}
   - component: {fileID: 248021039136594387}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: topWallTrigger
   m_TagString: WallTrigger
   m_Icon: {fileID: 0}
