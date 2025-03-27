@@ -3,7 +3,13 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - WallTrigger
+  - GroundTrigger
+  - SpawnTrigger
+  - DeathTrigger
+  - StumpleTrigger
+  - SizeMark
   layers:
   - Default
   - TransparentFX
