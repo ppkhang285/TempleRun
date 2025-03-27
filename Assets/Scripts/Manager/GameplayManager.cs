@@ -100,4 +100,55 @@ public class GameplayManager : MonoBehaviour
     {
         mapController.SpawnNewSegment();
     }
+
+
+    public void RunCoroutine(IEnumerator coroutine)
+    {
+        StartCoroutine(coroutine);
+    }
+
+
+    public MoveDirection TurnDirection(MoveDirection currDirect, bool isTurnLeft)
+    {
+        switch (currDirect)
+        {
+            case MoveDirection.FORWARD:
+                currDirect = isTurnLeft ? MoveDirection.LEFT : MoveDirection.RIGHT;
+                break;
+
+            case MoveDirection.BACKWARD:
+                currDirect = isTurnLeft ? MoveDirection.RIGHT : MoveDirection.LEFT;
+                break;
+            case MoveDirection.LEFT:
+                currDirect = isTurnLeft ? MoveDirection.BACKWARD : MoveDirection.FORWARD;
+                break;
+            case MoveDirection.RIGHT:
+                currDirect = isTurnLeft ? MoveDirection.FORWARD : MoveDirection.BACKWARD;
+                break;
+        }
+
+        return currDirect;
+    }
+    public void ChangeDirection(bool isTurnLeft)
+    {
+        //switch (currentDirecion)
+        //{
+        //    case MoveDirection.FORWARD:
+        //        currentDirecion = isTurnLeft ? MoveDirection.LEFT : MoveDirection.RIGHT;
+        //        break;
+
+        //    case MoveDirection.BACKWARD:
+        //        currentDirecion = isTurnLeft ? MoveDirection.RIGHT : MoveDirection.LEFT;
+        //        break;
+        //    case MoveDirection.LEFT:
+        //        currentDirecion = isTurnLeft ? MoveDirection.BACKWARD : MoveDirection.FORWARD;
+        //        break;
+        //    case MoveDirection.RIGHT:
+        //        currentDirecion = isTurnLeft ? MoveDirection.FORWARD : MoveDirection.BACKWARD;
+        //        break;
+        //}
+        currentDirecion = TurnDirection(currentDirecion, isTurnLeft);
+    }
+
+   
 }

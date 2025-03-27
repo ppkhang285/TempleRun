@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,6 +12,10 @@ public class Player : MonoBehaviour
     [SerializeField] private BoxCollider runningCollider;
     [SerializeField] private BoxCollider slidingCollider;
 
+    // Event
+    public static event Action onTurnLeft;
+    public static event Action onTurnRight;
+
 
     // Managers
 
@@ -20,7 +25,7 @@ public class Player : MonoBehaviour
     // Attributes
 
     private BoxCollider currentCollider;
-    public bool jumping;
+    private bool canTurn = true;
 
 
     private void Start()
@@ -33,6 +38,7 @@ public class Player : MonoBehaviour
     {
         HandleMoving();
         HandleJump();
+        HandleTurn();
         
         characterPhysic.Update();
     }
@@ -40,7 +46,7 @@ public class Player : MonoBehaviour
     private void Initialize()
     {
         characterPhysic = new CharacterPhysic(transform, this);
-        jumping = false; 
+
         runningCollider.enabled = true;
         slidingCollider.gameObject.SetActive(false);
     }
@@ -66,16 +72,12 @@ public class Player : MonoBehaviour
 
     private void HandleJump()
     {
-        if (characterPhysic.CollideWithGround())
-        {
-            jumping = false;
-        }
 
-        if (!jumping && InputManager.Instance.GetInput(InputAction.Jump, true))
+        if (InputManager.Instance.GetInput(InputAction.Jump, true))
         {
           
             characterPhysic.Jump();
-            jumping = true;
+   
         }
 
         
@@ -86,12 +88,35 @@ public class Player : MonoBehaviour
 
     }
 
+    private void HandleTurn()
+    {
+        if (!canTurn) return;
+
+        if (InputManager.Instance.GetInput(InputAction.TurnLeft, true) && characterPhysic.CanTurnLeft())
+        {
+            GameplayManager.Instance.ChangeDirection(true);
+            
+            Quaternion rotation = Constants.ROTATION_VECTOR[GameplayManager.Instance.currentDirecion];
+            transform.rotation = rotation;
+            canTurn = false;
+        }
+        else if (InputManager.Instance.GetInput(InputAction.TurnRight, true) && characterPhysic.CanTurnRight())
+        {
+            GameplayManager.Instance.ChangeDirection(false);
+
+            Quaternion rotation = Constants.ROTATION_VECTOR[GameplayManager.Instance.currentDirecion];
+            transform.rotation = rotation;
+            canTurn = false;
+        }
+    }
+
 
     public void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("SpawnTrigger"))
         {
             GameplayManager.Instance.SpawnSegment();
+            canTurn = true;
         }
     }
 }

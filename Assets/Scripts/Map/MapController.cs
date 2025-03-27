@@ -44,7 +44,8 @@ public class MapController
 
         for(int i = 0; i < mapSegments.Count; i++)
         {
-            mapSegments[i].MoveSegment(GameplayManager.Instance.moving_speed, -Vector3.right);
+            Vector3 moveVector = -Constants.DIRECTION_VECTOR[GameplayManager.Instance.currentDirecion];
+            mapSegments[i].MoveSegment(GameplayManager.Instance.moving_speed, moveVector);
         }
     }
 

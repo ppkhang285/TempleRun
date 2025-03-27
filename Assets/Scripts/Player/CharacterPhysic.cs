@@ -1,6 +1,10 @@
+using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using Utils;
+using static Utils.Enums;
+
 
 /// <summary>
 /// Controls the player's movement and actions.
@@ -17,6 +21,15 @@ public class CharacterPhysic
     private float coyoteTime = 0.1f; 
     private float coyoteTimeCounter = 0f;
 
+    // for test only
+    private float pullDownForce = 30f;
+    private float jumpForce = 25f;
+    private float jumpTime = 1f;
+
+    private bool isJumping = false;
+    private bool isFallingDown = false;
+
+
     public CharacterPhysic(Transform characterTransform, Player player)
     {
         this.characterTransform = characterTransform;
@@ -29,58 +42,69 @@ public class CharacterPhysic
 
     public void Update()
     {
-
-        if (velocity.y >= 0)
-        {
-            forces.Add(Vector3.down * Constants.GRAVITY * mass);
-        }
-        else
-        {
-            forces.Add(Vector3.down * Constants.GRAVITY * mass * 2.5f);
-        }
-
-     
-        Vector3 totalForce = Vector3.zero;
-        foreach (Vector3 force in forces)
-        {
-            totalForce += force;
-        }
-        Vector3 acceleration = totalForce / mass;
-
-      
-        if (velocity.y < 0 && CollideWithGround())
-        {
-            velocity.y = 0;
-            player.jumping = false;
-            coyoteTimeCounter = coyoteTime; 
-        }
-        else
+        if (coyoteTimeCounter > 0)
         {
             coyoteTimeCounter -= Time.deltaTime;
         }
 
-    
-        characterTransform.position += velocity * Time.deltaTime;
-        velocity += acceleration * Time.deltaTime;
 
-        forces.Clear();
+       // Debug.Log($"isJumping: {isJumping} isFallingDown: {isFallingDown}");
+        if (isFallingDown == isJumping)
+        {
+            PullingDown();
+        }
+        else
+        if (isJumping && !isFallingDown)
+        {
+            JumpingUp();
+        }
+    }
+    public void JumpingUp()
+    {
+           
+        characterTransform.Translate(Vector3.up * jumpForce * Time.deltaTime);
+        
+    }
+    public void PullingDown()
+    {
+        if (CollideWithGround())
+        {
+            if (isJumping && isFallingDown)
+            {
+                isJumping = false;
+                isFallingDown = false;
+            }
+            
+            coyoteTimeCounter = coyoteTime;
+        }
+        else
+        {
+            characterTransform.Translate(Vector3.down * pullDownForce * Time.deltaTime);
+        }
     }
 
+    IEnumerator JumpSequence()
+    {
+        yield return new WaitForSeconds(0.5f);
+        isFallingDown = true;
+ 
+    }
 
     public void Jump()
     {
-        if (coyoteTimeCounter > 0)
+        if (coyoteTimeCounter > 0 && !isJumping)
         {
-            velocity.y = Constants.CHARACTER_JUMP_FORCE;
-            coyoteTimeCounter = 0; 
-            player.jumping = true;
+            Debug.Log("Jump");
+            isJumping = true;
+            coyoteTimeCounter = 0;
+            GameplayManager.Instance.RunCoroutine(JumpSequence());
         }
     }
 
 
     public bool CollideWithGround()
     {
-
+        LayerMask mask = LayerMask.GetMask("GroundMask");
 
         return Physics.BoxCast(characterTransform.position, Vector3.one * 4f, Vector3.down, Quaternion.identity, 1.1f);
     }
@@ -88,14 +112,46 @@ public class CharacterPhysic
     public bool CollideLeft()
     {
         LayerMask mask = LayerMask.GetMask("WallMask");
-        Vector3 leftVector = Constants.DIRECTION_VECTOR[Enums.MoveDirection.LEFT];
+
+        MoveDirection turnDirect = GameplayManager.Instance.TurnDirection(GameplayManager.Instance.currentDirecion, true);
+        Vector3 leftVector = Constants.DIRECTION_VECTOR[turnDirect];
         return Physics.Raycast(characterTransform.position, leftVector, 1.1f, mask);
     }
 
     public bool CollideRight()
     {
         LayerMask mask = LayerMask.GetMask("WallMask");
-        Vector3 rightVector = Constants.DIRECTION_VECTOR[Enums.MoveDirection.RIGHT];
+        MoveDirection turnDirect = GameplayManager.Instance.TurnDirection(GameplayManager.Instance.currentDirecion, false);
+
+
+        Vector3 rightVector = Constants.DIRECTION_VECTOR[turnDirect];
         return Physics.Raycast(characterTransform.position, rightVector, 1.1f, mask);
+    }
+ 
+    public bool CanTurnLeft()
+    {
+        LayerMask mask = LayerMask.GetMask("WallMask");
+        MoveDirection turnDirect = GameplayManager.Instance.TurnDirection(GameplayManager.Instance.currentDirecion, true);
+        Vector3 leftVector = Constants.DIRECTION_VECTOR[turnDirect];
+
+   
+        return !Physics.Raycast(characterTransform.position, leftVector, 60f, mask);
+    }
+
+    public bool CanTurnRight()
+    {
+        LayerMask mask = LayerMask.GetMask("WallMask");
+        MoveDirection turnDirect = GameplayManager.Instance.TurnDirection(GameplayManager.Instance.currentDirecion, false);
+
+        Vector3 rightVector = Constants.DIRECTION_VECTOR[turnDirect];
+
+        return !Physics.Raycast(characterTransform.position, rightVector, 60f, mask);
+    }
+
+    public bool IsWallForward()
+    {
+        LayerMask mask = LayerMask.GetMask("WallMask");
+        Vector3 forwardVec = Constants.DIRECTION_VECTOR[GameplayManager.Instance.currentDirecion];
+        return !Physics.Raycast(characterTransform.position, forwardVec, 60f, mask);
     }
 }
