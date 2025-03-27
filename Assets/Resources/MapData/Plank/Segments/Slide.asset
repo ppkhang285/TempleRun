@@ -15,5 +15,6 @@ MonoBehaviour:
   segmentType: 4
   biome: 2
   prefabList:
-  - prefab: {fileID: 919132149155446097, guid: 600e570c11f63fa43b66efaeae6b27a9, type: 3}
+  - prefab: {fileID: 1211069283972520506, guid: 9b24aa75f40ece542a5ffe856956f791,
+      type: 3}
     weight: 1
