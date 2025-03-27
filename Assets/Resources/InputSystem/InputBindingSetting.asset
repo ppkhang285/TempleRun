@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bindings:
   - action: 5
-    key: 276
+    key: 97
     isMouse: 0
   - action: 6
-    key: 275
+    key: 100
     isMouse: 0
   - action: 2
     key: 119
@@ -26,11 +26,11 @@ MonoBehaviour:
     key: 115
     isMouse: 0
   - action: 0
-    key: 97
-    isMouse: 0
+    key: 0
+    isMouse: 1
   - action: 1
-    key: 100
-    isMouse: 0
+    key: 0
+    isMouse: 1
   - action: 4
     key: 27
     isMouse: 0

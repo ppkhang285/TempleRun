@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using static Utils.Enums;
 using Utils;
-using UnityEngine.UIElements;
 
 
 /// <summary>
@@ -21,8 +20,6 @@ public class MapController
 
     private Dictionary<MapBiome, MapBiomeData> biomeDataDict;
 
-    private const int MAX_SEGMENT = 4;
-
     public MapController(Transform mapRoot)
     {
         this.mapRoot = mapRoot;
@@ -35,13 +32,6 @@ public class MapController
 
     public void Update()
     {
-
-        if (mapSegments.Count > MAX_SEGMENT)
-        {
-            mapSegments[0].OnDestroy();
-            mapSegments.RemoveAt(0);
-        }
-
         for(int i = 0; i < mapSegments.Count; i++)
         {
             mapSegments[i].MoveSegment(GameplayManager.Instance.moving_speed, -Vector3.right);
@@ -119,7 +109,6 @@ public class MapController
         }
 
         float height = biomeDataDict[biome].height;
-
         Vector3 position = GetNewPosition(segmentPref) + Vector3.up * height;
         Quaternion rotation = Constants.ROTATION_VECTOR[GameplayManager.Instance.currentDirecion];
 
@@ -141,10 +130,10 @@ public class MapController
 
 
         // Change to -> Get size from Collider
-        Vector3 newSize = newPref.transform.GetChild(0).Find("sizeObj").GetComponent<BoxCollider>().size;
-        Vector3 lastSize = mapSegments[mapSegments.Count - 1].transform.GetChild(0).Find("sizeObj").GetComponent<BoxCollider>().size;
-
+        Vector3 newSize = newPref.GetComponent<MeshFilter>().sharedMesh.bounds.size;
         Vector3 lastPosition = mapSegments[mapSegments.Count - 1].transform.position;
+        Vector3 lastSize = mapSegments[mapSegments.Count - 1].transform.GetComponent<MeshFilter>().sharedMesh.bounds.size;
+
         //Debug.Log(lastSize);
         //Debug.Log(newSize);
 
