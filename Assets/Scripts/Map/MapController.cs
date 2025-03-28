@@ -15,6 +15,7 @@ public class MapController
 {
     private Transform mapRoot;
     private MapGenerator mapGenerator;
+    private MapSegmentPool mapSegmentPool;
 
     private List<MapSegment> mapSegments;
     private SpawnConfigData spawnConfigData;
@@ -22,7 +23,7 @@ public class MapController
     private Dictionary<MapBiome, MapBiomeData> biomeDataDict;
 
     private const int MAX_SEGMENT = 4;
-    private const float DESTROY_DISTANCE = 250.0f;
+    private const float DESTROY_DISTANCE = 300.0f;
 
     public MapController(Transform mapRoot)
     {
@@ -69,6 +70,7 @@ public class MapController
         LoadSpawnConfigData();
         mapSegments = new List<MapSegment>();
         mapGenerator = new MapGenerator(spawnConfigData);
+        mapSegmentPool = new MapSegmentPool();
 
         biomeDataDict = spawnConfigData.GetBiomeDataDict();
 
@@ -80,6 +82,8 @@ public class MapController
 
         // Spawn Start Segment (Start_Gate)
         SpawnStartSegment();
+        SpawnNewSegment();
+        SpawnNewSegment();
         SpawnNewSegment();
     }
 
@@ -126,7 +130,7 @@ public class MapController
 
     public void SpawnNewSegment(SegmentType segmentType, MapBiome biome)
     {
-
+        
         
         GameObject segmentPref = GetSegmentPrefab(segmentType, biome);
         List<MapSegment> newSegments = new List<MapSegment>();
@@ -139,7 +143,8 @@ public class MapController
 
         float height = biomeDataDict[biome].height;
 
-       for(int i = mapSegments.Count -1; i >= 0; i--)
+
+        for(int i = mapSegments.Count -1; i >= 0; i--)
         {
             if (!mapSegments[i].CanSpawnNeighbor()) continue;
             MapSegment lastSegment = mapSegments[i];
@@ -170,14 +175,16 @@ public class MapController
                 segment = new MapSegment(segmentType, segmentInstance.transform, newSegmentDirection);
                 mapSegments.Add(segment);
             }
+            
 
         }
+
+       
 
    
 
        
     }
-
 
 
 
