@@ -18,7 +18,7 @@ public class GameplayManager : MonoBehaviour
 
     // Gameplay attributes
     public float moving_speed { get; private set; } // Moving speed of character (moving speed of map segments)
-    public MoveDirection currentDirecion { get; private set; }
+    public Direction currentDirecion { get; private set; }
     public int currentDifficulty { get; private set; }
     public Player player { get; private set; }
 
@@ -60,7 +60,7 @@ public class GameplayManager : MonoBehaviour
         mapController = new MapController(mapRoot.transform);
 
         // Gameplay Attribute setting
-        currentDirecion = MoveDirection.FORWARD;
+        currentDirecion = Direction.FORWARD;
         moving_speed = 20.0f;
         currentDifficulty = 1;
 
@@ -88,7 +88,7 @@ public class GameplayManager : MonoBehaviour
         moving_speed = speed;
     }
 
-    public void SetMoveDirection(MoveDirection direction)
+    public void SetMoveDirection(Direction direction)
     {
         currentDirecion = direction;
     }
@@ -107,23 +107,23 @@ public class GameplayManager : MonoBehaviour
         StartCoroutine(coroutine);
     }
 
-
-    public MoveDirection TurnDirection(MoveDirection currDirect, bool isTurnLeft)
+    // Chuyen vo Utils
+    public Direction TurnDirection(Direction currDirect, bool isTurnLeft)
     {
         switch (currDirect)
         {
-            case MoveDirection.FORWARD:
-                currDirect = isTurnLeft ? MoveDirection.LEFT : MoveDirection.RIGHT;
+            case Direction.FORWARD:
+                currDirect = isTurnLeft ? Direction.LEFT : Direction.RIGHT;
                 break;
 
-            case MoveDirection.BACKWARD:
-                currDirect = isTurnLeft ? MoveDirection.RIGHT : MoveDirection.LEFT;
+            case Direction.BACKWARD:
+                currDirect = isTurnLeft ? Direction.RIGHT : Direction.LEFT;
                 break;
-            case MoveDirection.LEFT:
-                currDirect = isTurnLeft ? MoveDirection.BACKWARD : MoveDirection.FORWARD;
+            case Direction.LEFT:
+                currDirect = isTurnLeft ? Direction.BACKWARD : Direction.FORWARD;
                 break;
-            case MoveDirection.RIGHT:
-                currDirect = isTurnLeft ? MoveDirection.FORWARD : MoveDirection.BACKWARD;
+            case Direction.RIGHT:
+                currDirect = isTurnLeft ? Direction.FORWARD : Direction.BACKWARD;
                 break;
         }
 
@@ -131,22 +131,7 @@ public class GameplayManager : MonoBehaviour
     }
     public void ChangeDirection(bool isTurnLeft)
     {
-        //switch (currentDirecion)
-        //{
-        //    case MoveDirection.FORWARD:
-        //        currentDirecion = isTurnLeft ? MoveDirection.LEFT : MoveDirection.RIGHT;
-        //        break;
-
-        //    case MoveDirection.BACKWARD:
-        //        currentDirecion = isTurnLeft ? MoveDirection.RIGHT : MoveDirection.LEFT;
-        //        break;
-        //    case MoveDirection.LEFT:
-        //        currentDirecion = isTurnLeft ? MoveDirection.BACKWARD : MoveDirection.FORWARD;
-        //        break;
-        //    case MoveDirection.RIGHT:
-        //        currentDirecion = isTurnLeft ? MoveDirection.FORWARD : MoveDirection.BACKWARD;
-        //        break;
-        //}
+        
         currentDirecion = TurnDirection(currentDirecion, isTurnLeft);
     }
 

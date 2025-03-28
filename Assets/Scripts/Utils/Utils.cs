@@ -21,20 +21,20 @@ namespace Utils
         public readonly static float CHARACTER_JUMP_FORCE = 50.0f;
         public readonly static float GRAVITY = 70.0f;
 
-        public static readonly Dictionary<Enums.MoveDirection, Vector3> DIRECTION_VECTOR = new Dictionary<Enums.MoveDirection, Vector3>
+        public static readonly Dictionary<Enums.Direction, Vector3> DIRECTION_VECTOR = new Dictionary<Enums.Direction, Vector3>
         {
-            { Enums.MoveDirection.FORWARD, Vector3.right },
-            { Enums.MoveDirection.BACKWARD, Vector3.left },
-            { Enums.MoveDirection.LEFT, Vector3.forward },
-            { Enums.MoveDirection.RIGHT, Vector3.back }
+            { Enums.Direction.FORWARD, Vector3.right },
+            { Enums.Direction.BACKWARD, Vector3.left },
+            { Enums.Direction.LEFT, Vector3.forward },
+            { Enums.Direction.RIGHT, Vector3.back }
         };
 
-        public static readonly Dictionary<Enums.MoveDirection, Quaternion> ROTATION_VECTOR = new Dictionary<Enums.MoveDirection, Quaternion>
+        public static readonly Dictionary<Enums.Direction, Quaternion> ROTATION_VECTOR = new Dictionary<Enums.Direction, Quaternion>
         {
-            { Enums.MoveDirection.FORWARD, Quaternion.Euler(0, 0, 0) },
-            { Enums.MoveDirection.BACKWARD, Quaternion.Euler(0, 180, 0) },
-            { Enums.MoveDirection.LEFT, Quaternion.Euler(0, -90, 0) },
-            { Enums.MoveDirection.RIGHT, Quaternion.Euler(0, 90, 0) }
+            { Enums.Direction.FORWARD, Quaternion.Euler(0, 0, 0) },
+            { Enums.Direction.BACKWARD, Quaternion.Euler(0, 180, 0) },
+            { Enums.Direction.LEFT, Quaternion.Euler(0, -90, 0) },
+            { Enums.Direction.RIGHT, Quaternion.Euler(0, 90, 0) }
         };
 
     }
@@ -80,7 +80,7 @@ namespace Utils
             NarrowRight,
 
         }
-        public enum MoveDirection
+        public enum Direction
         {
             FORWARD,
             BACKWARD,
@@ -90,5 +90,30 @@ namespace Utils
         }
 
     }
+    public static class Methods
+    {
+        public static Enums.Direction TurnDirection(Enums.Direction currDirect, bool isTurnLeft)
+        {
+            switch (currDirect)
+            {
+                case Enums.Direction.FORWARD:
+                    currDirect = isTurnLeft ? Enums.Direction.LEFT : Enums.Direction.RIGHT;
+                    break;
+
+                case Enums.Direction.BACKWARD:
+                    currDirect = isTurnLeft ? Enums.Direction.RIGHT : Enums.Direction.LEFT;
+                    break;
+                case Enums.Direction.LEFT:
+                    currDirect = isTurnLeft ? Enums.Direction.BACKWARD : Enums.Direction.FORWARD;
+                    break;
+                case Enums.Direction.RIGHT:
+                    currDirect = isTurnLeft ? Enums.Direction.FORWARD : Enums.Direction.BACKWARD;
+                    break;
+            }
+
+            return currDirect;
+        }
+    }
+   
 
 }
