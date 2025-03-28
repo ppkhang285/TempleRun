@@ -113,7 +113,7 @@ public class CharacterPhysic
     {
         LayerMask mask = LayerMask.GetMask("WallMask");
 
-        Direction turnDirect = GameplayManager.Instance.TurnDirection(GameplayManager.Instance.currentDirecion, true);
+        Direction turnDirect = UtilMethods.TurnDirection(GameplayManager.Instance.currentDirecion, true);
         Vector3 leftVector = Constants.DIRECTION_VECTOR[turnDirect];
         return Physics.Raycast(characterTransform.position, leftVector, 1.1f, mask);
     }
@@ -121,7 +121,7 @@ public class CharacterPhysic
     public bool CollideRight()
     {
         LayerMask mask = LayerMask.GetMask("WallMask");
-        Direction turnDirect = GameplayManager.Instance.TurnDirection(GameplayManager.Instance.currentDirecion, false);
+        Direction turnDirect = UtilMethods.TurnDirection(GameplayManager.Instance.currentDirecion, false);
 
 
         Vector3 rightVector = Constants.DIRECTION_VECTOR[turnDirect];
@@ -131,7 +131,7 @@ public class CharacterPhysic
     public bool CanTurnLeft()
     {
         LayerMask mask = LayerMask.GetMask("WallMask");
-        Direction turnDirect = GameplayManager.Instance.TurnDirection(GameplayManager.Instance.currentDirecion, true);
+        Direction turnDirect = UtilMethods.TurnDirection(GameplayManager.Instance.currentDirecion, true);
         Vector3 leftVector = Constants.DIRECTION_VECTOR[turnDirect];
 
    
@@ -141,7 +141,7 @@ public class CharacterPhysic
     public bool CanTurnRight()
     {
         LayerMask mask = LayerMask.GetMask("WallMask");
-        Direction turnDirect = GameplayManager.Instance.TurnDirection(GameplayManager.Instance.currentDirecion, false);
+        Direction turnDirect = UtilMethods.TurnDirection(GameplayManager.Instance.currentDirecion, false);
 
         Vector3 rightVector = Constants.DIRECTION_VECTOR[turnDirect];
 

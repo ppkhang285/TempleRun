@@ -83,7 +83,9 @@ public class MapController
 
         GameObject startSegmentPref = spawnConfigData.startSegment;
         GameObject startSegmentInstance = GameObject.Instantiate(startSegmentPref, Vector3.zero + Vector3.up * height, Quaternion.identity,  mapRoot);
-        MapSegment startSegment = new MapSegment(SegmentType.START, startSegmentInstance.transform);
+        MapSegment startSegment = new MapSegment(SegmentType.START, startSegmentInstance.transform, GameplayManager.Instance.currentDirecion );
+
+
         mapSegments.Add(startSegment);
 
 
@@ -127,6 +129,22 @@ public class MapController
         float height = biomeDataDict[biome].height;
 
 
+        //for (int i = mapSegments.Count -1; i >= 0; i--)
+        //{
+
+        //    MapSegment lastSegment = mapSegments[i];
+        //    Vector3 position = GetNewPosition(segmentPref, lastSegment) + Vector3.up * height;
+        //    Quaternion rotation = Constants.ROTATION_VECTOR[GameplayManager.Instance.currentDirecion];
+
+
+        //    GameObject segmentInstance = GameObject.Instantiate(segmentPref, Vector3.down * 10, Quaternion.identity, mapRoot);
+        //    segmentInstance.transform.position = position;
+        //    segmentInstance.transform.rotation = rotation;
+
+        //    MapSegment segment = new MapSegment(segmentType, segmentInstance.transform, Direction.FORWARD);
+        //    mapSegments.Add(segment);
+
+        //}
 
         MapSegment lastSegment = mapSegments[mapSegments.Count - 1];
         Vector3 position = GetNewPosition(segmentPref, lastSegment) + Vector3.up * height;
@@ -137,10 +155,10 @@ public class MapController
         segmentInstance.transform.position = position;
         segmentInstance.transform.rotation = rotation;
 
-        MapSegment segment = new MapSegment(segmentType, segmentInstance.transform);
+        MapSegment segment = new MapSegment(segmentType, segmentInstance.transform, Direction.FORWARD);
         mapSegments.Add(segment);
 
-        //Debug.Log(segmentInstance.GetComponent<MeshRenderer>().bounds.size);
+        Debug.Log(segmentInstance.GetComponent<MeshRenderer>().bounds.size);
     }
 
 

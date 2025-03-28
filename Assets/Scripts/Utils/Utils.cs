@@ -90,7 +90,7 @@ namespace Utils
         }
 
     }
-    public static class Methods
+    public static class UtilMethods
     {
         public static Enums.Direction TurnDirection(Enums.Direction currDirect, bool isTurnLeft)
         {

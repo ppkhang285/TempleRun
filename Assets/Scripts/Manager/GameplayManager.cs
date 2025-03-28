@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Utils;
 using static Utils.Enums;
 
 public class GameplayManager : MonoBehaviour
@@ -132,7 +133,7 @@ public class GameplayManager : MonoBehaviour
     public void ChangeDirection(bool isTurnLeft)
     {
         
-        currentDirecion = TurnDirection(currentDirecion, isTurnLeft);
+        currentDirecion = UtilMethods.TurnDirection(currentDirecion, isTurnLeft);
     }
 
    
