@@ -47,11 +47,11 @@ public class MapSegment
     /// x: z
     /// </summary>
 
-    public Vector3 GetNeighborPos(GameObject newPref)
+    public Vector3 GetNeighborPos(GameObject newPref, bool getTurnBothLeft = false)
     {
 
 
-        Vector3 directionVector = Constants.DIRECTION_VECTOR[GameplayManager.Instance.currentDirecion];
+        //Vector3 directionVector = Constants.DIRECTION_VECTOR[GameplayManager.Instance.currentDirecion];
 
 
         // Change to -> Get size from Collider
@@ -59,15 +59,43 @@ public class MapSegment
         Vector3 newSize = newPref.transform.GetChild(0).Find("sizeObj").GetComponent<BoxCollider>().size;
         Vector3 lastSize = this.segmentTransform.GetChild(0).Find("sizeObj").GetComponent<BoxCollider>().size;
 
-
         Vector3 lastPosition = this.segmentTransform.position;
-        //Debug.Log(lastSize);
-        //Debug.Log(newSize);
 
+        Direction nextDirection = GetNeighborDirection(getTurnBothLeft);
+
+        
+        
+        
+
+        Vector3 directionVector = Constants.DIRECTION_VECTOR[nextDirection];
 
         Vector3 newPosition = lastPosition + directionVector * (newSize.x + lastSize.x) / 2;
         newPosition.y = 0;
 
         return newPosition;
+    }
+
+
+    public Direction GetNeighborDirection(bool getTurnBothLeft = false)
+    {
+        Direction nextDirection = Direction.NULL;
+        if (segmentType == SegmentType.Turn_Left)
+        {
+            nextDirection = UtilMethods.TurnDirection(direction, true);
+        }
+        else if (segmentType == SegmentType.Turn_Right)
+        {
+            nextDirection = UtilMethods.TurnDirection(direction, false);
+        }
+        else if (segmentType == SegmentType.Turn_Both)
+        {
+            nextDirection = UtilMethods.TurnDirection(direction, getTurnBothLeft);
+        }
+        else
+        {
+            nextDirection = direction;
+        }
+
+        return nextDirection;
     }
 }

@@ -82,6 +82,7 @@ namespace Utils
         }
         public enum Direction
         {
+            NULL,
             FORWARD,
             BACKWARD,
             LEFT,
