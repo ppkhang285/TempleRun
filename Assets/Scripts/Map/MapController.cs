@@ -22,6 +22,7 @@ public class MapController
     private Dictionary<MapBiome, MapBiomeData> biomeDataDict;
 
     private const int MAX_SEGMENT = 4;
+   
 
     public MapController(Transform mapRoot)
     {
@@ -44,7 +45,8 @@ public class MapController
 
         for(int i = 0; i < mapSegments.Count; i++)
         {
-            mapSegments[i].MoveSegment(GameplayManager.Instance.moving_speed, -Vector3.right);
+            Vector3 moveVector = -Constants.DIRECTION_VECTOR[GameplayManager.Instance.currentDirecion];
+            mapSegments[i].MoveSegment(GameplayManager.Instance.moving_speed, moveVector);
         }
     }
 
@@ -67,7 +69,7 @@ public class MapController
 
         // Spawn Start Segment (Start_Gate)
         SpawnStartSegment();
-
+        SpawnNewSegment();
     }
 
     public void SpawnEnviroment()
@@ -102,7 +104,9 @@ public class MapController
 
     public void SpawnNewSegment()
     {
+        
         SegmentType genratedType = mapGenerator.GenerateNewSegmentType();
+
         SpawnNewSegment(genratedType, mapGenerator.GetCurrentBiome());
     }
 
@@ -112,6 +116,8 @@ public class MapController
 
         
         GameObject segmentPref = GetSegmentPrefab(segmentType, biome);
+        List<MapSegment> newSegments = new List<MapSegment>();
+        
         if (segmentPref == null)
         {
             Debug.Log("Cannot spawn segment: segmentPref is null");
@@ -120,7 +126,10 @@ public class MapController
 
         float height = biomeDataDict[biome].height;
 
-        Vector3 position = GetNewPosition(segmentPref) + Vector3.up * height;
+
+
+        MapSegment lastSegment = mapSegments[mapSegments.Count - 1];
+        Vector3 position = GetNewPosition(segmentPref, lastSegment) + Vector3.up * height;
         Quaternion rotation = Constants.ROTATION_VECTOR[GameplayManager.Instance.currentDirecion];
 
 
@@ -135,16 +144,19 @@ public class MapController
     }
 
 
-    private Vector3 GetNewPosition(GameObject newPref)
+    private Vector3 GetNewPosition(GameObject newPref, MapSegment lastSegment)
     {
         Vector3 directionVector = Constants.DIRECTION_VECTOR[GameplayManager.Instance.currentDirecion];
 
 
         // Change to -> Get size from Collider
-        Vector3 newSize = newPref.transform.GetChild(0).Find("sizeObj").GetComponent<BoxCollider>().size;
-        Vector3 lastSize = mapSegments[mapSegments.Count - 1].transform.GetChild(0).Find("sizeObj").GetComponent<BoxCollider>().size;
 
-        Vector3 lastPosition = mapSegments[mapSegments.Count - 1].transform.position;
+        Debug.Log(newPref);
+        Vector3 newSize = newPref.transform.GetChild(0).Find("sizeObj").GetComponent<BoxCollider>().size;
+        Vector3 lastSize = lastSegment.segmentTransform.GetChild(0).Find("sizeObj").GetComponent<BoxCollider>().size;
+
+
+        Vector3 lastPosition = lastSegment.segmentTransform.position;
         //Debug.Log(lastSize);
         //Debug.Log(newSize);
 
