@@ -5,7 +5,7 @@ using Utils;
 using static Utils.Enums;
 public class MapSegment 
 {
-    private SegmentType segmentType;
+    public SegmentType segmentType {  get; private set; }
     public Transform segmentTransform { get; private set; }
     public bool canSpawnNext; // Can spawn next segment link with this segment
     public Direction direction; // Directioon of this Segment
@@ -41,18 +41,10 @@ public class MapSegment
     {
         canSpawnNext = false;
     }
-    /// <summary>
-    /// If not TurnBoth -> Pos is normal vector3
-    /// If is TurnBoth :
-    /// x: z
-    /// </summary>
+
 
     public Vector3 GetNeighborPos(GameObject newPref, bool getTurnBothLeft = false)
     {
-
-
-        //Vector3 directionVector = Constants.DIRECTION_VECTOR[GameplayManager.Instance.currentDirecion];
-
 
         // Change to -> Get size from Collider
 
@@ -97,5 +89,10 @@ public class MapSegment
         }
 
         return nextDirection;
+    }
+
+    public bool CanSpawnNeighbor()
+    {
+        return canSpawnNext;
     }
 }
