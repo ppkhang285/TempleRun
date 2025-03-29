@@ -145,8 +145,9 @@ public class Player : MonoBehaviour
     {
         if (other.CompareTag("SpawnTrigger"))
         {
-            
+        
             GameplayManager.Instance.SpawnSegment();
+            other.gameObject.SetActive(false);
             canTurn = true;
         }
         else if (other.CompareTag("DeathTrigger"))
@@ -155,6 +156,7 @@ public class Player : MonoBehaviour
         }
         else if (other.CompareTag("StumpleTrigger"))
         {
+            other.gameObject.SetActive(false);
             if (isStumple)
             {
                 Debug.Log("Game Over");

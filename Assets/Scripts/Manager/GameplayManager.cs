@@ -1,7 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Utils;
 using static Utils.Enums;
+
+
 
 public class GameplayManager : MonoBehaviour
 {
@@ -16,12 +19,14 @@ public class GameplayManager : MonoBehaviour
     public MapController mapController { get; private set; }
 
 
-    // Gameplay attributes
+    // Global attributes
     public float moving_speed { get; private set; } // Moving speed of character (moving speed of map segments)
     public Direction currentDirecion { get; private set; }
     public int currentDifficulty { get; private set; }
     public Player player { get; private set; }
 
+    public GameState gameState { get; private set; }
+    //
 
     void Awake()
     {
@@ -43,13 +48,15 @@ public class GameplayManager : MonoBehaviour
         InitSpawnObject();
     }
 
+    
+
   
 
     private void Inintialize()
     {
 
         //Cursor.visible = false;
-
+        gameState = GameState.MainMenu;
         inputManager = new InputManager();
 
         if (mapRoot == null)
@@ -61,7 +68,7 @@ public class GameplayManager : MonoBehaviour
 
         // Gameplay Attribute setting
         currentDirecion = Direction.FORWARD;
-        moving_speed = 20.0f;
+        moving_speed = 40.0f;
         currentDifficulty = 1;
 
 
@@ -78,8 +85,13 @@ public class GameplayManager : MonoBehaviour
 
     void Update()
     {
-        mapController.Update();
-        player.MyUpdate();
+
+        if (gameState == GameState.Playing)
+        {
+            mapController.Update();
+            player.MyUpdate();
+        }
+        
     }
 
     // Setter
@@ -99,6 +111,37 @@ public class GameplayManager : MonoBehaviour
     public void SpawnSegment()
     {
         mapController.SpawnNewSegment();
+    }
+
+    [Button]
+    public void StartGame()
+    {
+        if (gameState == GameState.MainMenu)
+        {
+            gameState = GameState.Playing;
+        }
+    }
+
+    [Button]
+    public void PauseGame()
+    {
+        if (gameState == GameState.Playing)
+        {
+            gameState = GameState.Paused;
+        }
+
+
+    }
+
+    [Button]
+    public void ContinueGame()
+    {
+        if (gameState == GameState.Paused)
+        {
+
+            // Call UI Countdown  (Coroutine)-> Play
+            gameState = GameState.Playing;
+        }
     }
 
 
@@ -132,7 +175,7 @@ public class GameplayManager : MonoBehaviour
     public void ChangeDirection(bool isTurnLeft)
     {
         
-        currentDirecion = TurnDirection(currentDirecion, isTurnLeft);
+        currentDirecion = UtilMethods.TurnDirection(currentDirecion, isTurnLeft);
     }
 
    

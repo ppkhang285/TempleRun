@@ -15,6 +15,7 @@ public class MapController
 {
     private Transform mapRoot;
     private MapGenerator mapGenerator;
+    private MapSegmentPool mapSegmentPool;
 
     private List<MapSegment> mapSegments;
     private SpawnConfigData spawnConfigData;
@@ -22,7 +23,7 @@ public class MapController
     private Dictionary<MapBiome, MapBiomeData> biomeDataDict;
 
     private const int MAX_SEGMENT = 4;
-   
+    private const float DESTROY_DISTANCE = 300.0f;
 
     public MapController(Transform mapRoot)
     {
@@ -37,11 +38,22 @@ public class MapController
     public void Update()
     {
 
-        if (mapSegments.Count > MAX_SEGMENT)
+        //if (mapSegments.Count > MAX_SEGMENT)
+        //{
+        //    mapSegments[0].OnDestroy();
+        //    mapSegments.RemoveAt(0);
+        //}
+
+        for(int i = mapSegments.Count-1; i >= 0; i--)
         {
-            mapSegments[0].OnDestroy();
-            mapSegments.RemoveAt(0);
+            float distance = Vector3.Distance(mapSegments[i].segmentTransform.position, Vector3.zero);
+            if (distance > DESTROY_DISTANCE)
+            {
+                mapSegments[i].OnDestroy();
+                mapSegments.RemoveAt(i);
+            }
         }
+
 
         for(int i = 0; i < mapSegments.Count; i++)
         {
@@ -58,6 +70,7 @@ public class MapController
         LoadSpawnConfigData();
         mapSegments = new List<MapSegment>();
         mapGenerator = new MapGenerator(spawnConfigData);
+        mapSegmentPool = new MapSegmentPool();
 
         biomeDataDict = spawnConfigData.GetBiomeDataDict();
 
@@ -69,6 +82,8 @@ public class MapController
 
         // Spawn Start Segment (Start_Gate)
         SpawnStartSegment();
+        SpawnNewSegment();
+        SpawnNewSegment();
         SpawnNewSegment();
     }
 
@@ -83,7 +98,9 @@ public class MapController
 
         GameObject startSegmentPref = spawnConfigData.startSegment;
         GameObject startSegmentInstance = GameObject.Instantiate(startSegmentPref, Vector3.zero + Vector3.up * height, Quaternion.identity,  mapRoot);
-        MapSegment startSegment = new MapSegment(SegmentType.START, startSegmentInstance.transform);
+        MapSegment startSegment = new MapSegment(SegmentType.START, startSegmentInstance.transform, GameplayManager.Instance.currentDirecion );
+
+
         mapSegments.Add(startSegment);
 
 
@@ -105,15 +122,15 @@ public class MapController
     public void SpawnNewSegment()
     {
         
-        SegmentType genratedType = mapGenerator.GenerateNewSegmentType();
+        SegmentType generatedType = mapGenerator.GenerateNewSegmentType();
 
-        SpawnNewSegment(genratedType, mapGenerator.GetCurrentBiome());
+        SpawnNewSegment(generatedType, mapGenerator.GetCurrentBiome());
     }
 
 
     public void SpawnNewSegment(SegmentType segmentType, MapBiome biome)
     {
-
+        
         
         GameObject segmentPref = GetSegmentPrefab(segmentType, biome);
         List<MapSegment> newSegments = new List<MapSegment>();
@@ -127,45 +144,49 @@ public class MapController
         float height = biomeDataDict[biome].height;
 
 
+        for(int i = mapSegments.Count -1; i >= 0; i--)
+        {
+            if (!mapSegments[i].CanSpawnNeighbor()) continue;
+            MapSegment lastSegment = mapSegments[i];
+            lastSegment.FlagNextSpawn();
 
-        MapSegment lastSegment = mapSegments[mapSegments.Count - 1];
-        Vector3 position = GetNewPosition(segmentPref, lastSegment) + Vector3.up * height;
-        Quaternion rotation = Constants.ROTATION_VECTOR[GameplayManager.Instance.currentDirecion];
+            Direction newSegmentDirection = lastSegment.GetNeighborDirection();
+            Vector3 position = lastSegment.GetNeighborPos(segmentPref) + Vector3.up * height;         
+            Quaternion rotation = Constants.ROTATION_VECTOR[newSegmentDirection];
+
+            GameObject segmentInstance = GameObject.Instantiate(segmentPref, Vector3.down * 10, Quaternion.identity, mapRoot);
+            segmentInstance.transform.position = position;
+            segmentInstance.transform.rotation = rotation;
+
+            MapSegment segment = new MapSegment(segmentType, segmentInstance.transform, newSegmentDirection);
+            mapSegments.Add(segment);
 
 
-        GameObject segmentInstance = GameObject.Instantiate(segmentPref, Vector3.down * 10, Quaternion.identity, mapRoot);
-        segmentInstance.transform.position = position;
-        segmentInstance.transform.rotation = rotation;
+            if (lastSegment.segmentType == SegmentType.Turn_Both)
+            {
+                newSegmentDirection = lastSegment.GetNeighborDirection(true);
+                position = lastSegment.GetNeighborPos(segmentPref, true) + Vector3.up * height;
+                rotation = Constants.ROTATION_VECTOR[newSegmentDirection];
 
-        MapSegment segment = new MapSegment(segmentType, segmentInstance.transform);
-        mapSegments.Add(segment);
+                segmentInstance = GameObject.Instantiate(segmentPref, Vector3.down * 10, Quaternion.identity, mapRoot);
+                segmentInstance.transform.position = position;
+                segmentInstance.transform.rotation = rotation;
 
-        //Debug.Log(segmentInstance.GetComponent<MeshRenderer>().bounds.size);
+                segment = new MapSegment(segmentType, segmentInstance.transform, newSegmentDirection);
+                mapSegments.Add(segment);
+            }
+            
+
+        }
+
+       
+
+   
+
+       
     }
 
 
-    private Vector3 GetNewPosition(GameObject newPref, MapSegment lastSegment)
-    {
-        Vector3 directionVector = Constants.DIRECTION_VECTOR[GameplayManager.Instance.currentDirecion];
-
-
-        // Change to -> Get size from Collider
-
-        Debug.Log(newPref);
-        Vector3 newSize = newPref.transform.GetChild(0).Find("sizeObj").GetComponent<BoxCollider>().size;
-        Vector3 lastSize = lastSegment.segmentTransform.GetChild(0).Find("sizeObj").GetComponent<BoxCollider>().size;
-
-
-        Vector3 lastPosition = lastSegment.segmentTransform.position;
-        //Debug.Log(lastSize);
-        //Debug.Log(newSize);
-
-
-        Vector3 newPosition = lastPosition + directionVector * (newSize.x + lastSize.x) / 2;
-        newPosition.y = 0;
-
-        return newPosition;
-    }
 
     private GameObject GetSegmentPrefab(SegmentType segmentType, MapBiome biome)
     {
