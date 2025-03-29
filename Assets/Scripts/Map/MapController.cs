@@ -193,14 +193,8 @@ public class MapController
             
 
         }
-
-       
-
-   
-
        
     }
-
 
 
     private GameObject GetSegmentPrefab(SegmentType segmentType, MapBiome biome)

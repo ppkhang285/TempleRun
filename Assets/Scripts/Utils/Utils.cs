@@ -16,10 +16,12 @@ namespace Utils
     public static class Constants
     {
 
-        public readonly static float CHARACTER_MASS = 2.0f;
-        public readonly static float CHARACTER_VERTICAL_VELOCITY = 20.0f;
-        public readonly static float CHARACTER_JUMP_FORCE = 50.0f;
-        public readonly static float GRAVITY = 70.0f;
+        public const float CHARACTER_MASS = 2.0f;
+        public const float CHARACTER_VERTICAL_VELOCITY = 20.0f;
+        public const float CHARACTER_JUMP_FORCE = 50.0f;
+        public const float GRAVITY = 70.0f;
+
+        public const int MAX_POWERUP_LEVEL = 5;
 
         public static readonly Dictionary<Enums.Direction, Vector3> DIRECTION_VECTOR = new Dictionary<Enums.Direction, Vector3>
         {

@@ -12,11 +12,6 @@ public class Player : MonoBehaviour
     [SerializeField] private BoxCollider runningCollider;
     [SerializeField] private BoxCollider slidingCollider;
 
-    // Event
-    public static event Action onTurnLeft;
-    public static event Action onTurnRight;
-
-
     // Managers
 
     public CharacterPhysic characterPhysic { get; private set; }

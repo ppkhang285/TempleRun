@@ -14,9 +14,9 @@ public class CharacterPhysic
     private Transform characterTransform;
     private Player player;
 
-    private float mass;
-    private Vector3 velocity;
-    private List<Vector3> forces;
+    //private float mass;
+    //private Vector3 velocity;
+    //private List<Vector3> forces;
 
     private float coyoteTime = 0.1f; 
     private float coyoteTimeCounter = 0f;
@@ -35,9 +35,9 @@ public class CharacterPhysic
         this.characterTransform = characterTransform;
         this.player = player;
 
-        forces = new List<Vector3>();
-        velocity = Vector3.zero;
-        mass = Constants.CHARACTER_MASS;
+        //forces = new List<Vector3>();
+        //velocity = Vector3.zero;
+        //mass = Constants.CHARACTER_MASS;
     }
 
     public void Update()
