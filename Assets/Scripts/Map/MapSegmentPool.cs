@@ -8,7 +8,7 @@ using static Utils.Enums;
 
 
 
-public class MapSegmentPool 
+public class MapSegmentPool
 {
 
     private Dictionary<(MapBiome, SegmentType), Queue<GameObject>> objectPool;
@@ -17,22 +17,23 @@ public class MapSegmentPool
 
     public MapSegmentPool()
     {
-        Initialize();   
+        Initialize();
     }
 
     private void Initialize()
     {
-        rootPosition = new Vector3(0, -100, 0);
+        rootPosition = new Vector3(0, -1000, 0);
         poolRoot = new GameObject("PoolRoot");
         poolRoot.transform.position = rootPosition;
 
         objectPool = new Dictionary<(MapBiome, SegmentType), Queue<GameObject>>();
+
     }
 
     public GameObject GetObject(MapBiome biome, SegmentType type, GameObject prefab = null)
     {
         (MapBiome, SegmentType) key = (biome, type);
-        if (!objectPool.ContainsKey(key))
+        if (!objectPool.ContainsKey(key) || objectPool[key].Count <=0)
         {
             if (prefab == null)
             {
@@ -40,21 +41,44 @@ public class MapSegmentPool
             }
 
             //Create new Instance
-           GameObject segmentInstance = GameObject.Instantiate(prefab);
-
+            GameObject segmentInstance = GameObject.Instantiate(prefab);
+            
 
             // Return it
             return segmentInstance;
         }
 
-        return objectPool[key].Dequeue();
+        GameObject seqmentObject = objectPool[key].Dequeue();
+        ResetObjectState(seqmentObject);
+
+        return seqmentObject;
     }
 
     public void ReturnObject(GameObject returnObject, MapBiome biome, SegmentType type)
     {
         (MapBiome, SegmentType) key = (biome, type);
+
         returnObject.transform.SetParent(poolRoot.transform);
+        returnObject.transform.localPosition = Vector3.zero;
+
+
+        if (!objectPool.ContainsKey(key))
+        {
+            objectPool[key] = new Queue<GameObject>(); 
+        }
+
         objectPool[key].Enqueue(returnObject);
+    }
+
+    private void ResetObjectState(GameObject segmentObject)
+    {
+   
+        segmentObject.transform.SetParent(null);
+
+        // Player turn of spawnTrigger when collided -> Turn on again
+        
+        segmentObject.transform.GetChild(0).Find("spawnTrigger").gameObject.SetActive(true);
+        
     }
 
     

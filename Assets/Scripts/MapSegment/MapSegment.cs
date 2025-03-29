@@ -6,13 +6,14 @@ using static Utils.Enums;
 public class MapSegment 
 {
     public SegmentType segmentType {  get; private set; }
+    public MapBiome biome { get; private set; }
     public Transform segmentTransform { get; private set; }
     public bool canSpawnNext; // Can spawn next segment link with this segment
     public Direction direction; // Directioon of this Segment
 
 
 
-    public MapSegment(SegmentType segmentType, Transform transform, Direction direction)
+    public MapSegment(SegmentType segmentType, MapBiome biome, Transform transform, Direction direction)
     {
         this.segmentType = segmentType;
         this.segmentTransform = transform;
