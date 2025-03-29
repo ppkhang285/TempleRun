@@ -44,24 +44,32 @@ public class MapController
         //    mapSegments.RemoveAt(0);
         //}
 
-        for(int i = mapSegments.Count-1; i >= 0; i--)
-        {
-            float distance = Vector3.Distance(mapSegments[i].segmentTransform.position, Vector3.zero);
-            if (distance > DESTROY_DISTANCE)
-            {
-                mapSegments[i].OnDestroy();
-                mapSegments.RemoveAt(i);
-            }
-        }
+        HandleDeleteSegments();
 
 
-        for(int i = 0; i < mapSegments.Count; i++)
+        for (int i = 0; i < mapSegments.Count; i++)
         {
             Vector3 moveVector = -Constants.DIRECTION_VECTOR[GameplayManager.Instance.currentDirecion];
             mapSegments[i].MoveSegment(GameplayManager.Instance.moving_speed, moveVector);
         }
     }
 
+    private void HandleDeleteSegments()
+    {
+        for (int i = mapSegments.Count - 1; i >= 0; i--)
+        {
+            float distance = Vector3.Distance(mapSegments[i].segmentTransform.position, Vector3.zero);
+            if (distance > DESTROY_DISTANCE)
+            {
+                //mapSegments[i].OnDestroy();
+                GameObject segmentObject = mapSegments[i].segmentTransform.gameObject;
+
+                mapSegmentPool.ReturnObject(segmentObject, mapSegments[i].biome, mapSegments[i].segmentType);
+
+                mapSegments.RemoveAt(i);
+            }
+        }
+    }
 
     
 
@@ -98,7 +106,8 @@ public class MapController
 
         GameObject startSegmentPref = spawnConfigData.startSegment;
         GameObject startSegmentInstance = GameObject.Instantiate(startSegmentPref, Vector3.zero + Vector3.up * height, Quaternion.identity,  mapRoot);
-        MapSegment startSegment = new MapSegment(SegmentType.START, startSegmentInstance.transform, GameplayManager.Instance.currentDirecion );
+        MapSegment startSegment = new MapSegment(SegmentType.START, MapBiome.Temple,startSegmentInstance.transform, 
+                                                    GameplayManager.Instance.currentDirecion );
 
 
         mapSegments.Add(startSegment);
@@ -154,11 +163,14 @@ public class MapController
             Vector3 position = lastSegment.GetNeighborPos(segmentPref) + Vector3.up * height;         
             Quaternion rotation = Constants.ROTATION_VECTOR[newSegmentDirection];
 
-            GameObject segmentInstance = GameObject.Instantiate(segmentPref, Vector3.down * 10, Quaternion.identity, mapRoot);
+            //GameObject segmentInstance = GameObject.Instantiate(segmentPref, Vector3.down * 10, Quaternion.identity, mapRoot);
+            GameObject segmentInstance = mapSegmentPool.GetObject(biome, segmentType, segmentPref);
+            segmentInstance.transform.SetParent(mapRoot);
+
             segmentInstance.transform.position = position;
             segmentInstance.transform.rotation = rotation;
 
-            MapSegment segment = new MapSegment(segmentType, segmentInstance.transform, newSegmentDirection);
+            MapSegment segment = new MapSegment(segmentType, biome, segmentInstance.transform, newSegmentDirection);
             mapSegments.Add(segment);
 
 
@@ -168,11 +180,14 @@ public class MapController
                 position = lastSegment.GetNeighborPos(segmentPref, true) + Vector3.up * height;
                 rotation = Constants.ROTATION_VECTOR[newSegmentDirection];
 
-                segmentInstance = GameObject.Instantiate(segmentPref, Vector3.down * 10, Quaternion.identity, mapRoot);
+                //segmentInstance = GameObject.Instantiate(segmentPref, Vector3.down * 10, Quaternion.identity, mapRoot);
+                segmentInstance = mapSegmentPool.GetObject(biome, segmentType, segmentPref);
+
+                segmentInstance.transform.SetParent(mapRoot);
                 segmentInstance.transform.position = position;
                 segmentInstance.transform.rotation = rotation;
 
-                segment = new MapSegment(segmentType, segmentInstance.transform, newSegmentDirection);
+                segment = new MapSegment(segmentType, biome, segmentInstance.transform, newSegmentDirection);
                 mapSegments.Add(segment);
             }
             
