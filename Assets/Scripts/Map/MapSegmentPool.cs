@@ -6,16 +6,14 @@ using static Utils.Enums;
 
 
 
-public class PoolData
-{
-    public MapBiome biome;
-    public SegmentType type;
-}
+
 
 public class MapSegmentPool 
 {
 
-    private Dictionary<PoolData, Queue<GameObject>> objectPool;
+    private Dictionary<(MapBiome, SegmentType), Queue<GameObject>> objectPool;
+    private GameObject poolRoot;
+    private Vector3 rootPosition;
 
     public MapSegmentPool()
     {
@@ -24,17 +22,39 @@ public class MapSegmentPool
 
     private void Initialize()
     {
-        objectPool = new Dictionary<PoolData, Queue<GameObject>>();
+        rootPosition = new Vector3(0, -100, 0);
+        poolRoot = new GameObject("PoolRoot");
+        poolRoot.transform.position = rootPosition;
+
+        objectPool = new Dictionary<(MapBiome, SegmentType), Queue<GameObject>>();
     }
 
-    public GameObject GetObject()
+    public GameObject GetObject(MapBiome biome, SegmentType type, GameObject prefab = null)
     {
-        return null;
+        (MapBiome, SegmentType) key = (biome, type);
+        if (!objectPool.ContainsKey(key))
+        {
+            if (prefab == null)
+            {
+                Debug.LogError("No prefab to Create Object in Pooling");
+            }
+
+            //Create new Instance
+           GameObject segmentInstance = GameObject.Instantiate(prefab);
+
+
+            // Return it
+            return segmentInstance;
+        }
+
+        return objectPool[key].Dequeue();
     }
 
-    public void ReturnObject()
+    public void ReturnObject(GameObject returnObject, MapBiome biome, SegmentType type)
     {
-
+        (MapBiome, SegmentType) key = (biome, type);
+        returnObject.transform.SetParent(poolRoot.transform);
+        objectPool[key].Enqueue(returnObject);
     }
 
     

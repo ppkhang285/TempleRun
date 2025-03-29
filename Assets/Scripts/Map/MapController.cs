@@ -122,9 +122,9 @@ public class MapController
     public void SpawnNewSegment()
     {
         
-        SegmentType genratedType = mapGenerator.GenerateNewSegmentType();
+        SegmentType generatedType = mapGenerator.GenerateNewSegmentType();
 
-        SpawnNewSegment(genratedType, mapGenerator.GetCurrentBiome());
+        SpawnNewSegment(generatedType, mapGenerator.GetCurrentBiome());
     }
 
 

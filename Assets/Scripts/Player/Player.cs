@@ -156,6 +156,7 @@ public class Player : MonoBehaviour
         }
         else if (other.CompareTag("StumpleTrigger"))
         {
+            other.gameObject.SetActive(false);
             if (isStumple)
             {
                 Debug.Log("Game Over");
