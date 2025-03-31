@@ -15,8 +15,9 @@ public class CoinManager
     public CoinManager()
     {
         currentCoin = 0;
-        maxSpawnInterval = 20.0f;
-        minSpawnInterval = 7.0f;
+        maxSpawnInterval = 10.0f;
+        minSpawnInterval = 5.0f;
+        spawnTimer = 10;
 
         GameplayManager.Instance.RunCoroutine(Runtimer());
     }
@@ -45,10 +46,15 @@ public class CoinManager
         return spawnTimer <= 0;
     }
 
-    public void CollectionCoin(GameObject coinObj)
+    public void CollectCoin(GameObject coinObj)
     {
         GameplayManager.Instance.mapController.coinSpawner.DespawnCoin(coinObj);
 
-        currentCoin += 1;
+        GainCoin(1);
+    }
+
+    public void GainCoin(int coin)
+    {
+        currentCoin += coin;
     }
 }

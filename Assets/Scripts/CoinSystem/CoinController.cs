@@ -57,9 +57,28 @@ public class CoinController
             return;
         }
 
-        if (mapSegment.segmentType != Enums.SegmentType.Jump) return;
-        
-        List<Vector3> coinPosList = Pattern_Jump(mapSegment);
+        List<Vector3> coinPosList;
+
+        if (mapSegment.segmentType == Enums.SegmentType.Jump)
+        {
+            coinPosList = Pattern_Jump(mapSegment);
+        }
+        else if(mapSegment.segmentType == Enums.SegmentType.Straight ||
+                mapSegment.segmentType == Enums.SegmentType.Slide)
+        {
+            coinPosList = Pattern_Straight(mapSegment);
+        }
+        else
+        {
+            return;
+        }
+        if (coinPosList == null)
+        {
+            Debug.LogError("Cannot gen pattern for coin");
+        }
+
+
+
         Quaternion rotation = Constants.ROTATION_VECTOR[mapSegment.direction];
         Vector3 segmentPos = mapSegment.segmentTransform.position;
 
@@ -181,7 +200,7 @@ public class CoinController
         for (int i = 1; i < maxCoin; i++)
         {
             Vector3 currPos = result[result.Count - 1] + Vector3.right * (coinSize.x + padding);
-            currPos.y = -0.01f * (currPos.x - collliderPos.x) * (currPos.x - collliderPos.x) + 10;
+            currPos.y = -0.01f * (currPos.x - collliderPos.x) * (currPos.x - collliderPos.x) + 12;
             result.Add(currPos);
         }
 

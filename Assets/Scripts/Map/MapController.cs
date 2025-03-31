@@ -26,6 +26,8 @@ public class MapController
     private const int MAX_SEGMENT = 4;
     private const float DESTROY_DISTANCE = 300.0f;
 
+    
+
     public MapController(Transform mapRoot)
     {
         this.mapRoot = mapRoot;
@@ -47,6 +49,8 @@ public class MapController
 
         HandleDeleteSegments();
         coinSpawner.HandleDeleteCoins();
+
+        
 
         Vector3 moveVector = -Constants.DIRECTION_VECTOR[GameplayManager.Instance.currentDirecion];
 
@@ -206,7 +210,7 @@ public class MapController
     {
         mapSegments.Add(segment);
 
-        coinSpawner.SpawnCoin(segment); // For testing
+        HandleSpawnCoin(segment);
     }
 
     private void HandleSpawnCoin(MapSegment mapSegment)

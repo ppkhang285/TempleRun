@@ -166,7 +166,7 @@ public class Player : MonoBehaviour
        else if (other.CompareTag("Coin"))
         {
             
-            GameplayManager.Instance.coinManager.CollectionCoin(other.gameObject);
+            GameplayManager.Instance.coinManager.CollectCoin(other.gameObject);
         }
     }
 

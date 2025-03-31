@@ -22,8 +22,8 @@ public class CharacterPhysic
     private float coyoteTimeCounter = 0f;
 
     // for test only
-    private float pullDownForce = 30f;
-    private float jumpForce = 25f;
+    private float pullDownForce = 35f;
+    private float jumpForce = 30f;
     private float jumpTime = 0.5f;
 
     public bool isJumping { get; private set; } = false;
