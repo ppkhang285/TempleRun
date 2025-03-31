@@ -185,6 +185,8 @@ MonoBehaviour:
   mapRoot: {fileID: 153518704}
   playerPrefabs: {fileID: 9109231912999947041, guid: 3ce7f94152dbfcc44b2f1f19420dffd3,
     type: 3}
+  coinPrefab: {fileID: 8232920171661117629, guid: fd5e38b3bba8e0b4b8986299e84f50b0,
+    type: 3}
 --- !u!4 &453508456
 Transform:
   m_ObjectHideFlags: 0

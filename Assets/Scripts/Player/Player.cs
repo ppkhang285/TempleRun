@@ -163,6 +163,11 @@ public class Player : MonoBehaviour
                 GameplayManager.Instance.RunCoroutine(StumpleCooldown());
             }
         }
+       else if (other.CompareTag("Coin"))
+        {
+            
+            GameplayManager.Instance.coinManager.CollectionCoin(other.gameObject);
+        }
     }
 
 

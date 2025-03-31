@@ -44,4 +44,11 @@ public class CoinManager
     {
         return spawnTimer <= 0;
     }
+
+    public void CollectionCoin(GameObject coinObj)
+    {
+        GameplayManager.Instance.mapController.coinSpawner.DespawnCoin(coinObj);
+
+        currentCoin += 1;
+    }
 }

@@ -16,7 +16,7 @@ public class MapController
     private Transform mapRoot;
     private MapGenerator mapGenerator;
     private MapSegmentPool mapSegmentPool;
-    private CoinSpawner coinSpawner;
+    public CoinController coinSpawner {  get; private set; }
 
     private List<MapSegment> mapSegments;
     private SpawnConfigData spawnConfigData;
@@ -46,13 +46,16 @@ public class MapController
         //}
 
         HandleDeleteSegments();
+        coinSpawner.HandleDeleteCoins();
 
+        Vector3 moveVector = -Constants.DIRECTION_VECTOR[GameplayManager.Instance.currentDirecion];
 
         for (int i = 0; i < mapSegments.Count; i++)
         {
-            Vector3 moveVector = -Constants.DIRECTION_VECTOR[GameplayManager.Instance.currentDirecion];
             mapSegments[i].MoveSegment(GameplayManager.Instance.moving_speed, moveVector);
         }
+
+        coinSpawner.MoveCoins(GameplayManager.Instance.moving_speed, moveVector);
     }
 
     private void HandleDeleteSegments()
@@ -80,7 +83,7 @@ public class MapController
         mapSegments = new List<MapSegment>();
         mapGenerator = new MapGenerator(spawnConfigData);
         mapSegmentPool = new MapSegmentPool();
-        coinSpawner = new CoinSpawner();
+        coinSpawner = new CoinController(mapRoot);
 
         biomeDataDict = spawnConfigData.GetBiomeDataDict();
 
@@ -173,8 +176,9 @@ public class MapController
             segmentInstance.transform.rotation = rotation;
 
             MapSegment segment = new MapSegment(segmentType, biome, segmentInstance.transform, newSegmentDirection);
-            mapSegments.Add(segment);
+            AddNewSegment(segment);
 
+            
 
             if (lastSegment.segmentType == SegmentType.Turn_Both)
             {
@@ -190,12 +194,19 @@ public class MapController
                 segmentInstance.transform.rotation = rotation;
 
                 segment = new MapSegment(segmentType, biome, segmentInstance.transform, newSegmentDirection);
-                mapSegments.Add(segment);
+                AddNewSegment(segment);
             }
             
 
         }
        
+    }
+
+    private void AddNewSegment(MapSegment segment)
+    {
+        mapSegments.Add(segment);
+
+        coinSpawner.SpawnCoin(segment); // For testing
     }
 
     private void HandleSpawnCoin(MapSegment mapSegment)

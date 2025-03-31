@@ -10,6 +10,8 @@ TagManager:
   - DeathTrigger
   - StumpleTrigger
   - SizeMark
+  - Coin
+  - Item
   layers:
   - Default
   - TransparentFX

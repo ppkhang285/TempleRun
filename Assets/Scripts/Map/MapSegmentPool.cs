@@ -4,10 +4,6 @@ using UnityEngine;
 using static Utils.Enums;
 
 
-
-
-
-
 public class MapSegmentPool
 {
 

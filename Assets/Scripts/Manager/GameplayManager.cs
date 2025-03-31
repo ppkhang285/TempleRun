@@ -13,6 +13,7 @@ public class GameplayManager : MonoBehaviour
     // Inspector
     public GameObject mapRoot;
     public GameObject playerPrefabs;
+    public GameObject coinPrefab;
 
     // Managers
     public InputManager inputManager { get; private set; }
