@@ -25,6 +25,9 @@ public class Player : MonoBehaviour
     private bool isSliding = false;
     private bool isStumple = false;
     private float stumpleTime = 5.0f;
+    private bool canControl = true;
+   
+
     private void Start()
     {
        
@@ -33,10 +36,14 @@ public class Player : MonoBehaviour
 
     public void MyUpdate()
     {
-        HandleMoving();
-        HandleJump();
-        HandleTurn();
-        HandleSlide();
+        if (canControl) 
+        {
+            HandleMoving();
+            HandleJump();
+            HandleTurn();
+            HandleSlide();
+        }
+        
         
         characterPhysic.Update();
     }
@@ -157,6 +164,7 @@ public class Player : MonoBehaviour
         }
         else if (other.CompareTag("DeathTrigger"))
         {
+            canControl = false;
             Debug.Log("Game over");
         }
         else if (other.CompareTag("StumpleTrigger"))
