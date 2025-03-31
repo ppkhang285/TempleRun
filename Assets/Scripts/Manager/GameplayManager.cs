@@ -69,7 +69,7 @@ public class GameplayManager : MonoBehaviour
 
         // Gameplay Attribute setting
         currentDirecion = Direction.FORWARD;
-        moving_speed = 40.0f;
+        moving_speed = 70.0f;
         currentDifficulty = 1;
 
 
@@ -86,6 +86,11 @@ public class GameplayManager : MonoBehaviour
 
     void Update()
     {
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            StartGame();
+        }
 
         if (gameState == GameState.Playing)
         {

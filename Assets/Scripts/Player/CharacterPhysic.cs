@@ -114,7 +114,9 @@ public class CharacterPhysic
 
         Direction turnDirect = UtilMethods.TurnDirection(GameplayManager.Instance.currentDirecion, true);
         Vector3 leftVector = Constants.DIRECTION_VECTOR[turnDirect];
-        return Physics.Raycast(characterTransform.position, leftVector, 1.1f, mask);
+        float rayDistance = 2.1f + player.currentCollider.size.z /2;
+
+        return Physics.Raycast(characterTransform.position, leftVector, rayDistance, mask);
     }
 
     public bool CollideRight()
@@ -122,9 +124,11 @@ public class CharacterPhysic
         LayerMask mask = LayerMask.GetMask("WallMask");
         Direction turnDirect = UtilMethods.TurnDirection(GameplayManager.Instance.currentDirecion, false);
 
-
         Vector3 rightVector = Constants.DIRECTION_VECTOR[turnDirect];
-        return Physics.Raycast(characterTransform.position, rightVector, 1.1f, mask);
+
+        float rayDistance = 2.1f + player.currentCollider.size.z / 2;
+
+        return Physics.Raycast(characterTransform.position, rightVector, rayDistance, mask);
     }
  
     public bool CanTurnLeft()
@@ -132,9 +136,11 @@ public class CharacterPhysic
         LayerMask mask = LayerMask.GetMask("WallMask");
         Direction turnDirect = UtilMethods.TurnDirection(GameplayManager.Instance.currentDirecion, true);
         Vector3 leftVector = Constants.DIRECTION_VECTOR[turnDirect];
+        Vector3 rayPos = characterTransform.position;
 
-   
-        return !Physics.Raycast(characterTransform.position, leftVector, 70f, mask);
+        return !Physics.BoxCast(characterTransform.position, player.currentCollider.size , leftVector, Quaternion.identity,40.0f, mask);
+
+        return !Physics.Raycast(rayPos, leftVector, 70f, mask);
     }
 
     public bool CanTurnRight()
@@ -143,8 +149,11 @@ public class CharacterPhysic
         Direction turnDirect = UtilMethods.TurnDirection(GameplayManager.Instance.currentDirecion, false);
 
         Vector3 rightVector = Constants.DIRECTION_VECTOR[turnDirect];
+        Vector3 rayPos = characterTransform.position;
 
-        return !Physics.Raycast(characterTransform.position, rightVector, 70f, mask);
+        return !Physics.BoxCast(characterTransform.position, player.currentCollider.size , rightVector, Quaternion.identity, 40.0f, mask);
+
+      //  return !Physics.Raycast(rayPos, rightVector, 40f, mask);
     }
 
    

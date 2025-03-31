@@ -11,7 +11,7 @@ public class Player : MonoBehaviour
     // Inspector
     [SerializeField] private BoxCollider runningCollider;
     [SerializeField] private BoxCollider slidingCollider;
-
+ 
     // Managers
 
     public CharacterPhysic characterPhysic { get; private set; }
@@ -19,7 +19,7 @@ public class Player : MonoBehaviour
 
     // Attributes
 
-    private BoxCollider currentCollider;
+    [HideInInspector] public BoxCollider currentCollider { get; private set; }
     private bool canTurn = true;
     private float slidingTime = 1.0f;
     private bool isSliding = false;
@@ -47,6 +47,8 @@ public class Player : MonoBehaviour
 
         runningCollider.gameObject.SetActive(true);
         slidingCollider.gameObject.SetActive(false);
+
+        currentCollider = runningCollider;
         
     }
 
@@ -72,9 +74,14 @@ public class Player : MonoBehaviour
     private void HandleJump()
     {
 
-        if (InputManager.Instance.GetInput(InputAction.Jump, true) && !isSliding)
+        if (InputManager.Instance.GetInput(InputAction.Jump, true))
         {
-          
+
+            isSliding = false;
+            runningCollider.gameObject.SetActive(true);
+            slidingCollider.gameObject.SetActive(false);
+            currentCollider = runningCollider;
+
             characterPhysic.Jump();
    
         }
@@ -90,6 +97,7 @@ public class Player : MonoBehaviour
             isSliding = true;
             runningCollider.gameObject.SetActive(false);
             slidingCollider.gameObject.SetActive(true);
+            currentCollider = slidingCollider;
 
             GameplayManager.Instance.RunCoroutine(SlideSequence());
 
@@ -102,16 +110,18 @@ public class Player : MonoBehaviour
     {
         yield return new WaitForSeconds(slidingTime);
 
+        if (characterPhysic.isJumping) yield return null ;
         isSliding = false;
         runningCollider.gameObject.SetActive(true);
         slidingCollider.gameObject.SetActive(false);
+        currentCollider = runningCollider;
     }
 
     private void HandleTurn()
     {
         if (!canTurn) return;
 
-        if (InputManager.Instance.GetInput(InputAction.TurnLeft, true) && characterPhysic.CanTurnLeft())
+        if (InputManager.Instance.GetInput(InputAction.TurnLeft, false) && characterPhysic.CanTurnLeft())
         {
             GameplayManager.Instance.ChangeDirection(true);
             
@@ -119,7 +129,7 @@ public class Player : MonoBehaviour
             transform.rotation = rotation;
             canTurn = false;
         }
-        else if (InputManager.Instance.GetInput(InputAction.TurnRight, true) && characterPhysic.CanTurnRight())
+        else if (InputManager.Instance.GetInput(InputAction.TurnRight, false) && characterPhysic.CanTurnRight())
         {
             GameplayManager.Instance.ChangeDirection(false);
 
