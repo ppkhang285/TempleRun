@@ -1,8 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PowerUpSystem : MonoBehaviour
+
+
+public class PowerUpData : ScriptableObject
 {
-    
+    public int index;
 }

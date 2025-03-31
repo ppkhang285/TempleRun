@@ -17,7 +17,8 @@ public class GameplayManager : MonoBehaviour
     // Managers
     public InputManager inputManager { get; private set; }
     public MapController mapController { get; private set; }
-
+    public PowerUpManager powerUpManager { get; private set; }
+    public CoinManager coinManager { get; private set; }
 
     // Global attributes
     public float moving_speed { get; private set; } // Moving speed of character (moving speed of map segments)
@@ -48,23 +49,22 @@ public class GameplayManager : MonoBehaviour
         InitSpawnObject();
     }
 
-    
-
-  
-
     private void Inintialize()
     {
 
         //Cursor.visible = false;
         gameState = GameState.MainMenu;
-        inputManager = new InputManager();
 
         if (mapRoot == null)
         {
             Debug.LogError("MapRoot is null");
-           
+
         }
+
+        inputManager = new InputManager();
         mapController = new MapController(mapRoot.transform);
+        powerUpManager = new PowerUpManager();
+        coinManager = new CoinManager();
 
         // Gameplay Attribute setting
         currentDirecion = Direction.FORWARD;
@@ -150,28 +150,8 @@ public class GameplayManager : MonoBehaviour
         StartCoroutine(coroutine);
     }
 
-    // Chuyen vo Utils
-    public Direction TurnDirection(Direction currDirect, bool isTurnLeft)
-    {
-        switch (currDirect)
-        {
-            case Direction.FORWARD:
-                currDirect = isTurnLeft ? Direction.LEFT : Direction.RIGHT;
-                break;
 
-            case Direction.BACKWARD:
-                currDirect = isTurnLeft ? Direction.RIGHT : Direction.LEFT;
-                break;
-            case Direction.LEFT:
-                currDirect = isTurnLeft ? Direction.BACKWARD : Direction.FORWARD;
-                break;
-            case Direction.RIGHT:
-                currDirect = isTurnLeft ? Direction.FORWARD : Direction.BACKWARD;
-                break;
-        }
-
-        return currDirect;
-    }
+    
     public void ChangeDirection(bool isTurnLeft)
     {
         

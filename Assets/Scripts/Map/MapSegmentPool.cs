@@ -49,6 +49,8 @@ public class MapSegmentPool
         }
 
         GameObject seqmentObject = objectPool[key].Dequeue();
+       
+
         ResetObjectState(seqmentObject);
 
         return seqmentObject;
@@ -68,6 +70,8 @@ public class MapSegmentPool
         }
 
         objectPool[key].Enqueue(returnObject);
+        
+        
     }
 
     private void ResetObjectState(GameObject segmentObject)

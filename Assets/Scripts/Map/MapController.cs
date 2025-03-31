@@ -16,6 +16,7 @@ public class MapController
     private Transform mapRoot;
     private MapGenerator mapGenerator;
     private MapSegmentPool mapSegmentPool;
+    private CoinSpawner coinSpawner;
 
     private List<MapSegment> mapSegments;
     private SpawnConfigData spawnConfigData;
@@ -79,6 +80,7 @@ public class MapController
         mapSegments = new List<MapSegment>();
         mapGenerator = new MapGenerator(spawnConfigData);
         mapSegmentPool = new MapSegmentPool();
+        coinSpawner = new CoinSpawner();
 
         biomeDataDict = spawnConfigData.GetBiomeDataDict();
 
@@ -90,7 +92,7 @@ public class MapController
 
         // Spawn Start Segment (Start_Gate)
         SpawnStartSegment();
-        SpawnNewSegment();
+        SpawnNewSegment(); // Spawn 3 segment
         SpawnNewSegment();
         SpawnNewSegment();
     }
@@ -196,6 +198,13 @@ public class MapController
        
     }
 
+    private void HandleSpawnCoin(MapSegment mapSegment)
+    {
+        if (GameplayManager.Instance.coinManager.CanSpawnCoin() == false) return;
+
+        coinSpawner.SpawnCoin(mapSegment);
+        GameplayManager.Instance.coinManager.ResetTimer();
+    }
 
     private GameObject GetSegmentPrefab(SegmentType segmentType, MapBiome biome)
     {

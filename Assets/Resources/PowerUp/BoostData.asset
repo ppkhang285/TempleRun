@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5da9a7ab36b97e94992f1829ea7d2940, type: 3}
   m_Name: BoostData
   m_EditorClassIdentifier: 
+  index: 2
   boostDistances:
   - 500
   - 700

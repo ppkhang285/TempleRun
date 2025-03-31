@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d90633db1802df14fb19b8776028beb2, type: 3}
   m_Name: CoinMagnetData
   m_EditorClassIdentifier: 
+  index: 1
   durations:
   - 10
   - 15
