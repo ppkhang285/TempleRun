@@ -92,6 +92,10 @@ namespace Utils
             RIGHT
 
         }
+        public enum PowerUpType
+        {
+
+        }
 
     }
     public static class UtilMethods

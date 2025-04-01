@@ -140,7 +140,7 @@ public class CharacterPhysic
 
         return !Physics.BoxCast(characterTransform.position, player.currentCollider.size , leftVector, Quaternion.identity,40.0f, mask);
 
-        return !Physics.Raycast(rayPos, leftVector, 70f, mask);
+        //return !Physics.Raycast(rayPos, leftVector, 70f, mask);
     }
 
     public bool CanTurnRight()

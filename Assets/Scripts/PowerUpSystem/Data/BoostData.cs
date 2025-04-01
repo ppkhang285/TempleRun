@@ -7,4 +7,9 @@ using UnityEngine;
 public class BoostData : PowerUpData
 {
     public float[] boostDistances = new float[5];
+
+    public override void Activate(int currentLevel)
+    {
+        throw new System.NotImplementedException();
+    }
 }

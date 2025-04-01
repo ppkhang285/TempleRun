@@ -26,8 +26,6 @@ public class MapController
     private const int MAX_SEGMENT = 4;
     private const float DESTROY_DISTANCE = 300.0f;
 
-    
-
     public MapController(Transform mapRoot)
     {
         this.mapRoot = mapRoot;
@@ -36,8 +34,6 @@ public class MapController
         Initialize();
       
     }
-
-
     public void Update()
     {
 
@@ -236,6 +232,11 @@ public class MapController
 
         GameObject prefab = segmentData.GetRandomPrefab();
         return prefab;
+    }
+
+    private void Clear()
+    {
+
     }
 
 

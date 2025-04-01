@@ -14,12 +14,15 @@ public class CoinController
 
     private CoinPool coinPool;
 
+    private Dictionary<int, State> coinStates;
+
     private List<GameObject> coinList;
 
     private const int MIN_COIN = 5;
     private const int MAX_COIN = 10;
 
 
+    private const float pullingSpeed = 50;
     private const int padding = 1; // Padding between 2 coin
     private const float DESTROY_DISTANCE = 300.0f;
 
@@ -30,17 +33,48 @@ public class CoinController
         this.mapRoot = mapRoot; 
         coinPool = new CoinPool(coinPrefab);
         coinList = new List<GameObject>();
+        coinStates = new Dictionary<int, State>();
     }
 
+    private enum State
+    {
+        Idle,
+        Pulling
+    }
     public void MoveCoins(float speed, Vector3 direction)
     {
         foreach(GameObject coinObj in coinList)
         {
-            coinObj.transform.position  += direction * speed * Time.deltaTime;
+
+            if (coinStates[coinObj.GetInstanceID()] == State.Idle){
+                coinObj.transform.position += direction * speed * Time.deltaTime;
+            }
+            else
+            {
+          
+                Transform playerTrans = GameplayManager.Instance.player.transform;
+                Vector3 playerDirection = (playerTrans.position - coinObj.transform.position).normalized;
+
+                float distance = Vector3.Distance(coinObj.transform.position, playerTrans.position);
+
+                
+                float speedMultiplier = Mathf.Clamp(1f / distance, 0.5f, 2f);
+                coinObj.transform.position = Vector3.Lerp(coinObj.transform.position, playerTrans.position, pullingSpeed * speedMultiplier * Time.deltaTime);
+
+
+            }
         }
         
     
     }
+
+    public void FlagPulling(GameObject coinObject)
+    {
+        if (!coinStates.ContainsKey(coinObject.GetInstanceID())) return;
+        coinStates[coinObject.GetInstanceID()] = State.Pulling;
+        
+    }
+
 
     private void LoadCoinPrefab()
     {
@@ -88,8 +122,10 @@ public class CoinController
 
             coinObj.transform.SetParent(mapRoot, true);
             coinObj.transform.position = segmentPos + rotation * coinPos;//coinPos + segmentPos;
-    
 
+
+
+            coinStates.Add(coinObj.GetInstanceID(), State.Idle);
             coinList.Add(coinObj);
             
         }
@@ -99,15 +135,19 @@ public class CoinController
     {
         coinList.Remove(coinObj);
         coinPool.ReturnObject(coinObj);
+
+       
+        coinStates.Remove(coinObj.GetInstanceID());
         
+
     }
 
     public void DesSpawnCoinAt(int index)
     {
         GameObject coinObj = coinList[index];
-        coinList.RemoveAt(index);
-        coinPool.ReturnObject(coinObj);
+        DespawnCoin(coinObj);
     }
+
     public void HandleDeleteCoins()
     {
         for (int i = coinList.Count - 1; i >= 0; i--)

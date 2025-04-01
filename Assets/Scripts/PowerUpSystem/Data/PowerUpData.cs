@@ -5,7 +5,11 @@ using UnityEngine;
 
 
 
-public class PowerUpData : ScriptableObject
+public abstract class PowerUpData : ScriptableObject
 {
-    public int index;
+
+    public bool isItem = false;
+    public GameObject itemPrefab;
+
+    public abstract void Activate(int currentLevel);
 }

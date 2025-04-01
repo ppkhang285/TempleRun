@@ -7,4 +7,9 @@ using UnityEngine;
 public class CoinValueData : PowerUpData
 {
     public int[] values = new int[5];
+
+    public override void Activate(int currentLevel)
+    {
+        throw new System.NotImplementedException();
+    }
 }

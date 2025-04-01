@@ -75,6 +75,16 @@ public class GameplayManager : MonoBehaviour
 
     }
 
+    private void ResetToDefault()
+    {
+        currentDirecion = Direction.FORWARD;
+        moving_speed = 70.0f;
+        currentDifficulty = 1;
+
+
+    }
+   
+
     private void InitSpawnObject()
     {
         mapController.InitEnviroment();
@@ -111,7 +121,12 @@ public class GameplayManager : MonoBehaviour
         currentDirecion = direction;
     }
 
-    
+
+    [Button]
+    public void Test()
+    {
+        powerUpManager.ActivatePowerUp();
+    }
 
     [Button]
     public void SpawnSegment()

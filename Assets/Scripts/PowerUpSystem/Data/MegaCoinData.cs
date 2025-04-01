@@ -9,5 +9,17 @@ public class MegaCoinData : PowerUpData
 
     public int[] extraCoin = new int[5];
 
+    public override void Activate(int currentLevel)
+    {
+        if (currentLevel <= 0 || currentLevel > Constants.MAX_POWERUP_LEVEL)
+        {
+            Debug.LogError("Wrong Level");
+            return;
+        }
+        int coin = extraCoin[currentLevel-1];
+
+        GameplayManager.Instance.coinManager.GainCoin(coin);
+    }
+
 
 }

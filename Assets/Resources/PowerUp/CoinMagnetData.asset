@@ -12,16 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d90633db1802df14fb19b8776028beb2, type: 3}
   m_Name: CoinMagnetData
   m_EditorClassIdentifier: 
-  index: 1
+  isItem: 1
+  itemPrefab: {fileID: 0}
   durations:
-  - 10
-  - 15
-  - 17
-  - 17
-  - 20
-  radius:
-  - 10
-  - 10
-  - 20
-  - 20
+  - 100
+  - 150
+  - 170
+  - 200
+  - 200
+  radiusList:
   - 50
+  - 70
+  - 100
+  - 20
+  - 40

@@ -130,6 +130,7 @@ public class Player : MonoBehaviour
 
         if (InputManager.Instance.GetInput(InputAction.TurnLeft, false) && characterPhysic.CanTurnLeft())
         {
+            Debug.Log("Turn");
             GameplayManager.Instance.ChangeDirection(true);
             
             Quaternion rotation = Constants.ROTATION_VECTOR[GameplayManager.Instance.currentDirecion];
@@ -138,11 +139,13 @@ public class Player : MonoBehaviour
         }
         else if (InputManager.Instance.GetInput(InputAction.TurnRight, false) && characterPhysic.CanTurnRight())
         {
+            
             GameplayManager.Instance.ChangeDirection(false);
 
             Quaternion rotation = Constants.ROTATION_VECTOR[GameplayManager.Instance.currentDirecion];
             transform.rotation = rotation;
             canTurn = false;
+
         }
     }
 
@@ -164,7 +167,7 @@ public class Player : MonoBehaviour
         }
         else if (other.CompareTag("DeathTrigger"))
         {
-            canControl = false;
+         //   canControl = false;
             Debug.Log("Game over");
         }
         else if (other.CompareTag("StumpleTrigger"))

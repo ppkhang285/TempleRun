@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96d5937fa180ac048906f36dfdc2aad7, type: 3}
   m_Name: InvisibilityData
   m_EditorClassIdentifier: 
-  index: 3
+  isItem: 1
+  itemPrefab: {fileID: 0}
   duration:
   - 5
   - 8

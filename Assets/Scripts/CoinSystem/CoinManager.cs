@@ -55,6 +55,8 @@ public class CoinManager
 
     public void GainCoin(int coin)
     {
+        
         currentCoin += coin;
+       // Debug.Log($"Current coin: {currentCoin}");
     }
 }
