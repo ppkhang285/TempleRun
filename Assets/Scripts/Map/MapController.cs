@@ -25,7 +25,6 @@ public class MapController
 
     private const int MAX_SEGMENT = 4;
     private const float DESTROY_DISTANCE = 300.0f;
-
     public MapController(Transform mapRoot)
     {
         this.mapRoot = mapRoot;
@@ -42,21 +41,23 @@ public class MapController
         //    mapSegments[0].OnDestroy();
         //    mapSegments.RemoveAt(0);
         //}
-
+        //BalanceMap();
         HandleDeleteSegments();
         coinSpawner.HandleDeleteCoins();
 
-        
 
         Vector3 moveVector = -Constants.DIRECTION_VECTOR[GameplayManager.Instance.currentDirecion];
-
+        
         for (int i = 0; i < mapSegments.Count; i++)
         {
+            mapSegments[i].TurnInvisibleLane(GameplayManager.Instance.inInvisibleState);
             mapSegments[i].MoveSegment(GameplayManager.Instance.moving_speed, moveVector);
+            
         }
 
         coinSpawner.MoveCoins(GameplayManager.Instance.moving_speed, moveVector);
     }
+
 
     private void HandleDeleteSegments()
     {
@@ -88,6 +89,8 @@ public class MapController
         biomeDataDict = spawnConfigData.GetBiomeDataDict();
 
     }
+
+    
 
     public void InitEnviroment()
     {
@@ -209,6 +212,16 @@ public class MapController
         HandleSpawnCoin(segment);
     }
 
+    private void BalanceMap()
+    {
+        if (mapSegments.Count < 5)
+        {
+            for (int i = 0; i < 5-mapSegments.Count; i++)
+            {
+                SpawnNewSegment();
+            }
+        }
+    }
     private void HandleSpawnCoin(MapSegment mapSegment)
     {
         if (GameplayManager.Instance.coinManager.CanSpawnCoin() == false) return;

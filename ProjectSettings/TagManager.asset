@@ -12,6 +12,7 @@ TagManager:
   - SizeMark
   - Coin
   - Item
+  - InstantDeathTrigger
   layers:
   - Default
   - TransparentFX

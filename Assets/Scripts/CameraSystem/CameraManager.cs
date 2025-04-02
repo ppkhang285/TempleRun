@@ -22,7 +22,7 @@ public class CameraManager
         startCamera = cameraRoot.GetComponentInChildren<CinemachineVirtualCamera>();
         //playerCamera = playerRoot.GetComponentInChildren<CinemachineVirtualCamera>();
 
-        if (startCamera == null || brainCamera == null)
+        if ( startCamera == null || brainCamera == null)
         {
             Debug.LogError("Not found camera");
         
@@ -45,7 +45,9 @@ public class CameraManager
     public void GameplayCamera()
     {
         brainCamera.m_DefaultBlend.m_Style = CinemachineBlendDefinition.Style.EaseInOut;
+        brainCamera.m_DefaultBlend.m_Time = 2f;
         startCamera.enabled = false;
+        GameplayManager.Instance.RunCoroutine(ChangeBlendTimeAfterStart());
     }
 
     public void DefaultCamera()
@@ -60,6 +62,12 @@ public class CameraManager
         Quaternion rotation = Constants.ROTATION_VECTOR[GameplayManager.Instance.currentDirecion];
         playerRoot.transform.rotation = rotation;
 
+    }
+
+    IEnumerator ChangeBlendTimeAfterStart()
+    {
+        yield return new WaitForSeconds(2.1f);
+        brainCamera.m_DefaultBlend.m_Time = 0.5f;
     }
 
 }

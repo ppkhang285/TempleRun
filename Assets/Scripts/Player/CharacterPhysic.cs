@@ -138,7 +138,7 @@ public class CharacterPhysic
         Vector3 leftVector = Constants.DIRECTION_VECTOR[turnDirect];
         Vector3 rayPos = characterTransform.position;
 
-        return !Physics.BoxCast(characterTransform.position, player.currentCollider.size , leftVector, Quaternion.identity,40.0f, mask);
+        return !Physics.BoxCast(characterTransform.position, player.currentCollider.size + Vector3.one, leftVector, Quaternion.identity,50.0f, mask);
 
         //return !Physics.Raycast(rayPos, leftVector, 70f, mask);
     }
@@ -151,7 +151,7 @@ public class CharacterPhysic
         Vector3 rightVector = Constants.DIRECTION_VECTOR[turnDirect];
         Vector3 rayPos = characterTransform.position;
 
-        return !Physics.BoxCast(characterTransform.position, player.currentCollider.size , rightVector, Quaternion.identity, 40.0f, mask);
+        return !Physics.BoxCast(characterTransform.position, player.currentCollider.size +Vector3.one , rightVector, Quaternion.identity, 50.0f, mask);
 
       //  return !Physics.Raycast(rayPos, rightVector, 40f, mask);
     }

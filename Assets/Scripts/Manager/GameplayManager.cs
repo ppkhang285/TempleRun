@@ -34,6 +34,7 @@ public class GameplayManager : MonoBehaviour
     public int currentDifficulty { get; private set; }
     public Player player { get; private set; }
 
+    public bool inInvisibleState { get; private set; }
     public GameState gameState { get; private set; }
     //
 
@@ -88,9 +89,19 @@ public class GameplayManager : MonoBehaviour
         moving_speed = 70.0f;
         currentDifficulty = 1;
         cameraManager.DefaultCamera();
-
+        inInvisibleState = false;
     }
-   
+
+    public void ToggleInvisibleState()
+    {
+        inInvisibleState = !inInvisibleState;
+    }
+
+    public void ToggleInvisibleState(bool isActive)
+    {
+        inInvisibleState = isActive;
+    }
+
 
     private void InitSpawnObject()
     {
@@ -121,6 +132,13 @@ public class GameplayManager : MonoBehaviour
         
     }
 
+    public void GameOver()
+    {
+        Debug.Log("Game Over");
+        PauseGame();
+    }
+
+
     // Setter
     public void SetMovingSpeed(float speed)
     {
@@ -136,7 +154,9 @@ public class GameplayManager : MonoBehaviour
     [Button]
     public void Test()
     {
-        powerUpManager.ActivatePowerUp();
+         powerUpManager.ActivatePowerUp();
+
+        //ToggleInvisibleState();
     }
 
     [Button]

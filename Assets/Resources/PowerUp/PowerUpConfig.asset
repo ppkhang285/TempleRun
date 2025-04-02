@@ -20,6 +20,4 @@ MonoBehaviour:
   - index: 2
     data: {fileID: 11400000, guid: b29d2f28cfdd31648aa90542f45ebba9, type: 2}
   - index: 3
-    data: {fileID: 11400000, guid: a2f5816bddbbf3b419170cc2b639ddf1, type: 2}
-  - index: 4
     data: {fileID: 11400000, guid: 08d9c3a24dca73e409fdd80af0d9d3f0, type: 2}

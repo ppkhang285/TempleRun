@@ -20,14 +20,14 @@ public class Player : MonoBehaviour
     // Attributes
 
     [HideInInspector] public BoxCollider currentCollider { get; private set; }
-    private bool canTurn = true;
+    private int turnCount = 0;
     private float slidingTime = 1.0f;
     private bool isSliding = false;
     private bool isStumple = false;
     private float stumpleTime = 5.0f;
     private bool canControl = true;
-   
 
+    private const int TURN_COUNT = 2;
     private void Start()
     {
        
@@ -40,7 +40,15 @@ public class Player : MonoBehaviour
         {
             HandleMoving();
             HandleJump();
-            HandleTurn();
+            if (GameplayManager.Instance.inInvisibleState)
+            {
+                HandleAutoTurn();
+            }
+            else
+            {
+                HandleTurn();
+            }
+
             HandleSlide();
         }
         
@@ -126,7 +134,7 @@ public class Player : MonoBehaviour
 
     private void HandleTurn()
     {
-        if (!canTurn) return;
+        if (turnCount > 0) return;
 
         if (InputManager.Instance.GetInput(InputAction.TurnLeft, false) && characterPhysic.CanTurnLeft())
         {
@@ -136,7 +144,7 @@ public class Player : MonoBehaviour
             Quaternion rotation = Constants.ROTATION_VECTOR[GameplayManager.Instance.currentDirecion];
             //transform.rotation = rotation;
             GameplayManager.Instance.RunCoroutine(RotateSmoothly(rotation));
-            canTurn = false;
+            turnCount = TURN_COUNT;
         }
         else if (InputManager.Instance.GetInput(InputAction.TurnRight, false) && characterPhysic.CanTurnRight())
         {
@@ -146,7 +154,7 @@ public class Player : MonoBehaviour
             Quaternion rotation = Constants.ROTATION_VECTOR[GameplayManager.Instance.currentDirecion];
             GameplayManager.Instance.RunCoroutine(RotateSmoothly(rotation));
             //transform.rotation = rotation;
-            canTurn = false;
+            turnCount = TURN_COUNT;
 
         }
     }
@@ -163,16 +171,16 @@ public class Player : MonoBehaviour
 
     private void HandleAutoTurn()
     {
-        if (!canTurn) return;
+        if (turnCount > 0) return;
 
         if (characterPhysic.CanTurnLeft())
         {
-            Debug.Log("Turn");
+
             GameplayManager.Instance.ChangeDirection(true);
 
             Quaternion rotation = Constants.ROTATION_VECTOR[GameplayManager.Instance.currentDirecion];
-            transform.rotation = rotation;
-            canTurn = false;
+            GameplayManager.Instance.RunCoroutine(RotateSmoothly(rotation));
+            turnCount = TURN_COUNT;
         }
         else if (characterPhysic.CanTurnRight())
         {
@@ -180,8 +188,8 @@ public class Player : MonoBehaviour
             GameplayManager.Instance.ChangeDirection(false);
 
             Quaternion rotation = Constants.ROTATION_VECTOR[GameplayManager.Instance.currentDirecion];
-            transform.rotation = rotation;
-            canTurn = false;
+            GameplayManager.Instance.RunCoroutine(RotateSmoothly(rotation));
+            turnCount = TURN_COUNT;
 
         }
     }
@@ -199,12 +207,15 @@ public class Player : MonoBehaviour
         
             GameplayManager.Instance.SpawnSegment();
             other.gameObject.SetActive(false);
-            canTurn = true;
+            turnCount -= 1;
         }
-        else if (other.CompareTag("DeathTrigger"))
+        else if (other.CompareTag("InstantDeathTrigger"))
         {
-         //   canControl = false;
-            Debug.Log("Game over");
+            OnDeath();
+        }
+        else if (other.CompareTag("DeathTrigger") && !GameplayManager.Instance.inInvisibleState)
+        {
+            OnDeath();
         }
         else if (other.CompareTag("StumpleTrigger"))
         {
@@ -225,6 +236,14 @@ public class Player : MonoBehaviour
             
             GameplayManager.Instance.coinManager.CollectCoin(other.gameObject);
         }
+    }
+
+
+    private void OnDeath()
+    {
+
+        gameObject.SetActive(false);
+        GameplayManager.Instance.GameOver();
     }
 
 

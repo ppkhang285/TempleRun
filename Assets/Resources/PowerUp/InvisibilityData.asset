@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isItem: 1
   itemPrefab: {fileID: 0}
-  duration:
-  - 5
-  - 8
+  durations:
   - 10
-  - 12
-  - 16
+  - 15
+  - 20
+  - 25
+  - 30

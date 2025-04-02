@@ -105,7 +105,7 @@ public class PowerUpManager
 
     public void ActivatePowerUp()
     {
-        int index = 1;
+        int index = 2;
         int level = m_powerUpDict[index].level;
         m_powerUpDict[index].data.Activate(level);
     }

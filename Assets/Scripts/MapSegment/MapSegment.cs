@@ -96,4 +96,11 @@ public class MapSegment
     {
         return canSpawnNext;
     }
+
+    public void TurnInvisibleLane(bool isTurnOn)
+    {
+        Transform invisibleLane = segmentTransform.Find("invisibleLane");
+        if (invisibleLane == null) return;
+        invisibleLane.gameObject.SetActive(isTurnOn);
+    }
 }
