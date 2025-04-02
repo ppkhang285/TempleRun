@@ -132,14 +132,51 @@ public class Player : MonoBehaviour
         {
             Debug.Log("Turn");
             GameplayManager.Instance.ChangeDirection(true);
-            
+            //GameplayManager.Instance.cameraManager.Rotate();
             Quaternion rotation = Constants.ROTATION_VECTOR[GameplayManager.Instance.currentDirecion];
-            transform.rotation = rotation;
+            //transform.rotation = rotation;
+            GameplayManager.Instance.RunCoroutine(RotateSmoothly(rotation));
             canTurn = false;
         }
         else if (InputManager.Instance.GetInput(InputAction.TurnRight, false) && characterPhysic.CanTurnRight())
         {
             
+            GameplayManager.Instance.ChangeDirection(false);
+            //GameplayManager.Instance.cameraManager.Rotate();
+            Quaternion rotation = Constants.ROTATION_VECTOR[GameplayManager.Instance.currentDirecion];
+            GameplayManager.Instance.RunCoroutine(RotateSmoothly(rotation));
+            //transform.rotation = rotation;
+            canTurn = false;
+
+        }
+    }
+
+    IEnumerator RotateSmoothly(Quaternion targetRotation)
+    {
+        float rotateSpeed = 10.0f;
+        while (Quaternion.Angle(transform.rotation, targetRotation) > 0.1f)
+        {
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotateSpeed);
+            yield return null; 
+        }
+    }
+
+    private void HandleAutoTurn()
+    {
+        if (!canTurn) return;
+
+        if (characterPhysic.CanTurnLeft())
+        {
+            Debug.Log("Turn");
+            GameplayManager.Instance.ChangeDirection(true);
+
+            Quaternion rotation = Constants.ROTATION_VECTOR[GameplayManager.Instance.currentDirecion];
+            transform.rotation = rotation;
+            canTurn = false;
+        }
+        else if (characterPhysic.CanTurnRight())
+        {
+
             GameplayManager.Instance.ChangeDirection(false);
 
             Quaternion rotation = Constants.ROTATION_VECTOR[GameplayManager.Instance.currentDirecion];
@@ -148,7 +185,6 @@ public class Player : MonoBehaviour
 
         }
     }
-
 
     IEnumerator StumpleCooldown()
     {

@@ -1,3 +1,4 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,13 +14,19 @@ public class GameplayManager : MonoBehaviour
     // Inspector
     public GameObject mapRoot;
     public GameObject playerPrefabs;
+    public GameObject playerRoot;
     public GameObject coinPrefab;
+    public GameObject CameraRoot;
+
+
+    
 
     // Managers
     public InputManager inputManager { get; private set; }
     public MapController mapController { get; private set; }
     public PowerUpManager powerUpManager { get; private set; }
     public CoinManager coinManager { get; private set; }
+    public CameraManager cameraManager { get; private set; }
 
     // Global attributes
     public float moving_speed { get; private set; } // Moving speed of character (moving speed of map segments)
@@ -66,7 +73,7 @@ public class GameplayManager : MonoBehaviour
         mapController = new MapController(mapRoot.transform);
         powerUpManager = new PowerUpManager();
         coinManager = new CoinManager();
-
+        cameraManager = new CameraManager(CameraRoot, playerRoot);
         // Gameplay Attribute setting
         currentDirecion = Direction.FORWARD;
         moving_speed = 70.0f;
@@ -80,7 +87,7 @@ public class GameplayManager : MonoBehaviour
         currentDirecion = Direction.FORWARD;
         moving_speed = 70.0f;
         currentDifficulty = 1;
-
+        cameraManager.DefaultCamera();
 
     }
    
@@ -91,6 +98,9 @@ public class GameplayManager : MonoBehaviour
 
         //Spawn Player
         GameObject playerObj = Instantiate(playerPrefabs, Vector3.up * 10, Quaternion.identity);
+        //playerObj.transform.position = Vector3.zero;
+        playerObj.transform.SetParent(playerRoot.transform, true);
+
         player = playerObj.GetComponent<Player>();
     }
 
@@ -106,6 +116,7 @@ public class GameplayManager : MonoBehaviour
         {
             mapController.Update();
             player.MyUpdate();
+            cameraManager.Update();
         }
         
     }
@@ -140,6 +151,8 @@ public class GameplayManager : MonoBehaviour
         if (gameState == GameState.MainMenu)
         {
             gameState = GameState.Playing;
+
+            cameraManager.GameplayCamera();
         }
     }
 
