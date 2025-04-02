@@ -189,6 +189,7 @@ MonoBehaviour:
   coinPrefab: {fileID: 8232920171661117629, guid: fd5e38b3bba8e0b4b8986299e84f50b0,
     type: 3}
   CameraRoot: {fileID: 1994459473}
+  plaerSpawnPoint: {x: 0, y: 10, z: 0}
 --- !u!4 &453508456
 Transform:
   m_ObjectHideFlags: 0

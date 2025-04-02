@@ -94,7 +94,11 @@ namespace Utils
         }
         public enum PowerUpType
         {
-
+            None,
+            CoinMagnet,
+            CoinValues,
+            MegaCoin,
+            Invisibility
         }
 
     }

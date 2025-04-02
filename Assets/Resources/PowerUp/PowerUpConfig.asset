@@ -13,11 +13,8 @@ MonoBehaviour:
   m_Name: PowerUpConfig
   m_EditorClassIdentifier: 
   powerUpList:
-  - index: 0
-    data: {fileID: 11400000, guid: 2948289f6741924418af884c6a83e799, type: 2}
-  - index: 1
-    data: {fileID: 11400000, guid: f63efe1709746ba489f71c85856fdb16, type: 2}
-  - index: 2
-    data: {fileID: 11400000, guid: b29d2f28cfdd31648aa90542f45ebba9, type: 2}
-  - index: 3
-    data: {fileID: 11400000, guid: 08d9c3a24dca73e409fdd80af0d9d3f0, type: 2}
+  - {fileID: 11400000, guid: f63efe1709746ba489f71c85856fdb16, type: 2}
+  - {fileID: 11400000, guid: 08d9c3a24dca73e409fdd80af0d9d3f0, type: 2}
+  - {fileID: 11400000, guid: b29d2f28cfdd31648aa90542f45ebba9, type: 2}
+  - {fileID: 11400000, guid: 2948289f6741924418af884c6a83e799, type: 2}
+  itemTypeList: 010000000400000003000000

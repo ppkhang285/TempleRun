@@ -12,6 +12,8 @@ public class CameraManager
 
     private GameObject playerRoot;
     private GameObject cameraRoot;
+
+    private Coroutine startCamCoroutine;
     public CameraManager(GameObject cameraRoot, GameObject playerRoot)
     {
 
@@ -39,6 +41,7 @@ public class CameraManager
     }
     public void Reset()
     {
+        //GameplayManager.Instance.Stop_Coroutine(startCamCoroutine);
         DefaultCamera();
     }
 
@@ -47,7 +50,7 @@ public class CameraManager
         brainCamera.m_DefaultBlend.m_Style = CinemachineBlendDefinition.Style.EaseInOut;
         brainCamera.m_DefaultBlend.m_Time = 2f;
         startCamera.enabled = false;
-        GameplayManager.Instance.RunCoroutine(ChangeBlendTimeAfterStart());
+        startCamCoroutine = GameplayManager.Instance.RunCoroutine(ChangeBlendTimeAfterStart());
     }
 
     public void DefaultCamera()

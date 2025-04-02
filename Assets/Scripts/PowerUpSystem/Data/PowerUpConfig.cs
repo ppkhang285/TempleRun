@@ -3,29 +3,28 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using static Utils.Enums;
 
 
 [CreateAssetMenu(fileName = "PowerUpConfig", menuName = "PowerUp/PowerUpConfig")]
 public class PowerUpConfig: ScriptableObject
 {
-    [Serializable]
-    public struct PowerUpWithIndex
+
+    public List<PowerUpData> powerUpList;
+
+    public List<PowerUpType> itemTypeList;
+
+    public Dictionary<PowerUpType,  PowerUpData> ToDict()
     {
-        public int index;
-        public PowerUpData data;
-    }
-    public List<PowerUpWithIndex> powerUpList;
-    public Dictionary<int,  PowerUpData> ToDict()
-    {
-        Dictionary<int, PowerUpData> result = new Dictionary<int, PowerUpData>();
-        foreach(PowerUpWithIndex powerUp in powerUpList)
+        Dictionary<PowerUpType, PowerUpData> result = new Dictionary<PowerUpType, PowerUpData>();
+        foreach(PowerUpData powerUp in powerUpList)
         {
-            if (result.ContainsKey(powerUp.index))
+            if (result.ContainsKey(powerUp.type))
             {
-                Debug.LogError("Same index in Power Config");
+                Debug.LogError("Same type in Power Config");
                 continue;
             }
-            result[powerUp.index] = powerUp.data;
+            result[powerUp.type] = powerUp;
 
         }
         return result;

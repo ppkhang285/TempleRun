@@ -149,6 +149,14 @@ public class MapGenerator
         currentSegmentQ.Dequeue();
     }
 
+    public void Reset()
+    {
+        currentSegmentQ.Clear();
 
+        currentBiome = spawnConfigData.startBiome;
+        AddSegment(SegmentType.START);
+
+
+    }
 
 }

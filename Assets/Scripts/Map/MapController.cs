@@ -224,10 +224,10 @@ public class MapController
     }
     private void HandleSpawnCoin(MapSegment mapSegment)
     {
-        if (GameplayManager.Instance.coinManager.CanSpawnCoin() == false) return;
+        if (GameplayManager.Instance.progressionManager.CanSpawnCoin(mapSegment) == false) return;
 
         coinSpawner.SpawnCoin(mapSegment);
-        GameplayManager.Instance.coinManager.ResetTimer();
+        GameplayManager.Instance.progressionManager.ResetCoinTimer();
     }
 
     private GameObject GetSegmentPrefab(SegmentType segmentType, MapBiome biome)
@@ -247,8 +247,16 @@ public class MapController
         return prefab;
     }
 
-    private void Clear()
+    public void Reset()
     {
+        foreach(MapSegment mapSegment in mapSegments)
+        {
+            mapSegment.Clear();
+        }
+        mapSegments.Clear();
+        mapGenerator.Reset();
+        mapSegmentPool.Reset();
+        coinSpawner.Reset();
 
     }
 

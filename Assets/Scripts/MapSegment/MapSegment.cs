@@ -103,4 +103,8 @@ public class MapSegment
         if (invisibleLane == null) return;
         invisibleLane.gameObject.SetActive(isTurnOn);
     }
+    public void Clear()
+    {
+        GameObject.Destroy(segmentTransform.gameObject);
+    }
 }

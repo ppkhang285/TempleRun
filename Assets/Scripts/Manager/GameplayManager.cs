@@ -18,19 +18,21 @@ public class GameplayManager : MonoBehaviour
     public GameObject coinPrefab;
     public GameObject CameraRoot;
 
-
+   
     
 
     // Managers
     public InputManager inputManager { get; private set; }
     public MapController mapController { get; private set; }
     public PowerUpManager powerUpManager { get; private set; }
-    public CoinManager coinManager { get; private set; }
+    public ProgressionManager progressionManager { get; private set; }
     public CameraManager cameraManager { get; private set; }
 
     // Global attributes
     public float moving_speed { get; private set; } // Moving speed of character (moving speed of map segments)
     public Direction currentDirecion { get; private set; }
+
+    public Vector3 plaerSpawnPoint = Vector3.up * 10;
     public int currentDifficulty { get; private set; }
     public Player player { get; private set; }
 
@@ -53,7 +55,7 @@ public class GameplayManager : MonoBehaviour
     void Start()
     {
 
-
+        SpawnPlayer();
         Inintialize();
         InitSpawnObject();
     }
@@ -73,7 +75,7 @@ public class GameplayManager : MonoBehaviour
         inputManager = new InputManager();
         mapController = new MapController(mapRoot.transform);
         powerUpManager = new PowerUpManager();
-        coinManager = new CoinManager();
+        progressionManager = new ProgressionManager();
         cameraManager = new CameraManager(CameraRoot, playerRoot);
         // Gameplay Attribute setting
         currentDirecion = Direction.FORWARD;
@@ -105,10 +107,15 @@ public class GameplayManager : MonoBehaviour
 
     private void InitSpawnObject()
     {
+        
         mapController.InitEnviroment();
 
+        
+    }
+    private void SpawnPlayer()
+    {
         //Spawn Player
-        GameObject playerObj = Instantiate(playerPrefabs, Vector3.up * 10, Quaternion.identity);
+        GameObject playerObj = Instantiate(playerPrefabs, plaerSpawnPoint, Quaternion.identity);
         //playerObj.transform.position = Vector3.zero;
         playerObj.transform.SetParent(playerRoot.transform, true);
 
@@ -135,7 +142,7 @@ public class GameplayManager : MonoBehaviour
     public void GameOver()
     {
         Debug.Log("Game Over");
-        PauseGame();
+        gameState = GameState.GameOver;
     }
 
 
@@ -168,7 +175,7 @@ public class GameplayManager : MonoBehaviour
     [Button]
     public void StartGame()
     {
-        if (gameState == GameState.MainMenu)
+        if (gameState == GameState.MainMenu || gameState == GameState.GameOver)
         {
             gameState = GameState.Playing;
 
@@ -199,18 +206,49 @@ public class GameplayManager : MonoBehaviour
     }
 
 
-    public void RunCoroutine(IEnumerator coroutine)
+    public Coroutine RunCoroutine(IEnumerator coroutine)
     {
-        StartCoroutine(coroutine);
+        return StartCoroutine(coroutine);
     }
 
+    public void Stop_Coroutine(Coroutine coroutine)
+    {
+        if (coroutine == null) return;
+        StopCoroutine(coroutine);
+    }
 
-    
     public void ChangeDirection(bool isTurnLeft)
     {
         
         currentDirecion = UtilMethods.TurnDirection(currentDirecion, isTurnLeft);
     }
+    [Button]
 
-   
+    public void Reset()
+    {
+        StopAllCoroutines();
+
+        //
+        currentDirecion = Direction.FORWARD;
+
+        
+        cameraManager.Reset();
+        mapController.Reset();
+        progressionManager.Reset();
+
+        //
+        InitSpawnObject();
+
+        StartCoroutine(WaitForStart());
+    
+    }
+     IEnumerator WaitForStart()
+    {
+        player.Reset();
+        InitSpawnObject();
+       
+        yield return new WaitForSeconds(0.5f);
+        StartGame();
+    }
+
 }

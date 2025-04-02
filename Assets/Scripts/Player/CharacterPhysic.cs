@@ -29,6 +29,7 @@ public class CharacterPhysic
     public bool isJumping { get; private set; } = false;
     private bool isFallingDown = false;
 
+    private Coroutine jumpCoroutine;
 
     public CharacterPhysic(Transform characterTransform, Player player)
     {
@@ -39,6 +40,8 @@ public class CharacterPhysic
         //velocity = Vector3.zero;
         //mass = Constants.CHARACTER_MASS;
     }
+
+
 
     public void Update()
     {
@@ -96,7 +99,7 @@ public class CharacterPhysic
         {
             isJumping = true;
             coyoteTimeCounter = 0;
-            GameplayManager.Instance.RunCoroutine(JumpSequence());
+            jumpCoroutine = GameplayManager.Instance.RunCoroutine(JumpSequence());
         }
     }
 
@@ -157,6 +160,13 @@ public class CharacterPhysic
     }
 
    
+    public void Reset()
+    {
+        isJumping = false;
+        isFallingDown = false;
+        coyoteTimeCounter = 0f;
 
+    //GameplayManager.Instance.Stop_Coroutine(jumpCoroutine);
+}
     
 }

@@ -248,4 +248,15 @@ public class CoinController
 
       
     }
+
+    public void Reset()
+    {
+        coinPool.Reset();
+        for(int i = coinList.Count -1; i >=0; i--)
+        {
+            GameObject obj = coinList[i];
+            coinList.Remove(obj);
+            GameObject.Destroy(obj);
+        }
+    }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine;
 using Utils;
 using static PowerUpConfig;
+using static Utils.Enums;
 
 
 
@@ -11,9 +12,9 @@ public class PowerUpManager
 {
 
 
-    private Dictionary<int, PowerUpData> m_powerUpdataDict;
-    private Dictionary<int, PowerUp> m_powerUpDict;   
-    
+    private Dictionary<PowerUpType, PowerUpData> m_powerUpdataDict;
+    private Dictionary<PowerUpType, PowerUp> m_powerUpDict;
+    private List<PowerUpType> m_itemList;
 
     public PowerUpManager()
     {
@@ -24,27 +25,27 @@ public class PowerUpManager
 
     public void InitPowerUpDict()
     {
-        m_powerUpDict = new Dictionary<int, PowerUp>();
+        m_powerUpDict = new Dictionary<PowerUpType, PowerUp>();
 
-        Dictionary<int, int> loadDataList = LoadDataFromStorage();
+        Dictionary<PowerUpType, int> loadDataList = LoadDataFromStorage();
 
-        foreach (KeyValuePair<int, PowerUpData> entry in m_powerUpdataDict)
+        foreach (KeyValuePair<PowerUpType, PowerUpData> entry in m_powerUpdataDict)
         {
-            int index = entry.Key;               
+            PowerUpType type = entry.Key;               
             PowerUpData powerUpData = entry.Value;
             int level;
 
-            if (!loadDataList.ContainsKey(index))
+            if (!loadDataList.ContainsKey(type))
             {
                 level = 1;
             }
             else
             {
-                level = loadDataList[index];
+                level = loadDataList[type];
             }
 
-            PowerUp powerUp = new PowerUp(index, powerUpData, level);
-            m_powerUpDict.Add(index, powerUp);
+            PowerUp powerUp = new PowerUp(type, powerUpData, level);
+            m_powerUpDict.Add(type, powerUp);
             
         }
 
@@ -54,11 +55,11 @@ public class PowerUpManager
     [Serializable]
     private struct PowerUpStorageData
     {
-        public int index;
+        public PowerUpType type;
         public int level;
-        public PowerUpStorageData(int index, int level)
+        public PowerUpStorageData(PowerUpType type, int level)
         {
-            this.index = index;
+            this.type = type;
             this.level = level;
         }
 
@@ -66,16 +67,16 @@ public class PowerUpManager
 
     }
 
-    private Dictionary<int, int> LoadDataFromStorage()
+    private Dictionary<PowerUpType, int> LoadDataFromStorage()
     {
         // Get data
 
         //
-        Dictionary<int, int> result = new Dictionary<int, int>();
+        Dictionary<PowerUpType, int> result = new Dictionary<PowerUpType, int>();
 
         //
         PowerUpStorageData fakeData = new PowerUpStorageData(0, 3);
-        result.Add(fakeData.index, fakeData.level);
+        result.Add(fakeData.type, fakeData.level);
 
         //
         return result;
@@ -100,13 +101,15 @@ public class PowerUpManager
             Debug.Log("Load PowerUpData Config successfully");
         }
         m_powerUpdataDict = config.ToDict();
-        
+        m_itemList = config.itemTypeList.ToList();
+
     }
 
     public void ActivatePowerUp()
     {
-        int index = 2;
-        int level = m_powerUpDict[index].level;
-        m_powerUpDict[index].data.Activate(level);
+        PowerUpType type = PowerUpType.Invisibility;
+        int level = m_powerUpDict[type].level;
+        m_powerUpDict[type].data.Activate(level);
+        
     }
 }

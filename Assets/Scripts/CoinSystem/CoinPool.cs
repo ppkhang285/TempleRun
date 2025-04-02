@@ -17,7 +17,15 @@ public class CoinPool
         Initialize();
     }
 
+    public void Reset()
+    {
+        while (coinList.Count > 0)
+        {
+            GameObject obj = coinList.Dequeue();
+            GameObject.Destroy(obj);
+        }
 
+    }
     public void Initialize()
     {
         poolRoot = new GameObject("CoinPoolRoot");

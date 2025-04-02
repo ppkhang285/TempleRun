@@ -81,5 +81,20 @@ public class MapSegmentPool
         
     }
 
+    public void Reset()
+    {
+        foreach (var kvp in objectPool)
+        {
+            (MapBiome biome, SegmentType type) = kvp.Key; 
+            Queue<GameObject> q = kvp.Value; 
+            while(q.Count > 0){
+                GameObject obj = q.Dequeue();
+                GameObject.Destroy(obj);
+            }
+
+        }
+        objectPool.Clear();
+
+    }
     
 }

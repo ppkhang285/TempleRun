@@ -18,7 +18,7 @@ public class MegaCoinData : PowerUpData
         }
         int coin = extraCoin[currentLevel-1];
 
-        GameplayManager.Instance.coinManager.GainCoin(coin);
+        GameplayManager.Instance.progressionManager.GainCoin(coin);
     }
 
 

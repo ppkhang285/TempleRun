@@ -28,6 +28,12 @@ public class Player : MonoBehaviour
     private bool canControl = true;
 
     private const int TURN_COUNT = 2;
+
+    // Coroutine
+    private Coroutine slideSequenceCoroutine;
+    private Coroutine rotateSmoothlyCoroutine;
+    private Coroutine stumpleCoroutine;
+
     private void Start()
     {
        
@@ -60,10 +66,7 @@ public class Player : MonoBehaviour
     {
         characterPhysic = new CharacterPhysic(transform, this);
 
-        runningCollider.gameObject.SetActive(true);
-        slidingCollider.gameObject.SetActive(false);
-
-        currentCollider = runningCollider;
+        Reset();
         
     }
 
@@ -114,7 +117,7 @@ public class Player : MonoBehaviour
             slidingCollider.gameObject.SetActive(true);
             currentCollider = slidingCollider;
 
-            GameplayManager.Instance.RunCoroutine(SlideSequence());
+            slideSequenceCoroutine =  GameplayManager.Instance.RunCoroutine(SlideSequence());
 
         }
        
@@ -143,7 +146,7 @@ public class Player : MonoBehaviour
             //GameplayManager.Instance.cameraManager.Rotate();
             Quaternion rotation = Constants.ROTATION_VECTOR[GameplayManager.Instance.currentDirecion];
             //transform.rotation = rotation;
-            GameplayManager.Instance.RunCoroutine(RotateSmoothly(rotation));
+            rotateSmoothlyCoroutine =  GameplayManager.Instance.RunCoroutine(RotateSmoothly(rotation));
             turnCount = TURN_COUNT;
         }
         else if (InputManager.Instance.GetInput(InputAction.TurnRight, false) && characterPhysic.CanTurnRight())
@@ -152,7 +155,7 @@ public class Player : MonoBehaviour
             GameplayManager.Instance.ChangeDirection(false);
             //GameplayManager.Instance.cameraManager.Rotate();
             Quaternion rotation = Constants.ROTATION_VECTOR[GameplayManager.Instance.currentDirecion];
-            GameplayManager.Instance.RunCoroutine(RotateSmoothly(rotation));
+            rotateSmoothlyCoroutine = GameplayManager.Instance.RunCoroutine(RotateSmoothly(rotation));
             //transform.rotation = rotation;
             turnCount = TURN_COUNT;
 
@@ -179,7 +182,7 @@ public class Player : MonoBehaviour
             GameplayManager.Instance.ChangeDirection(true);
 
             Quaternion rotation = Constants.ROTATION_VECTOR[GameplayManager.Instance.currentDirecion];
-            GameplayManager.Instance.RunCoroutine(RotateSmoothly(rotation));
+            rotateSmoothlyCoroutine = GameplayManager.Instance.RunCoroutine(RotateSmoothly(rotation));
             turnCount = TURN_COUNT;
         }
         else if (characterPhysic.CanTurnRight())
@@ -188,7 +191,7 @@ public class Player : MonoBehaviour
             GameplayManager.Instance.ChangeDirection(false);
 
             Quaternion rotation = Constants.ROTATION_VECTOR[GameplayManager.Instance.currentDirecion];
-            GameplayManager.Instance.RunCoroutine(RotateSmoothly(rotation));
+            rotateSmoothlyCoroutine = GameplayManager.Instance.RunCoroutine(RotateSmoothly(rotation));
             turnCount = TURN_COUNT;
 
         }
@@ -211,10 +214,12 @@ public class Player : MonoBehaviour
         }
         else if (other.CompareTag("InstantDeathTrigger"))
         {
+            Debug.Log(other.transform.gameObject);
             OnDeath();
         }
         else if (other.CompareTag("DeathTrigger") && !GameplayManager.Instance.inInvisibleState)
         {
+            Debug.Log(other.transform.parent.gameObject);
             OnDeath();
         }
         else if (other.CompareTag("StumpleTrigger"))
@@ -228,13 +233,13 @@ public class Player : MonoBehaviour
             else
             {
                 isStumple = true;
-                GameplayManager.Instance.RunCoroutine(StumpleCooldown());
+                stumpleCoroutine = GameplayManager.Instance.RunCoroutine(StumpleCooldown());
             }
         }
        else if (other.CompareTag("Coin"))
         {
             
-            GameplayManager.Instance.coinManager.CollectCoin(other.gameObject);
+            GameplayManager.Instance.progressionManager.CollectCoin(other.gameObject);
         }
     }
 
@@ -244,6 +249,34 @@ public class Player : MonoBehaviour
 
         gameObject.SetActive(false);
         GameplayManager.Instance.GameOver();
+    }
+
+    public void Reset()
+    {
+        
+        characterPhysic.Reset();
+
+        transform.position = GameplayManager.Instance.plaerSpawnPoint;
+
+        Quaternion rotation = Constants.ROTATION_VECTOR[GameplayManager.Instance.currentDirecion];
+        transform.rotation = rotation;
+
+        runningCollider.gameObject.SetActive(true);
+        slidingCollider.gameObject.SetActive(false);
+        currentCollider = runningCollider;
+
+        turnCount = 0;
+        slidingTime = 1.0f;
+        isSliding = false;
+        isStumple = false;
+        stumpleTime = 5.0f;
+        canControl = true;
+
+        gameObject.SetActive(true);
+
+        //GameplayManager.Instance.Stop_Coroutine(stumpleCoroutine);
+        //GameplayManager.Instance.Stop_Coroutine(rotateSmoothlyCoroutine);
+        //GameplayManager.Instance.Stop_Coroutine(slideSequenceCoroutine);
     }
 
 
