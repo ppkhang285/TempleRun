@@ -61,8 +61,14 @@ public class ProgressionManager
         maxCoinSpawnInterval = 10.0f;
         minCoinSpawnInterval = 5.0f;
 
-        maxItemSpawnInterval = 30.0f;
-        minItemSpawnInterval = 20.0f;
+        maxItemSpawnInterval = 17.0f;
+        minItemSpawnInterval = 10.0f;
+
+        currentRunningDistance = 0;
+        moving_speed = 70.0f;
+
+        ResetCoinTimer();
+        ResetItemTimer();
     }
     public void Reset()
     {
@@ -72,6 +78,8 @@ public class ProgressionManager
         currentRunningDistance = 0;
         moving_speed = 70.0f;
 
+        ResetCoinTimer();
+        ResetItemTimer();
         StartGame();
 
         //GameplayManager.Instance.Stop_Coroutine(itemTimerCoroutine);
@@ -118,7 +126,7 @@ public class ProgressionManager
 
     public void ResetItemTimer()
     {
-        spawnCoinTimer = Random.Range(minItemSpawnInterval, maxItemSpawnInterval);
+        spawnItemTimer = Random.Range(minItemSpawnInterval, maxItemSpawnInterval);
         //GameplayManager.Instance.Stop_Coroutine(itemTimerCoroutine);
         itemTimerCoroutine = GameplayManager.Instance.RunCoroutine(RunItemTimer());
     }

@@ -259,4 +259,6 @@ public class CoinController
             GameObject.Destroy(obj);
         }
     }
+
+    
 }

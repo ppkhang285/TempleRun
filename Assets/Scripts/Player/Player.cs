@@ -116,12 +116,19 @@ public class Player : MonoBehaviour
             runningCollider.gameObject.SetActive(false);
             slidingCollider.gameObject.SetActive(true);
             currentCollider = slidingCollider;
+
+            if (!slidingCollider.enabled)
+            {
+                slidingCollider.enabled = true;
+                Debug.Log("Sliding collider was disabled, enabling it now");
+            }
+
             if (slideSequenceCoroutine != null)
             {
                 GameplayManager.Instance.Stop_Coroutine(slideSequenceCoroutine);
             }
             slideSequenceCoroutine = GameplayManager.Instance.RunCoroutine(SlideSequence());
-            
+            Physics.SyncTransforms();
 
         }
        
@@ -145,7 +152,7 @@ public class Player : MonoBehaviour
 
         if (InputManager.Instance.GetInput(InputAction.TurnLeft, false) && characterPhysic.CanTurnLeft())
         {
-            Debug.Log("Turn");
+          
             GameplayManager.Instance.ChangeDirection(true);
             //GameplayManager.Instance.cameraManager.Rotate();
             Quaternion rotation = Constants.ROTATION_VECTOR[GameplayManager.Instance.currentDirecion];
@@ -211,19 +218,19 @@ public class Player : MonoBehaviour
     {
         if (other.CompareTag("SpawnTrigger"))
         {
-            Debug.Log("Spawn");
+           // Debug.Log("Spawn");
             GameplayManager.Instance.SpawnSegment();
             other.gameObject.SetActive(false);
             turnCount -= 1;
         }
         else if (other.CompareTag("InstantDeathTrigger"))
         {
-            Debug.Log(other.transform.gameObject);
+         
             OnDeath();
         }
         else if (other.CompareTag("DeathTrigger") && !GameplayManager.Instance.inInvisibleState)
         {
-            Debug.Log(other.transform.parent.gameObject);
+          
             OnDeath();
         }
         else if (other.CompareTag("StumpleTrigger"))
@@ -245,8 +252,26 @@ public class Player : MonoBehaviour
             
             GameplayManager.Instance.progressionManager.CollectCoin(other.gameObject);
         }
+        else if (other.CompareTag("Item"))
+        {
+            OnCollidWithItem(other);
+        }
     }
 
+    private void OnCollidWithItem(Collider other)
+    {
+
+        GameplayManager.Instance.mapController.itemController.PickupItem(other.gameObject);
+    }
+
+    //private void OnCollidWithStumpleTrigger(Collider other)
+    //{
+
+    //}
+    //private void OnCollideWithCoin((Collider other)
+    //{
+
+    //}
 
     private void OnDeath()
     {

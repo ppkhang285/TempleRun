@@ -17,7 +17,7 @@ public class MapController
     private MapGenerator mapGenerator;
     private MapSegmentPool mapSegmentPool;
     public CoinController coinSpawner {  get; private set; }
-
+    public ItemController itemController { get; private set; }
     private List<MapSegment> mapSegments;
     private SpawnConfigData spawnConfigData;
 
@@ -33,6 +33,19 @@ public class MapController
         Initialize();
       
     }
+
+    private void Initialize()
+    {
+        LoadSpawnConfigData();
+        mapSegments = new List<MapSegment>();
+        mapGenerator = new MapGenerator(spawnConfigData);
+        mapSegmentPool = new MapSegmentPool();
+        coinSpawner = new CoinController(mapRoot);
+        itemController = new ItemController(mapRoot);
+
+        biomeDataDict = spawnConfigData.GetBiomeDataDict();
+
+    }
     public void Update()
     {
 
@@ -42,20 +55,24 @@ public class MapController
         //    mapSegments.RemoveAt(0);
         //}
         //BalanceMap();
+
+        float moving_speed = ProgressionManager.Instance.moving_speed;
+
         HandleDeleteSegments();
         coinSpawner.HandleDeleteCoins();
-
+        itemController.HandleDeleteItem();
 
         Vector3 moveVector = -Constants.DIRECTION_VECTOR[GameplayManager.Instance.currentDirecion];
         
         for (int i = 0; i < mapSegments.Count; i++)
         {
             mapSegments[i].TurnInvisibleLane(GameplayManager.Instance.inInvisibleState);
-            mapSegments[i].MoveSegment(GameplayManager.Instance.moving_speed, moveVector);
+            mapSegments[i].MoveSegment(moving_speed, moveVector);
             
         }
 
-        coinSpawner.MoveCoins(GameplayManager.Instance.moving_speed, moveVector);
+        coinSpawner.MoveCoins(moving_speed, moveVector);
+        itemController.MoveItems(moving_speed, moveVector);
     }
 
 
@@ -69,6 +86,11 @@ public class MapController
                 //mapSegments[i].OnDestroy();
                 GameObject segmentObject = mapSegments[i].segmentTransform.gameObject;
 
+
+                //if (segmentObject.transform.GetChild(0).Find("spawnTrigger").gameObject.activeInHierarchy == true)
+                //{
+                //    Debug.Log(segmentObject);
+                //}
                 mapSegmentPool.ReturnObject(segmentObject, mapSegments[i].biome, mapSegments[i].segmentType);
 
                 mapSegments.RemoveAt(i);
@@ -78,17 +100,7 @@ public class MapController
 
     
 
-    private void Initialize()
-    {
-        LoadSpawnConfigData();
-        mapSegments = new List<MapSegment>();
-        mapGenerator = new MapGenerator(spawnConfigData);
-        mapSegmentPool = new MapSegmentPool();
-        coinSpawner = new CoinController(mapRoot);
-
-        biomeDataDict = spawnConfigData.GetBiomeDataDict();
-
-    }
+   
 
     
 
@@ -209,25 +221,25 @@ public class MapController
     {
         mapSegments.Add(segment);
 
+        HandleSpawnItem(segment);
         HandleSpawnCoin(segment);
     }
 
-    private void BalanceMap()
-    {
-        if (mapSegments.Count < 5)
-        {
-            for (int i = 0; i < 5-mapSegments.Count; i++)
-            {
-                SpawnNewSegment();
-            }
-        }
-    }
+  
     private void HandleSpawnCoin(MapSegment mapSegment)
     {
-        if (GameplayManager.Instance.progressionManager.CanSpawnCoin(mapSegment) == false) return;
+        if (ProgressionManager.Instance.CanSpawnCoin(mapSegment) == false) return;
 
         coinSpawner.SpawnCoin(mapSegment);
-        GameplayManager.Instance.progressionManager.ResetCoinTimer();
+        ProgressionManager.Instance.ResetCoinTimer();
+    }
+
+    private void HandleSpawnItem(MapSegment mapSegment)
+    {
+        if (ProgressionManager.Instance.CanSpawnItem(mapSegment) == false) return;
+
+        itemController.SpawnItem(mapSegment);
+        ProgressionManager.Instance.ResetItemTimer();
     }
 
     private GameObject GetSegmentPrefab(SegmentType segmentType, MapBiome biome)

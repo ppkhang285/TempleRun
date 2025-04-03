@@ -26,6 +26,7 @@ public class PowerUpManager
     public void InitPowerUpDict()
     {
         m_powerUpDict = new Dictionary<PowerUpType, PowerUp>();
+        m_itemList = new List<PowerUpType>();
 
         Dictionary<PowerUpType, int> loadDataList = LoadDataFromStorage();
 
@@ -46,7 +47,10 @@ public class PowerUpManager
 
             PowerUp powerUp = new PowerUp(type, powerUpData, level);
             m_powerUpDict.Add(type, powerUp);
-            
+            if (powerUpData.isItem)
+            {
+                m_itemList.Add(type);
+            }
         }
 
         Debug.Log(m_powerUpDict);
@@ -65,6 +69,27 @@ public class PowerUpManager
 
        
 
+    }
+    public PowerUpData GetRandomItemPowerUp()
+    {
+        int totalWeight = m_itemList.Count;
+        int index = UnityEngine.Random.Range(0, totalWeight);
+
+        for (int i = 0; i < m_itemList.Count; i++)
+        {
+            if (index == 0) 
+            {
+                PowerUpType type = m_itemList[i];
+                return m_powerUpdataDict[type];
+            }
+            index -= 1;
+        }
+        return m_powerUpdataDict[PowerUpType.CoinMagnet];
+    }
+
+    public float GetCoinMultiplier()
+    {
+        return 0;
     }
 
     private Dictionary<PowerUpType, int> LoadDataFromStorage()
@@ -111,5 +136,12 @@ public class PowerUpManager
         int level = m_powerUpDict[type].level;
         m_powerUpDict[type].data.Activate(level);
         
+    }
+
+    public void ActivatePowerUp(PowerUpType type)
+    {
+        int level = m_powerUpDict[type].level;
+        m_powerUpDict[type].data.Activate(level);
+
     }
 }
