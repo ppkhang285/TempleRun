@@ -116,8 +116,12 @@ public class Player : MonoBehaviour
             runningCollider.gameObject.SetActive(false);
             slidingCollider.gameObject.SetActive(true);
             currentCollider = slidingCollider;
-
-            slideSequenceCoroutine =  GameplayManager.Instance.RunCoroutine(SlideSequence());
+            if (slideSequenceCoroutine != null)
+            {
+                GameplayManager.Instance.Stop_Coroutine(slideSequenceCoroutine);
+            }
+            slideSequenceCoroutine = GameplayManager.Instance.RunCoroutine(SlideSequence());
+            
 
         }
        
@@ -207,7 +211,7 @@ public class Player : MonoBehaviour
     {
         if (other.CompareTag("SpawnTrigger"))
         {
-        
+            Debug.Log("Spawn");
             GameplayManager.Instance.SpawnSegment();
             other.gameObject.SetActive(false);
             turnCount -= 1;

@@ -33,7 +33,11 @@ public class MapSegment
     {
         if (segmentTransform != null)
         {
-            GameObject.Destroy(segmentTransform.gameObject);
+            if (Application.isPlaying)
+                GameObject.Destroy(segmentTransform.gameObject);
+            else
+                GameObject.DestroyImmediate(segmentTransform.gameObject);
+          
         }
         
     }

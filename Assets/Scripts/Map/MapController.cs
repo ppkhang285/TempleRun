@@ -251,7 +251,7 @@ public class MapController
     {
         foreach(MapSegment mapSegment in mapSegments)
         {
-            mapSegment.Clear();
+            mapSegment.OnDestroy();
         }
         mapSegments.Clear();
         mapGenerator.Reset();

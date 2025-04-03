@@ -89,7 +89,10 @@ public class MapSegmentPool
             Queue<GameObject> q = kvp.Value; 
             while(q.Count > 0){
                 GameObject obj = q.Dequeue();
-                GameObject.Destroy(obj);
+                if (Application.isPlaying)
+                    GameObject.Destroy(obj);
+                else
+                    GameObject.DestroyImmediate(obj);
             }
 
         }

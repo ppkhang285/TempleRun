@@ -175,7 +175,7 @@ public class GameplayManager : MonoBehaviour
     [Button]
     public void StartGame()
     {
-        if (gameState == GameState.MainMenu || gameState == GameState.GameOver)
+        if (gameState == GameState.MainMenu || gameState == GameState.GameOver )
         {
             gameState = GameState.Playing;
 
@@ -226,6 +226,7 @@ public class GameplayManager : MonoBehaviour
 
     public void Reset()
     {
+        gameState = GameState.GameOver;
         StopAllCoroutines();
 
         //
@@ -245,7 +246,7 @@ public class GameplayManager : MonoBehaviour
      IEnumerator WaitForStart()
     {
         player.Reset();
-        InitSpawnObject();
+        //InitSpawnObject();
        
         yield return new WaitForSeconds(0.5f);
         StartGame();

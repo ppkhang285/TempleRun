@@ -47,6 +47,7 @@ public class MapGenerator
         AddSegment(SegmentType.START);
     }
 
+    
 
     // Getter method
  
@@ -109,7 +110,6 @@ public class MapGenerator
     private SegmentType GetRandomType(List<SegmentType> segmentList)
     {
         int weightSum = 0;
-
 
 
         DifficultProfile biomeProfile = difficultData.profiles.Find(x => x.profile.difficulty == GameplayManager.Instance.currentDifficulty).profile;
