@@ -4,10 +4,6 @@ using UnityEngine;
 using static Utils.Enums;
 
 
-
-
-
-
 public class MapSegmentPool
 {
 
@@ -49,6 +45,8 @@ public class MapSegmentPool
         }
 
         GameObject seqmentObject = objectPool[key].Dequeue();
+       
+
         ResetObjectState(seqmentObject);
 
         return seqmentObject;
@@ -68,6 +66,8 @@ public class MapSegmentPool
         }
 
         objectPool[key].Enqueue(returnObject);
+        
+        
     }
 
     private void ResetObjectState(GameObject segmentObject)
@@ -81,5 +81,23 @@ public class MapSegmentPool
         
     }
 
+    public void Reset()
+    {
+        foreach (var kvp in objectPool)
+        {
+            (MapBiome biome, SegmentType type) = kvp.Key; 
+            Queue<GameObject> q = kvp.Value; 
+            while(q.Count > 0){
+                GameObject obj = q.Dequeue();
+                if (Application.isPlaying)
+                    GameObject.Destroy(obj);
+                else
+                    GameObject.DestroyImmediate(obj);
+            }
+
+        }
+        objectPool.Clear();
+
+    }
     
 }

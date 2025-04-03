@@ -1,3 +1,4 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,18 +14,29 @@ public class GameplayManager : MonoBehaviour
     // Inspector
     public GameObject mapRoot;
     public GameObject playerPrefabs;
+    public GameObject playerRoot;
+    public GameObject coinPrefab;
+    public GameObject CameraRoot;
+
+   
+    
 
     // Managers
     public InputManager inputManager { get; private set; }
     public MapController mapController { get; private set; }
-
+    public PowerUpManager powerUpManager { get; private set; }
+    public ProgressionManager progressionManager { get; private set; }
+    public CameraManager cameraManager { get; private set; }
 
     // Global attributes
     public float moving_speed { get; private set; } // Moving speed of character (moving speed of map segments)
     public Direction currentDirecion { get; private set; }
+
+    public Vector3 plaerSpawnPoint = Vector3.up * 10;
     public int currentDifficulty { get; private set; }
     public Player player { get; private set; }
 
+    public bool inInvisibleState { get; private set; }
     public GameState gameState { get; private set; }
     //
 
@@ -43,56 +55,96 @@ public class GameplayManager : MonoBehaviour
     void Start()
     {
 
-
+        SpawnPlayer();
         Inintialize();
         InitSpawnObject();
     }
-
-    
-
-  
 
     private void Inintialize()
     {
 
         //Cursor.visible = false;
         gameState = GameState.MainMenu;
-        inputManager = new InputManager();
 
         if (mapRoot == null)
         {
             Debug.LogError("MapRoot is null");
-           
-        }
-        mapController = new MapController(mapRoot.transform);
 
+        }
+
+        inputManager = new InputManager();
+        mapController = new MapController(mapRoot.transform);
+        powerUpManager = new PowerUpManager();
+        progressionManager = new ProgressionManager();
+        cameraManager = new CameraManager(CameraRoot, playerRoot);
         // Gameplay Attribute setting
         currentDirecion = Direction.FORWARD;
-        moving_speed = 40.0f;
+        moving_speed = 70.0f;
         currentDifficulty = 1;
 
 
     }
 
+    private void ResetToDefault()
+    {
+        currentDirecion = Direction.FORWARD;
+        moving_speed = 70.0f;
+        currentDifficulty = 1;
+        cameraManager.DefaultCamera();
+        inInvisibleState = false;
+    }
+
+    public void ToggleInvisibleState()
+    {
+        inInvisibleState = !inInvisibleState;
+    }
+
+    public void ToggleInvisibleState(bool isActive)
+    {
+        inInvisibleState = isActive;
+    }
+
+
     private void InitSpawnObject()
     {
+        
         mapController.InitEnviroment();
 
+        
+    }
+    private void SpawnPlayer()
+    {
         //Spawn Player
-        GameObject playerObj = Instantiate(playerPrefabs, Vector3.up * 10, Quaternion.identity);
+        GameObject playerObj = Instantiate(playerPrefabs, plaerSpawnPoint, Quaternion.identity);
+        //playerObj.transform.position = Vector3.zero;
+        playerObj.transform.SetParent(playerRoot.transform, true);
+
         player = playerObj.GetComponent<Player>();
     }
 
     void Update()
     {
 
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            StartGame();
+        }
+
         if (gameState == GameState.Playing)
         {
             mapController.Update();
             player.MyUpdate();
+            cameraManager.Update();
         }
         
     }
+
+    public void GameOver()
+    {
+        Debug.Log("Game Over");
+        gameState = GameState.GameOver;
+    }
+
 
     // Setter
     public void SetMovingSpeed(float speed)
@@ -105,7 +157,14 @@ public class GameplayManager : MonoBehaviour
         currentDirecion = direction;
     }
 
-    
+
+    [Button]
+    public void Test()
+    {
+         powerUpManager.ActivatePowerUp();
+
+        //ToggleInvisibleState();
+    }
 
     [Button]
     public void SpawnSegment()
@@ -116,9 +175,11 @@ public class GameplayManager : MonoBehaviour
     [Button]
     public void StartGame()
     {
-        if (gameState == GameState.MainMenu)
+        if (gameState == GameState.MainMenu || gameState == GameState.GameOver )
         {
             gameState = GameState.Playing;
+
+            cameraManager.GameplayCamera();
         }
     }
 
@@ -145,38 +206,50 @@ public class GameplayManager : MonoBehaviour
     }
 
 
-    public void RunCoroutine(IEnumerator coroutine)
+    public Coroutine RunCoroutine(IEnumerator coroutine)
     {
-        StartCoroutine(coroutine);
+        return StartCoroutine(coroutine);
     }
 
-    // Chuyen vo Utils
-    public Direction TurnDirection(Direction currDirect, bool isTurnLeft)
+    public void Stop_Coroutine(Coroutine coroutine)
     {
-        switch (currDirect)
-        {
-            case Direction.FORWARD:
-                currDirect = isTurnLeft ? Direction.LEFT : Direction.RIGHT;
-                break;
-
-            case Direction.BACKWARD:
-                currDirect = isTurnLeft ? Direction.RIGHT : Direction.LEFT;
-                break;
-            case Direction.LEFT:
-                currDirect = isTurnLeft ? Direction.BACKWARD : Direction.FORWARD;
-                break;
-            case Direction.RIGHT:
-                currDirect = isTurnLeft ? Direction.FORWARD : Direction.BACKWARD;
-                break;
-        }
-
-        return currDirect;
+        if (coroutine == null) return;
+        StopCoroutine(coroutine);
     }
+
     public void ChangeDirection(bool isTurnLeft)
     {
         
         currentDirecion = UtilMethods.TurnDirection(currentDirecion, isTurnLeft);
     }
+    [Button]
 
-   
+    public void Reset()
+    {
+        gameState = GameState.GameOver;
+        StopAllCoroutines();
+
+        //
+        currentDirecion = Direction.FORWARD;
+
+        
+        cameraManager.Reset();
+        mapController.Reset();
+        progressionManager.Reset();
+
+        //
+        InitSpawnObject();
+
+        StartCoroutine(WaitForStart());
+    
+    }
+     IEnumerator WaitForStart()
+    {
+        player.Reset();
+        //InitSpawnObject();
+       
+        yield return new WaitForSeconds(0.5f);
+        StartGame();
+    }
+
 }

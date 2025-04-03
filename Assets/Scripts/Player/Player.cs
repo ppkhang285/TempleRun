@@ -11,7 +11,7 @@ public class Player : MonoBehaviour
     // Inspector
     [SerializeField] private BoxCollider runningCollider;
     [SerializeField] private BoxCollider slidingCollider;
-
+ 
     // Managers
 
     public CharacterPhysic characterPhysic { get; private set; }
@@ -19,12 +19,21 @@ public class Player : MonoBehaviour
 
     // Attributes
 
-    private BoxCollider currentCollider;
-    private bool canTurn = true;
+    [HideInInspector] public BoxCollider currentCollider { get; private set; }
+    private int turnCount = 0;
     private float slidingTime = 1.0f;
     private bool isSliding = false;
     private bool isStumple = false;
     private float stumpleTime = 5.0f;
+    private bool canControl = true;
+
+    private const int TURN_COUNT = 2;
+
+    // Coroutine
+    private Coroutine slideSequenceCoroutine;
+    private Coroutine rotateSmoothlyCoroutine;
+    private Coroutine stumpleCoroutine;
+
     private void Start()
     {
        
@@ -33,10 +42,22 @@ public class Player : MonoBehaviour
 
     public void MyUpdate()
     {
-        HandleMoving();
-        HandleJump();
-        HandleTurn();
-        HandleSlide();
+        if (canControl) 
+        {
+            HandleMoving();
+            HandleJump();
+            if (GameplayManager.Instance.inInvisibleState)
+            {
+                HandleAutoTurn();
+            }
+            else
+            {
+                HandleTurn();
+            }
+
+            HandleSlide();
+        }
+        
         
         characterPhysic.Update();
     }
@@ -45,8 +66,7 @@ public class Player : MonoBehaviour
     {
         characterPhysic = new CharacterPhysic(transform, this);
 
-        runningCollider.gameObject.SetActive(true);
-        slidingCollider.gameObject.SetActive(false);
+        Reset();
         
     }
 
@@ -72,9 +92,14 @@ public class Player : MonoBehaviour
     private void HandleJump()
     {
 
-        if (InputManager.Instance.GetInput(InputAction.Jump, true) && !isSliding)
+        if (InputManager.Instance.GetInput(InputAction.Jump, true))
         {
-          
+
+            isSliding = false;
+            runningCollider.gameObject.SetActive(true);
+            slidingCollider.gameObject.SetActive(false);
+            currentCollider = runningCollider;
+
             characterPhysic.Jump();
    
         }
@@ -90,8 +115,20 @@ public class Player : MonoBehaviour
             isSliding = true;
             runningCollider.gameObject.SetActive(false);
             slidingCollider.gameObject.SetActive(true);
+            currentCollider = slidingCollider;
 
-            GameplayManager.Instance.RunCoroutine(SlideSequence());
+            if (!slidingCollider.enabled)
+            {
+                slidingCollider.enabled = true;
+                Debug.Log("Sliding collider was disabled, enabling it now");
+            }
+
+            if (slideSequenceCoroutine != null)
+            {
+                GameplayManager.Instance.Stop_Coroutine(slideSequenceCoroutine);
+            }
+            slideSequenceCoroutine = GameplayManager.Instance.RunCoroutine(SlideSequence());
+            Physics.SyncTransforms();
 
         }
        
@@ -102,33 +139,74 @@ public class Player : MonoBehaviour
     {
         yield return new WaitForSeconds(slidingTime);
 
+        if (characterPhysic.isJumping) yield return null ;
         isSliding = false;
         runningCollider.gameObject.SetActive(true);
         slidingCollider.gameObject.SetActive(false);
+        currentCollider = runningCollider;
     }
 
     private void HandleTurn()
     {
-        if (!canTurn) return;
+        if (turnCount > 0) return;
 
-        if (InputManager.Instance.GetInput(InputAction.TurnLeft, true) && characterPhysic.CanTurnLeft())
+        if (InputManager.Instance.GetInput(InputAction.TurnLeft, false) && characterPhysic.CanTurnLeft())
         {
+          
             GameplayManager.Instance.ChangeDirection(true);
-            
+            //GameplayManager.Instance.cameraManager.Rotate();
             Quaternion rotation = Constants.ROTATION_VECTOR[GameplayManager.Instance.currentDirecion];
-            transform.rotation = rotation;
-            canTurn = false;
+            //transform.rotation = rotation;
+            rotateSmoothlyCoroutine =  GameplayManager.Instance.RunCoroutine(RotateSmoothly(rotation));
+            turnCount = TURN_COUNT;
         }
-        else if (InputManager.Instance.GetInput(InputAction.TurnRight, true) && characterPhysic.CanTurnRight())
+        else if (InputManager.Instance.GetInput(InputAction.TurnRight, false) && characterPhysic.CanTurnRight())
         {
+            
             GameplayManager.Instance.ChangeDirection(false);
-
+            //GameplayManager.Instance.cameraManager.Rotate();
             Quaternion rotation = Constants.ROTATION_VECTOR[GameplayManager.Instance.currentDirecion];
-            transform.rotation = rotation;
-            canTurn = false;
+            rotateSmoothlyCoroutine = GameplayManager.Instance.RunCoroutine(RotateSmoothly(rotation));
+            //transform.rotation = rotation;
+            turnCount = TURN_COUNT;
+
         }
     }
 
+    IEnumerator RotateSmoothly(Quaternion targetRotation)
+    {
+        float rotateSpeed = 10.0f;
+        while (Quaternion.Angle(transform.rotation, targetRotation) > 0.1f)
+        {
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotateSpeed);
+            yield return null; 
+        }
+    }
+
+    private void HandleAutoTurn()
+    {
+        if (turnCount > 0) return;
+
+        if (characterPhysic.CanTurnLeft())
+        {
+
+            GameplayManager.Instance.ChangeDirection(true);
+
+            Quaternion rotation = Constants.ROTATION_VECTOR[GameplayManager.Instance.currentDirecion];
+            rotateSmoothlyCoroutine = GameplayManager.Instance.RunCoroutine(RotateSmoothly(rotation));
+            turnCount = TURN_COUNT;
+        }
+        else if (characterPhysic.CanTurnRight())
+        {
+
+            GameplayManager.Instance.ChangeDirection(false);
+
+            Quaternion rotation = Constants.ROTATION_VECTOR[GameplayManager.Instance.currentDirecion];
+            rotateSmoothlyCoroutine = GameplayManager.Instance.RunCoroutine(RotateSmoothly(rotation));
+            turnCount = TURN_COUNT;
+
+        }
+    }
 
     IEnumerator StumpleCooldown()
     {
@@ -140,14 +218,20 @@ public class Player : MonoBehaviour
     {
         if (other.CompareTag("SpawnTrigger"))
         {
-        
+           // Debug.Log("Spawn");
             GameplayManager.Instance.SpawnSegment();
             other.gameObject.SetActive(false);
-            canTurn = true;
+            turnCount -= 1;
         }
-        else if (other.CompareTag("DeathTrigger"))
+        else if (other.CompareTag("InstantDeathTrigger"))
         {
-            Debug.Log("Game over");
+         
+            OnDeath();
+        }
+        else if (other.CompareTag("DeathTrigger") && !GameplayManager.Instance.inInvisibleState)
+        {
+          
+            OnDeath();
         }
         else if (other.CompareTag("StumpleTrigger"))
         {
@@ -160,9 +244,68 @@ public class Player : MonoBehaviour
             else
             {
                 isStumple = true;
-                GameplayManager.Instance.RunCoroutine(StumpleCooldown());
+                stumpleCoroutine = GameplayManager.Instance.RunCoroutine(StumpleCooldown());
             }
         }
+       else if (other.CompareTag("Coin"))
+        {
+            
+            GameplayManager.Instance.progressionManager.CollectCoin(other.gameObject);
+        }
+        else if (other.CompareTag("Item"))
+        {
+            OnCollidWithItem(other);
+        }
+    }
+
+    private void OnCollidWithItem(Collider other)
+    {
+
+        GameplayManager.Instance.mapController.itemController.PickupItem(other.gameObject);
+    }
+
+    //private void OnCollidWithStumpleTrigger(Collider other)
+    //{
+
+    //}
+    //private void OnCollideWithCoin((Collider other)
+    //{
+
+    //}
+
+    private void OnDeath()
+    {
+
+        gameObject.SetActive(false);
+        GameplayManager.Instance.GameOver();
+    }
+
+    public void Reset()
+    {
+        
+        characterPhysic.Reset();
+
+        transform.position = GameplayManager.Instance.plaerSpawnPoint;
+
+        Quaternion rotation = Constants.ROTATION_VECTOR[GameplayManager.Instance.currentDirecion];
+        transform.rotation = rotation;
+
+        runningCollider.gameObject.SetActive(true);
+        slidingCollider.gameObject.SetActive(false);
+        currentCollider = runningCollider;
+
+        turnCount = 0;
+        slidingTime = 1.0f;
+        isSliding = false;
+        isStumple = false;
+        stumpleTime = 5.0f;
+        canControl = true;
+
+        gameObject.SetActive(true);
+
+        //GameplayManager.Instance.Stop_Coroutine(stumpleCoroutine);
+        //GameplayManager.Instance.Stop_Coroutine(rotateSmoothlyCoroutine);
+        //GameplayManager.Instance.Stop_Coroutine(slideSequenceCoroutine);
     }
 
 

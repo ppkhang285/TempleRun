@@ -10,7 +10,7 @@ public class InputManager
     public static InputManager Instance => _instance ?? (_instance = new InputManager());
 
 
-    private InputBindingSetting inputBindingSetting;
+    //private InputBindingSetting inputBindingSetting;
     private Dictionary<InputAction, InputBinding> bindingMap;
 
     public InputManager()
@@ -45,7 +45,7 @@ public class InputManager
 
         var binding = bindingMap[action];
 
-
+        
         // Keyboard
         if (!binding.isMouse)
         {
@@ -59,7 +59,7 @@ public class InputManager
                 keyPressed = binding.key != KeyCode.None && Input.GetKeyDown(binding.key);
                 
             }
-
+            
             return keyPressed;
         }
         else

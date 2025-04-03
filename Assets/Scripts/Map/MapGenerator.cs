@@ -47,6 +47,7 @@ public class MapGenerator
         AddSegment(SegmentType.START);
     }
 
+    
 
     // Getter method
  
@@ -111,7 +112,6 @@ public class MapGenerator
         int weightSum = 0;
 
 
-
         DifficultProfile biomeProfile = difficultData.profiles.Find(x => x.profile.difficulty == GameplayManager.Instance.currentDifficulty).profile;
 
         Dictionary<SegmentType, int> segmentWeightDict = biomeProfile.GetSegmentWeightDict();
@@ -149,6 +149,14 @@ public class MapGenerator
         currentSegmentQ.Dequeue();
     }
 
+    public void Reset()
+    {
+        currentSegmentQ.Clear();
 
+        currentBiome = spawnConfigData.startBiome;
+        AddSegment(SegmentType.START);
+
+
+    }
 
 }

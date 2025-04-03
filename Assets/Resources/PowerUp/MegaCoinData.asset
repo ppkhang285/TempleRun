@@ -12,4 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8dedb0767994a0644b6800f1e75331fe, type: 3}
   m_Name: MegaCoinData
   m_EditorClassIdentifier: 
+  type: 3
+  isItem: 1
+  itemPrefab: {fileID: 4591419692264649930, guid: 599c29769b6dfa94c9f78559b345a609,
+    type: 3}
   extraCoin: 64000000c8000000f4010000e8030000b80b0000

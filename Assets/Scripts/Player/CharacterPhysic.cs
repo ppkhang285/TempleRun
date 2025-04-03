@@ -22,13 +22,14 @@ public class CharacterPhysic
     private float coyoteTimeCounter = 0f;
 
     // for test only
-    private float pullDownForce = 30f;
-    private float jumpForce = 25f;
+    private float pullDownForce = 35f;
+    private float jumpForce = 30f;
     private float jumpTime = 0.5f;
 
     public bool isJumping { get; private set; } = false;
     private bool isFallingDown = false;
 
+    private Coroutine jumpCoroutine;
 
     public CharacterPhysic(Transform characterTransform, Player player)
     {
@@ -39,6 +40,8 @@ public class CharacterPhysic
         //velocity = Vector3.zero;
         //mass = Constants.CHARACTER_MASS;
     }
+
+
 
     public void Update()
     {
@@ -96,7 +99,7 @@ public class CharacterPhysic
         {
             isJumping = true;
             coyoteTimeCounter = 0;
-            GameplayManager.Instance.RunCoroutine(JumpSequence());
+            jumpCoroutine = GameplayManager.Instance.RunCoroutine(JumpSequence());
         }
     }
 
@@ -114,7 +117,9 @@ public class CharacterPhysic
 
         Direction turnDirect = UtilMethods.TurnDirection(GameplayManager.Instance.currentDirecion, true);
         Vector3 leftVector = Constants.DIRECTION_VECTOR[turnDirect];
-        return Physics.Raycast(characterTransform.position, leftVector, 1.1f, mask);
+        float rayDistance = 2.1f + player.currentCollider.size.z /2;
+
+        return Physics.Raycast(characterTransform.position, leftVector, rayDistance, mask);
     }
 
     public bool CollideRight()
@@ -122,9 +127,11 @@ public class CharacterPhysic
         LayerMask mask = LayerMask.GetMask("WallMask");
         Direction turnDirect = UtilMethods.TurnDirection(GameplayManager.Instance.currentDirecion, false);
 
-
         Vector3 rightVector = Constants.DIRECTION_VECTOR[turnDirect];
-        return Physics.Raycast(characterTransform.position, rightVector, 1.1f, mask);
+
+        float rayDistance = 2.1f + player.currentCollider.size.z / 2;
+
+        return Physics.Raycast(characterTransform.position, rightVector, rayDistance, mask);
     }
  
     public bool CanTurnLeft()
@@ -132,9 +139,11 @@ public class CharacterPhysic
         LayerMask mask = LayerMask.GetMask("WallMask");
         Direction turnDirect = UtilMethods.TurnDirection(GameplayManager.Instance.currentDirecion, true);
         Vector3 leftVector = Constants.DIRECTION_VECTOR[turnDirect];
+        Vector3 rayPos = characterTransform.position;
 
-   
-        return !Physics.Raycast(characterTransform.position, leftVector, 70f, mask);
+        return !Physics.BoxCast(characterTransform.position, player.currentCollider.size + Vector3.one, leftVector, Quaternion.identity,50.0f, mask);
+
+        //return !Physics.Raycast(rayPos, leftVector, 70f, mask);
     }
 
     public bool CanTurnRight()
@@ -143,11 +152,21 @@ public class CharacterPhysic
         Direction turnDirect = UtilMethods.TurnDirection(GameplayManager.Instance.currentDirecion, false);
 
         Vector3 rightVector = Constants.DIRECTION_VECTOR[turnDirect];
+        Vector3 rayPos = characterTransform.position;
 
-        return !Physics.Raycast(characterTransform.position, rightVector, 70f, mask);
+        return !Physics.BoxCast(characterTransform.position, player.currentCollider.size +Vector3.one , rightVector, Quaternion.identity, 50.0f, mask);
+
+      //  return !Physics.Raycast(rayPos, rightVector, 40f, mask);
     }
 
    
+    public void Reset()
+    {
+        isJumping = false;
+        isFallingDown = false;
+        coyoteTimeCounter = 0f;
 
+    //GameplayManager.Instance.Stop_Coroutine(jumpCoroutine);
+}
     
 }

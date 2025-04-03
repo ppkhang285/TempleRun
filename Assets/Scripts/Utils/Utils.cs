@@ -7,9 +7,10 @@ namespace Utils
 {
     public static class Paths
     {
-        public static readonly string INPUT_BINDING_SETTING = "InputSystem/InputBindingSetting";
-        public static readonly string DIFFICULTY_DATA = "GameSetting/DifficultData";
-        public static readonly string SPAWN_CONFIG_DATA = "GameSetting/SpawnConfig";
+        public const string INPUT_BINDING_SETTING = "InputSystem/InputBindingSetting";
+        public const string DIFFICULTY_DATA = "GameSetting/DifficultData";
+        public const string SPAWN_CONFIG_DATA = "GameSetting/SpawnConfig";
+        public const string POWERUP_DATA = "PowerUp/PowerUpConfig";
     }
 
 
@@ -90,6 +91,14 @@ namespace Utils
             LEFT,
             RIGHT
 
+        }
+        public enum PowerUpType
+        {
+            None,
+            CoinMagnet,
+            CoinValues,
+            MegaCoin,
+            Invisibility
         }
 
     }

@@ -33,7 +33,11 @@ public class MapSegment
     {
         if (segmentTransform != null)
         {
-            GameObject.Destroy(segmentTransform.gameObject);
+            if (Application.isPlaying)
+                GameObject.Destroy(segmentTransform.gameObject);
+            else
+                GameObject.DestroyImmediate(segmentTransform.gameObject);
+          
         }
         
     }
@@ -95,5 +99,16 @@ public class MapSegment
     public bool CanSpawnNeighbor()
     {
         return canSpawnNext;
+    }
+
+    public void TurnInvisibleLane(bool isTurnOn)
+    {
+        Transform invisibleLane = segmentTransform.Find("invisibleLane");
+        if (invisibleLane == null) return;
+        invisibleLane.gameObject.SetActive(isTurnOn);
+    }
+    public void Clear()
+    {
+        GameObject.Destroy(segmentTransform.gameObject);
     }
 }
