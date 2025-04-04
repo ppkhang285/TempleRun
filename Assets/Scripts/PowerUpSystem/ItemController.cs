@@ -11,7 +11,7 @@ public class ItemController
     private List<GameObject> itemObjList;
     private Dictionary<int, PowerUpType> itemTypeDict;
 
-    private const float DESTROY_DISTANCE = 300.0f;
+
     public ItemController(Transform mapRoot)
     {
         this.mapRoot = mapRoot;
@@ -47,7 +47,7 @@ public class ItemController
             for (int i = itemObjList.Count - 1; i >= 0; i--)
             {
                 float distance = Vector3.Distance(itemObjList[i].transform.position, Vector3.zero);
-                if (distance > DESTROY_DISTANCE)
+                if (distance > Constants.DESTROY_DISTANCE)
                 {
                     DespawnItemAt(i);
                 }

@@ -24,7 +24,7 @@ public class MapController
     private Dictionary<MapBiome, MapBiomeData> biomeDataDict;
 
     private const int MAX_SEGMENT = 4;
-    private const float DESTROY_DISTANCE = 300.0f;
+
     public MapController(Transform mapRoot)
     {
         this.mapRoot = mapRoot;
@@ -81,7 +81,7 @@ public class MapController
         for (int i = mapSegments.Count - 1; i >= 0; i--)
         {
             float distance = Vector3.Distance(mapSegments[i].segmentTransform.position, Vector3.zero);
-            if (distance > DESTROY_DISTANCE)
+            if (distance > Constants.DESTROY_DISTANCE)
             {
                 //mapSegments[i].OnDestroy();
                 GameObject segmentObject = mapSegments[i].segmentTransform.gameObject;
@@ -106,13 +106,16 @@ public class MapController
 
     public void InitEnviroment()
     {
+        int forwarNumber = 4;
         // Spawn Water,...
 
         // Spawn Start Segment (Start_Gate)
         SpawnStartSegment();
-        SpawnNewSegment(); // Spawn 3 segment
-        SpawnNewSegment();
-        SpawnNewSegment();
+
+        for (int i = 0; i < forwarNumber; i++)
+        {
+            SpawnNewSegment();
+        }
     }
 
     public void SpawnEnviroment()

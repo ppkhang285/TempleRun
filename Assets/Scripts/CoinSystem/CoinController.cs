@@ -24,7 +24,7 @@ public class CoinController
 
     private const float pullingSpeed = 50;
     private const int padding = 1; // Padding between 2 coin
-    private const float DESTROY_DISTANCE = 300.0f;
+
 
     public CoinController(Transform mapRoot)
     {
@@ -153,7 +153,7 @@ public class CoinController
         for (int i = coinList.Count - 1; i >= 0; i--)
         {
             float distance = Vector3.Distance(coinList[i].transform.position, Vector3.zero);
-            if (distance > DESTROY_DISTANCE)
+            if (distance > Constants.DESTROY_DISTANCE)
             {
                 DesSpawnCoinAt(i);
             }

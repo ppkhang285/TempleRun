@@ -17,7 +17,7 @@ public class GameplayManager : MonoBehaviour
     public GameObject playerRoot;
     public GameObject coinPrefab;
     public GameObject CameraRoot;
-
+    public GameObject canvas;
    
     
 
@@ -27,7 +27,7 @@ public class GameplayManager : MonoBehaviour
     public PowerUpManager powerUpManager { get; private set; }
     public ProgressionManager progressionManager { get; private set; }
     public CameraManager cameraManager { get; private set; }
-
+    public UIManager uiManager { get; private set; }
     // Global attributes
     public float moving_speed { get; private set; } // Moving speed of character (moving speed of map segments)
     public Direction currentDirecion { get; private set; }
@@ -77,6 +77,9 @@ public class GameplayManager : MonoBehaviour
         powerUpManager = new PowerUpManager();
         progressionManager = new ProgressionManager();
         cameraManager = new CameraManager(CameraRoot, playerRoot);
+        uiManager = new UIManager();
+
+
         // Gameplay Attribute setting
         currentDirecion = Direction.FORWARD;
         moving_speed = 70.0f;
@@ -84,6 +87,27 @@ public class GameplayManager : MonoBehaviour
 
 
     }
+
+
+    void Update()
+    {
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            StartGame();
+        }
+
+        if (gameState == GameState.Playing)
+        {
+            mapController.Update();
+            player.MyUpdate();
+            cameraManager.Update();
+            progressionManager.Update();
+        }
+
+    }
+
+
 
     private void ResetToDefault()
     {
@@ -122,28 +146,6 @@ public class GameplayManager : MonoBehaviour
         player = playerObj.GetComponent<Player>();
     }
 
-    void Update()
-    {
-
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            StartGame();
-        }
-
-        if (gameState == GameState.Playing)
-        {
-            mapController.Update();
-            player.MyUpdate();
-            cameraManager.Update();
-        }
-        
-    }
-
-    public void GameOver()
-    {
-        Debug.Log("Game Over");
-        gameState = GameState.GameOver;
-    }
 
 
     // Setter
@@ -166,7 +168,6 @@ public class GameplayManager : MonoBehaviour
         //ToggleInvisibleState();
     }
 
-    [Button]
     public void SpawnSegment()
     {
         mapController.SpawnNewSegment();
@@ -199,12 +200,35 @@ public class GameplayManager : MonoBehaviour
     {
         if (gameState == GameState.Paused)
         {
-
             // Call UI Countdown  (Coroutine)-> Play
-            gameState = GameState.Playing;
+            
+            StartCoroutine(ContinueCountDown());
+            
         }
     }
 
+    IEnumerator ContinueCountDown()
+    {
+        int time = 3;
+
+        uiManager.ShowCountdownPanel(true);
+        while (time > 0)
+        {
+            uiManager.UpdateCountDownPanel(time);
+            yield return new WaitForSeconds(1);
+            time--;
+        }
+        gameState = GameState.Playing;
+        uiManager.ShowCountdownPanel(false);
+    }
+
+    public void GameOver()
+    {
+        Debug.Log("Game Over");
+        gameState = GameState.GameOver;
+        uiManager.UpdateGameOverMenuPanel(progressionManager.currentDistance, progressionManager.currentCoin);
+        uiManager.ShowGameOverMenuPanel(true);
+    }
 
     public Coroutine RunCoroutine(IEnumerator coroutine)
     {
@@ -222,7 +246,7 @@ public class GameplayManager : MonoBehaviour
         
         currentDirecion = UtilMethods.TurnDirection(currentDirecion, isTurnLeft);
     }
-    [Button]
+    
 
     public void Reset()
     {
@@ -231,8 +255,6 @@ public class GameplayManager : MonoBehaviour
 
         //
         currentDirecion = Direction.FORWARD;
-
-        
         cameraManager.Reset();
         mapController.Reset();
         progressionManager.Reset();
@@ -240,8 +262,7 @@ public class GameplayManager : MonoBehaviour
         //
         InitSpawnObject();
 
-        StartCoroutine(WaitForStart());
-    
+
     }
      IEnumerator WaitForStart()
     {
@@ -250,6 +271,15 @@ public class GameplayManager : MonoBehaviour
        
         yield return new WaitForSeconds(0.5f);
         StartGame();
+    }
+
+    [Button]
+
+    public void RestartGame()
+    {
+        Reset();
+        
+        StartCoroutine(WaitForStart());
     }
 
 }

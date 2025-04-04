@@ -9,7 +9,7 @@ public class ProgressionManager
     private static ProgressionManager _instance;
 
     public int currentCoin { get; private set; }
-    public float currentRunningDistance { get; private set; }
+    public float currentDistance { get; private set; }
     public int currentDifficulty { get; private set; }
     public float moving_speed { get; private set; }
 
@@ -28,7 +28,7 @@ public class ProgressionManager
     private Coroutine itemTimerCoroutine;
     private Coroutine coinTimerCoroutine;
 
-
+    private float BASE_SPEED = 70.0f;
     public static ProgressionManager Instance
     {
         get
@@ -54,6 +54,8 @@ public class ProgressionManager
     {
         itemTimerCoroutine = GameplayManager.Instance.RunCoroutine(RunItemTimer());
         coinTimerCoroutine =  GameplayManager.Instance.RunCoroutine(RunCointimer());
+
+        GameplayManager.Instance.RunCoroutine(IncreaseSpeed());
     }
 
     public void Init()
@@ -64,8 +66,8 @@ public class ProgressionManager
         maxItemSpawnInterval = 17.0f;
         minItemSpawnInterval = 10.0f;
 
-        currentRunningDistance = 0;
-        moving_speed = 70.0f;
+        currentDistance = 0;
+        moving_speed = BASE_SPEED;
 
         ResetCoinTimer();
         ResetItemTimer();
@@ -75,8 +77,8 @@ public class ProgressionManager
         spawnCoinTimer = 10;
         spawnItemTimer = 20;
 
-        currentRunningDistance = 0;
-        moving_speed = 70.0f;
+        currentDistance = 0;
+        moving_speed = BASE_SPEED;
 
         ResetCoinTimer();
         ResetItemTimer();
@@ -89,10 +91,20 @@ public class ProgressionManager
 
     public void Update()
     {
-        currentRunningDistance += Time.deltaTime * moving_speed;
-
+       
+        currentDistance += Time.deltaTime * moving_speed * 0.1f;
+        UIManager.Instance.UpdateHUDPanel(currentDistance, currentCoin);
     }
-
+    IEnumerator IncreaseSpeed()
+    {
+        // Increase speed by 10% every of BASE 5 seconds
+        while (true)
+        {
+            yield return new WaitForSeconds(5.0f);
+            moving_speed += BASE_SPEED * 0.1f;
+            
+        }
+    }
 
     IEnumerator RunCointimer()
     {
@@ -165,6 +177,7 @@ public class ProgressionManager
     {
         
         currentCoin += coin;
-       // Debug.Log($"Current coin: {currentCoin}");
+        UIManager.Instance.UpdateHUDPanel(currentDistance, currentCoin);
+        // Debug.Log($"Current coin: {currentCoin}");
     }
 }
