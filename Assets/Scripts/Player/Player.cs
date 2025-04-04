@@ -195,7 +195,11 @@ public class Player : MonoBehaviour
         float rotateSpeed = 10.0f;
         while (Quaternion.Angle(transform.rotation, targetRotation) > 0.1f)
         {
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotateSpeed);
+            if (GameplayManager.Instance.IsPlaying())
+            {
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotateSpeed);
+            }
+            
             yield return null; 
         }
     }

@@ -95,8 +95,9 @@ public class UIManager
 
     public void ShowMainMenuPanel(bool show)
     {
+        ShowBlurBackground(false);
         mainMenuPanel.SetActive(show);
-        ShowBlurBackground(show);
+        
     }
 
     public void ShowPauseMenuPanel(bool show)
@@ -148,16 +149,13 @@ public class UIManager
     private void OnRestartButtonClicked()
     {
         GameplayManager.Instance.RestartGame();
-        ShowGameOverMenuPanel(false);
-        ShowPauseMenuPanel(false);
-        ShowHUDPanel(true);
+
     }
 
     private void OnMainMenuButtonClicked()
     {
         GameplayManager.Instance.Reset();
-        ShowGameOverMenuPanel(false);
-        ShowMainMenuPanel(true);
+        
         
     }
 
@@ -176,6 +174,7 @@ public class UIManager
 
     public void UpdateGameOverMenuPanel(float distance, int coin)
     {
+        Debug.Log("Update Game Over Menu Panel " + distance);
         SetText(gameOverMenuPanel.transform.Find("StatGroup/Distance/Value").GetComponent<TMP_Text>(), distance.ToString("0"));
         SetText(gameOverMenuPanel.transform.Find("StatGroup/Coins/Value").GetComponent<TMP_Text>(), coin.ToString());
     }
@@ -183,6 +182,53 @@ public class UIManager
     public void UpdateCountDownPanel(int time)
     {
         SetText(coutdownPanel.transform.GetChild(0).GetComponent<TMP_Text>(), time.ToString());
+    }
+
+    public void OnPauseGame()
+    {
+        ShowHUDPanel(false);
+        UpdatePauseMenuPanel(ProgressionManager.Instance.currentDistance, ProgressionManager.Instance.currentCoin);
+        ShowPauseMenuPanel(true);
+    }
+
+    public void OnContinueGame()
+    {
+        ShowCountdownPanel(false);
+        ShowHUDPanel(true);
+    }
+
+    public void OnStartGame()
+    {
+
+    }
+
+    public void OnMainMenu()
+    {
+        TurnOffAll();
+        ShowMainMenuPanel(true);
+    }
+    public void OnGameOver()
+    {
+
+        TurnOffAll();
+        UpdateGameOverMenuPanel(ProgressionManager.Instance.currentDistance, ProgressionManager.Instance.currentCoin);
+        ShowGameOverMenuPanel(true);
+    }
+
+    public void OnRestartGame()
+    {
+        TurnOffAll();
+        UpdateHUDPanel(0, 0);
+        ShowHUDPanel(true);
+    }
+    private void TurnOffAll()
+    {
+        ShowBlurBackground(false);
+        ShowMainMenuPanel(false);
+        ShowPauseMenuPanel(false);
+        ShowHUDPanel(false);
+        ShowGameOverMenuPanel(false);
+        ShowCountdownPanel(false);  
     }
 
 }

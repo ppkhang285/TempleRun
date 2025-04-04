@@ -100,8 +100,17 @@ public class ProgressionManager
         // Increase speed by 10% every of BASE 5 seconds
         while (true)
         {
-            yield return new WaitForSeconds(5.0f);
-            moving_speed += BASE_SPEED * 0.1f;
+            if (GameplayManager.Instance.IsPlaying())
+            {
+                yield return new WaitForSeconds(5.0f);
+                moving_speed += BASE_SPEED * 0.1f;
+            }
+            else
+            {
+                yield return null;
+                continue;
+            }
+            
             
         }
     }
@@ -111,7 +120,11 @@ public class ProgressionManager
         coinSpawned = false;
         while (spawnCoinTimer > 0)
         {
-            spawnCoinTimer -= Time.deltaTime;
+            if (GameplayManager.Instance.IsPlaying())
+            {
+                spawnCoinTimer -= Time.deltaTime;
+            }
+                
             yield return null;
         }
 
@@ -122,7 +135,11 @@ public class ProgressionManager
         itemSpawned = false;
         while (spawnItemTimer > 0)
         {
-            spawnItemTimer -= Time.deltaTime;
+            if (GameplayManager.Instance.IsPlaying())
+            {
+                spawnItemTimer -= Time.deltaTime;
+            }
+            
             yield return null;
         }
 

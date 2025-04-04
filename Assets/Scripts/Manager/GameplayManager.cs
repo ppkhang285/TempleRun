@@ -72,12 +72,12 @@ public class GameplayManager : MonoBehaviour
 
         }
 
-        inputManager = new InputManager();
+        inputManager = InputManager.Instance;
         mapController = new MapController(mapRoot.transform);
         powerUpManager = new PowerUpManager();
-        progressionManager = new ProgressionManager();
+        progressionManager = ProgressionManager.Instance;
         cameraManager = new CameraManager(CameraRoot, playerRoot);
-        uiManager = new UIManager();
+        uiManager =  UIManager.Instance;
 
 
         // Gameplay Attribute setting
@@ -91,12 +91,11 @@ public class GameplayManager : MonoBehaviour
 
     void Update()
     {
-
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (InputManager.Instance.GetInput(InputAction.Pause, true))
         {
-            StartGame();
+            PauseGame();
+            
         }
-
         if (gameState == GameState.Playing)
         {
             mapController.Update();
@@ -104,6 +103,8 @@ public class GameplayManager : MonoBehaviour
             cameraManager.Update();
             progressionManager.Update();
         }
+
+
 
     }
 
@@ -189,6 +190,7 @@ public class GameplayManager : MonoBehaviour
     {
         if (gameState == GameState.Playing)
         {
+            uiManager.OnPauseGame();
             gameState = GameState.Paused;
         }
 
@@ -219,15 +221,15 @@ public class GameplayManager : MonoBehaviour
             time--;
         }
         gameState = GameState.Playing;
-        uiManager.ShowCountdownPanel(false);
+        uiManager.OnContinueGame();
     }
 
     public void GameOver()
     {
         Debug.Log("Game Over");
+      
         gameState = GameState.GameOver;
-        uiManager.UpdateGameOverMenuPanel(progressionManager.currentDistance, progressionManager.currentCoin);
-        uiManager.ShowGameOverMenuPanel(true);
+        uiManager.OnGameOver();
     }
 
     public Coroutine RunCoroutine(IEnumerator coroutine)
@@ -261,7 +263,7 @@ public class GameplayManager : MonoBehaviour
 
         //
         InitSpawnObject();
-
+        uiManager.OnMainMenu();
 
     }
      IEnumerator WaitForStart()
@@ -278,8 +280,13 @@ public class GameplayManager : MonoBehaviour
     public void RestartGame()
     {
         Reset();
-        
+        uiManager.OnRestartGame();
         StartCoroutine(WaitForStart());
+    }
+
+    public bool IsPlaying()
+    {
+        return gameState == GameState.Playing;
     }
 
 }
