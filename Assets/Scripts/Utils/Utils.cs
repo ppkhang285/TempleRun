@@ -21,6 +21,8 @@ namespace Utils
         public const float CHARACTER_VERTICAL_VELOCITY = 20.0f;
         public const float CHARACTER_JUMP_FORCE = 50.0f;
         public const float GRAVITY = 70.0f;
+        public const float DESTROY_DISTANCE = 500.0f;
+
 
         public const int MAX_POWERUP_LEVEL = 5;
 

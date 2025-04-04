@@ -35,6 +35,11 @@ public class CoinMagnetData : PowerUpData
         float timer = duration;
         while(timer > 0)
         {
+            if (!GameplayManager.Instance.IsPlaying())
+            {
+                yield return null;
+                continue;
+            }
             Collider[] nearbyCoinObj = Physics.OverlapSphere(characterTransform.position, radius);
             foreach (Collider collider in nearbyCoinObj)
             {

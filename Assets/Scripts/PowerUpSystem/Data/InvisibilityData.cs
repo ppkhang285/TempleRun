@@ -24,7 +24,16 @@ public class InvisibilityData : PowerUpData
     IEnumerator ActivateInvisible(float duration)
     {
         GameplayManager.Instance.ToggleInvisibleState(true);
-        yield return new WaitForSeconds(duration);
+        float timer = duration;
+        while (timer > 0)
+        {
+            if (GameplayManager.Instance.IsPlaying())
+            {
+                timer -= Time.deltaTime;
+            }
+            
+            yield return null;
+        }
         GameplayManager.Instance.ToggleInvisibleState(false);
     }
 }

@@ -11,7 +11,8 @@ public class Player : MonoBehaviour
     // Inspector
     [SerializeField] private BoxCollider runningCollider;
     [SerializeField] private BoxCollider slidingCollider;
- 
+    [SerializeField] private GameObject shadowProjectorObj;
+
     // Managers
 
     public CharacterPhysic characterPhysic { get; private set; }
@@ -57,8 +58,8 @@ public class Player : MonoBehaviour
 
             HandleSlide();
         }
-        
-        
+
+        HandleShadow();
         characterPhysic.Update();
     }
 
@@ -68,6 +69,22 @@ public class Player : MonoBehaviour
 
         Reset();
         
+    }
+
+    private void HandleShadow()
+    {
+        LayerMask mask = LayerMask.GetMask("GroundMask");
+        float maxDistance = 100f; 
+
+        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, maxDistance, mask))
+        {
+            shadowProjectorObj.transform.position =
+                new Vector3(transform.position.x, transform.position.y - hit.distance, transform.position.z);
+        }
+        else
+        {
+            shadowProjectorObj.transform.position = transform.position;
+        }
     }
 
     private void HandleMoving()
@@ -178,7 +195,11 @@ public class Player : MonoBehaviour
         float rotateSpeed = 10.0f;
         while (Quaternion.Angle(transform.rotation, targetRotation) > 0.1f)
         {
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotateSpeed);
+            if (GameplayManager.Instance.IsPlaying())
+            {
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotateSpeed);
+            }
+            
             yield return null; 
         }
     }
@@ -238,7 +259,7 @@ public class Player : MonoBehaviour
             other.gameObject.SetActive(false);
             if (isStumple)
             {
-                Debug.Log("Game Over");
+                OnDeath();
             }
 
             else
