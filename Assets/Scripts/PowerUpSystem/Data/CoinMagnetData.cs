@@ -35,21 +35,22 @@ public class CoinMagnetData : PowerUpData
         float timer = duration;
         while(timer > 0)
         {
-            if (!GameplayManager.Instance.IsPlaying())
+            if (GameplayManager.Instance.IsPlaying())
             {
-                yield return null;
-                continue;
-            }
-            Collider[] nearbyCoinObj = Physics.OverlapSphere(characterTransform.position, radius);
-            foreach (Collider collider in nearbyCoinObj)
-            {
-                if (collider.CompareTag("Coin"))
-                {
-                    GameplayManager.Instance.mapController.coinSpawner.FlagPulling(collider.gameObject);
-                }
-            }
 
-            timer -= Time.deltaTime;
+
+                Collider[] nearbyCoinObj = Physics.OverlapSphere(characterTransform.position, radius);
+                foreach (Collider collider in nearbyCoinObj)
+                {
+                    if (collider.CompareTag("Coin"))
+                    {
+                        GameplayManager.Instance.mapController.coinSpawner.FlagPulling(collider.gameObject);
+                    }
+                }
+
+                timer -= Time.deltaTime;
+            }
+            Debug.Log(timer);
             yield return null;
 
         }

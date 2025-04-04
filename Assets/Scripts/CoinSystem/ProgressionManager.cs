@@ -78,6 +78,7 @@ public class ProgressionManager
         spawnItemTimer = 20;
 
         currentDistance = 0;
+        currentCoin = 0;
         moving_speed = BASE_SPEED;
 
         ResetCoinTimer();
@@ -92,7 +93,7 @@ public class ProgressionManager
     public void Update()
     {
        
-        currentDistance += Time.deltaTime * moving_speed * 0.1f;
+        currentDistance += Time.deltaTime * moving_speed * 0.2f;
         UIManager.Instance.UpdateHUDPanel(currentDistance, currentCoin);
     }
     IEnumerator IncreaseSpeed()
@@ -102,7 +103,7 @@ public class ProgressionManager
         {
             if (GameplayManager.Instance.IsPlaying())
             {
-                yield return new WaitForSeconds(5.0f);
+                yield return new WaitForSeconds(15.0f);
                 moving_speed += BASE_SPEED * 0.1f;
             }
             else

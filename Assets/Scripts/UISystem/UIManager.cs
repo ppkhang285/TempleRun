@@ -59,7 +59,7 @@ public class UIManager
     {
         // Main Menu
         mainMenuPanel.transform.Find("ButtonGroup/PlayButton").GetComponent<Button>().onClick.AddListener(OnStartButtonClicked);
-        mainMenuPanel.transform.Find("ButtonGroup/ExitButton").GetComponent<Button>().onClick.AddListener(Application.Quit);
+        mainMenuPanel.transform.Find("ButtonGroup/ExitButton").GetComponent<Button>().onClick.AddListener(GameplayManager.Instance.ExitGame);
 
         // Pause Menu
         pauseMenuPanel.transform.Find("ButtonGroup/ResumeButton").GetComponent<Button>().onClick.AddListener(OnResumeButtonClicked);
@@ -174,7 +174,7 @@ public class UIManager
 
     public void UpdateGameOverMenuPanel(float distance, int coin)
     {
-        Debug.Log("Update Game Over Menu Panel " + distance);
+
         SetText(gameOverMenuPanel.transform.Find("StatGroup/Distance/Value").GetComponent<TMP_Text>(), distance.ToString("0"));
         SetText(gameOverMenuPanel.transform.Find("StatGroup/Coins/Value").GetComponent<TMP_Text>(), coin.ToString());
     }

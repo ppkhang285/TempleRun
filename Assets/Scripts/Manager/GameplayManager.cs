@@ -289,4 +289,13 @@ public class GameplayManager : MonoBehaviour
         return gameState == GameState.Playing;
     }
 
+    public void ExitGame()
+    {
+        #if UNITY_STANDALONE
+                Application.Quit();
+        #endif
+        #if UNITY_EDITOR
+                UnityEditor.EditorApplication.isPlaying = false;
+        #endif
+    }
 }

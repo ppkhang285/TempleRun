@@ -31,6 +31,8 @@ public class InvisibilityData : PowerUpData
             {
                 timer -= Time.deltaTime;
             }
+
+            Debug.Log(timer);
             
             yield return null;
         }

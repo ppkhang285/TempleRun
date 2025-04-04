@@ -17,11 +17,11 @@ MonoBehaviour:
   itemPrefab: {fileID: 3880955638192172503, guid: 026157fa82cd37c4cbb3a6bd8d057cfb,
     type: 3}
   durations:
-  - 100
-  - 150
-  - 170
-  - 200
-  - 200
+  - 10
+  - 15
+  - 17
+  - 20
+  - 20
   radiusList:
   - 50
   - 70
