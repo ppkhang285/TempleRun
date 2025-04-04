@@ -161,7 +161,7 @@ public class GameplayManager : MonoBehaviour
     }
 
 
-    [Button]
+ 
     public void Test()
     {
          powerUpManager.ActivatePowerUp();
@@ -174,7 +174,7 @@ public class GameplayManager : MonoBehaviour
         mapController.SpawnNewSegment();
     }
 
-    [Button]
+
     public void StartGame()
     {
         if (gameState == GameState.MainMenu || gameState == GameState.GameOver )
@@ -185,7 +185,7 @@ public class GameplayManager : MonoBehaviour
         }
     }
 
-    [Button]
+ 
     public void PauseGame()
     {
         if (gameState == GameState.Playing)
@@ -197,7 +197,7 @@ public class GameplayManager : MonoBehaviour
 
     }
 
-    [Button]
+
     public void ContinueGame()
     {
         if (gameState == GameState.Paused)
@@ -275,7 +275,7 @@ public class GameplayManager : MonoBehaviour
         StartGame();
     }
 
-    [Button]
+
 
     public void RestartGame()
     {
