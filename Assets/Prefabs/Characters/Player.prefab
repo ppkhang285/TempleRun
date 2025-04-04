@@ -205,7 +205,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0777d029ed3dffa4692f417d4aba19ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: 31d0dcc6f2dd4e4408d18036a2c93862, type: 2}
+  m_Material: {fileID: 2100000, guid: 0e2d90efcaf2dfc46b64b3ee095cce75, type: 2}
   m_DrawDistance: 1000
   m_FadeScale: 0.9
   m_StartAngleFade: 180
@@ -213,8 +213,8 @@ MonoBehaviour:
   m_UVScale: {x: 1, y: 1}
   m_UVBias: {x: 0, y: 0}
   m_ScaleMode: 0
-  m_Offset: {x: 0, y: 0, z: 0.5}
-  m_Size: {x: 1, y: 1, z: 1}
+  m_Offset: {x: 0, y: 0, z: 0}
+  m_Size: {x: 3.8, y: 3, z: 3.8}
   m_FadeFactor: 1
 --- !u!1 &4150452342775381745
 GameObject:
@@ -729,6 +729,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   runningCollider: {fileID: 263947903535223456}
   slidingCollider: {fileID: 6162554421947208939}
+  shadowProjectorObj: {fileID: 4124589701502913088}
 --- !u!65 &3301851404042181781
 BoxCollider:
   m_ObjectHideFlags: 0
