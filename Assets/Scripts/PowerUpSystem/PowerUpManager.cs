@@ -53,7 +53,6 @@ public class PowerUpManager
             }
         }
 
-        Debug.Log(m_powerUpDict);
 
     }
     [Serializable]
