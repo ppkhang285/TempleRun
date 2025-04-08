@@ -122,9 +122,7 @@ public class CoinController
 
             coinObj.transform.SetParent(mapRoot, true);
             coinObj.transform.position = segmentPos + rotation * coinPos;//coinPos + segmentPos;
-
-
-
+           
             coinStates.Add(coinObj.GetInstanceID(), State.Idle);
             coinList.Add(coinObj);
             
@@ -136,7 +134,7 @@ public class CoinController
         coinList.Remove(coinObj);
         coinPool.ReturnObject(coinObj);
 
-       
+        
         coinStates.Remove(coinObj.GetInstanceID());
         
 

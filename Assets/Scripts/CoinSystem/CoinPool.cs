@@ -44,7 +44,8 @@ public class CoinPool
         else
         {
             GameObject coinObj = coinList.Dequeue();
-          
+
+            coinObj.SetActive(true);
             coinObj.transform.SetParent(null);
 
             return coinObj;
@@ -54,7 +55,7 @@ public class CoinPool
 
     public void ReturnObject(GameObject obj)
     {
-       
+        obj.SetActive(false);
         obj.transform.SetParent(poolRoot.transform);
         obj.transform.localPosition = Vector3.zero;
 
