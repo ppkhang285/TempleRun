@@ -51,15 +51,15 @@ public class Player : MonoBehaviour
         {
             HandleMoving();
             HandleJump();
-            if (GameplayManager.Instance.inInvisibleState)
-            {
-                HandleAutoTurn();
-            }
-            else
-            {
-                HandleTurn();
-            }
-
+            //if (GameplayManager.Instance.inInvisibleState)
+            //{
+            //    HandleAutoTurn();
+            //}
+            //else
+            //{
+            //    HandleTurn();
+            //}
+            HandleAutoTurn();
             HandleSlide();
         }
 
