@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using Utils;
 using static Utils.Enums;
 
 public class ProgressionManager
@@ -197,5 +198,13 @@ public class ProgressionManager
         currentCoin += coin;
         UIManager.Instance.UpdateHUDPanel(currentDistance, currentCoin);
         // Debug.Log($"Current coin: {currentCoin}");
+    }
+
+    public float GetScore()
+    {
+        float multiplier = 1 + (currentCoin / 100);
+        float itemScore = GameplayManager.Instance.powerUpManager.itemCount * Constants.SCORE_PER_ITEM;
+        float score = itemScore + currentDistance +  currentCoin * Constants.SCORE_PER_COIN * multiplier;
+        return score;
     }
 }

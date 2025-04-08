@@ -162,12 +162,7 @@ public class GameplayManager : MonoBehaviour
 
 
  
-    public void Test()
-    {
-         powerUpManager.ActivatePowerUp();
 
-        //ToggleInvisibleState();
-    }
 
     public void SpawnSegment()
     {
@@ -260,6 +255,7 @@ public class GameplayManager : MonoBehaviour
         cameraManager.Reset();
         mapController.Reset();
         progressionManager.Reset();
+        powerUpManager.Reset();
 
         //
         InitSpawnObject();

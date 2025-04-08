@@ -22,9 +22,11 @@ public class CharacterPhysic
     private float coyoteTimeCounter = 0f;
 
     // for test only
-    private float pullDownForce = 35f;
-    private float jumpForce = 30f;
+    private float pullDownForce = 80f;
+    private float jumpForce = 60f;
     private float jumpTime = 0.5f;
+    private float jumpHeight = 25;
+
 
     public bool isJumping { get; private set; } = false;
     private bool isFallingDown = false;
@@ -65,8 +67,8 @@ public class CharacterPhysic
     public void JumpingUp()
     {
            
-        characterTransform.Translate(Vector3.up * jumpForce * Time.deltaTime);
-        
+        //characterTransform.Translate(Vector3.up * jumpForce * Time.deltaTime);
+        characterTransform.position += Vector3.up * jumpForce * Time.deltaTime;
     }
     public void PullingDown()
     {
@@ -82,13 +84,20 @@ public class CharacterPhysic
         }
         else
         {
-            characterTransform.Translate(Vector3.down * pullDownForce * Time.deltaTime);
+            //characterTransform.Translate(Vector3.down * pullDownForce * Time.deltaTime);
+            characterTransform.position += Vector3.down * pullDownForce * Time.deltaTime;
         }
     }
 
     IEnumerator JumpSequence()
     {
-        yield return new WaitForSeconds(jumpTime);
+        float baseHeight = characterTransform.position.y;
+        while (characterTransform.position.y < baseHeight + jumpHeight)
+        {
+            //characterTransform.position += Vector3.up * jumpForce * Time.deltaTime;
+            yield return null;
+        }
+        //yield return new WaitForSeconds(jumpTime);
         isFallingDown = true;
  
     }

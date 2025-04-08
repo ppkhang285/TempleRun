@@ -15,6 +15,7 @@ public class PowerUpManager
     private Dictionary<PowerUpType, PowerUpData> m_powerUpdataDict;
     private Dictionary<PowerUpType, PowerUp> m_powerUpDict;
     private List<PowerUpType> m_itemList;
+    public int itemCount { get; private set; } = 0; 
 
     public PowerUpManager()
     {
@@ -129,18 +130,16 @@ public class PowerUpManager
 
     }
 
-    public void ActivatePowerUp()
-    {
-        PowerUpType type = PowerUpType.Invisibility;
-        int level = m_powerUpDict[type].level;
-        m_powerUpDict[type].data.Activate(level);
-        
-    }
 
     public void ActivatePowerUp(PowerUpType type)
     {
+        itemCount++;
         int level = m_powerUpDict[type].level;
         m_powerUpDict[type].data.Activate(level);
 
+    }
+    public void Reset()
+    {
+        itemCount = 0;
     }
 }

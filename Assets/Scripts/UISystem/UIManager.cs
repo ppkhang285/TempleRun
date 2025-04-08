@@ -172,9 +172,9 @@ public class UIManager
         SetText(HUDPanel.transform.Find("Coin").GetComponentInChildren<TMP_Text>(), coin.ToString());
     }
 
-    public void UpdateGameOverMenuPanel(float distance, int coin)
+    public void UpdateGameOverMenuPanel(float distance, int coin, float score = 0)
     {
-
+        SetText(gameOverMenuPanel.transform.Find("Score/Value").GetComponent<TMP_Text>(), score.ToString("0"));
         SetText(gameOverMenuPanel.transform.Find("StatGroup/Distance/Value").GetComponent<TMP_Text>(), distance.ToString("0"));
         SetText(gameOverMenuPanel.transform.Find("StatGroup/Coins/Value").GetComponent<TMP_Text>(), coin.ToString());
     }
@@ -211,7 +211,8 @@ public class UIManager
     {
 
         TurnOffAll();
-        UpdateGameOverMenuPanel(ProgressionManager.Instance.currentDistance, ProgressionManager.Instance.currentCoin);
+        UpdateGameOverMenuPanel(ProgressionManager.Instance.currentDistance, ProgressionManager.Instance.currentCoin,
+            ProgressionManager.Instance.GetScore());
         ShowGameOverMenuPanel(true);
     }
 

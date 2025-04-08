@@ -12,6 +12,7 @@ public class Player : MonoBehaviour
     [SerializeField] private BoxCollider runningCollider;
     [SerializeField] private BoxCollider slidingCollider;
     [SerializeField] private GameObject shadowProjectorObj;
+    [SerializeField] private Animator animatorController;
 
     // Managers
 
@@ -23,6 +24,7 @@ public class Player : MonoBehaviour
     [HideInInspector] public BoxCollider currentCollider { get; private set; }
     private int turnCount = 0;
     private float slidingTime = 1.0f;
+
     private bool isSliding = false;
     private bool isStumple = false;
     private float stumpleTime = 5.0f;
@@ -39,6 +41,8 @@ public class Player : MonoBehaviour
     {
        
         Initialize();
+        animatorController.Play("Run");
+     
     }
 
     public void MyUpdate()
@@ -61,6 +65,7 @@ public class Player : MonoBehaviour
 
         HandleShadow();
         characterPhysic.Update();
+        
     }
 
     private void Initialize()
@@ -113,6 +118,8 @@ public class Player : MonoBehaviour
         {
 
             isSliding = false;
+            animatorController.SetBool("isSliding", false);
+
             runningCollider.gameObject.SetActive(true);
             slidingCollider.gameObject.SetActive(false);
             currentCollider = runningCollider;
@@ -130,6 +137,8 @@ public class Player : MonoBehaviour
         {
 
             isSliding = true;
+            animatorController.SetBool("isSliding", true);
+
             runningCollider.gameObject.SetActive(false);
             slidingCollider.gameObject.SetActive(true);
             currentCollider = slidingCollider;
@@ -158,6 +167,8 @@ public class Player : MonoBehaviour
 
         if (characterPhysic.isJumping) yield return null ;
         isSliding = false;
+        animatorController.SetBool("isSliding", false);
+
         runningCollider.gameObject.SetActive(true);
         slidingCollider.gameObject.SetActive(false);
         currentCollider = runningCollider;
@@ -318,6 +329,8 @@ public class Player : MonoBehaviour
         turnCount = 0;
         slidingTime = 1.0f;
         isSliding = false;
+        animatorController.SetBool("isSliding", false);
+
         isStumple = false;
         stumpleTime = 5.0f;
         canControl = true;
