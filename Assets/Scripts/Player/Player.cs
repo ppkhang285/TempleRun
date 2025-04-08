@@ -79,12 +79,16 @@ public class Player : MonoBehaviour
     private void HandleShadow()
     {
         LayerMask mask = LayerMask.GetMask("GroundMask");
-        float maxDistance = 100f; 
+        float maxDistance = 100f;
+        float leftOffset = 4;
+        Vector3 leftVector = Constants.DIRECTION_VECTOR[ UtilMethods.TurnDirection(GameplayManager.Instance.currentDirecion, true)];
+        Vector3 pos = transform.position + leftVector * leftOffset;
 
-        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, maxDistance, mask))
+
+        if (Physics.Raycast(pos, Vector3.down, out RaycastHit hit, maxDistance, mask))
         {
             shadowProjectorObj.transform.position =
-                new Vector3(transform.position.x, transform.position.y - hit.distance, transform.position.z);
+                new Vector3(pos.x, transform.position.y - hit.distance + 2, pos.z);
         }
         else
         {
