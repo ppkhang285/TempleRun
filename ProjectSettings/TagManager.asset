@@ -10,6 +10,9 @@ TagManager:
   - DeathTrigger
   - StumpleTrigger
   - SizeMark
+  - Coin
+  - Item
+  - InstantDeathTrigger
   layers:
   - Default
   - TransparentFX
@@ -17,9 +20,9 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
-  - 
+  - GroundMask
+  - WallMask
+  - Player
   - 
   - 
   - 

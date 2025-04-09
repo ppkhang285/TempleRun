@@ -20,7 +20,7 @@ MonoBehaviour:
   - segmentType: 1
     weight: 10
   - segmentType: 2
-    weight: 100
+    weight: 20
   - segmentType: 3
     weight: 10
   - segmentType: 4

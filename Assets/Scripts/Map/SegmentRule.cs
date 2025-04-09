@@ -39,7 +39,7 @@ public class SegmentRule
         filterList = Rule_1(filterList);
         filterList = Rule_2(filterList);
         filterList = Rule_3(filterList);
-
+        filterList = Rule_4(filterList);
         //
         return filterList;
 
@@ -47,13 +47,13 @@ public class SegmentRule
 
 
     /// <summary>
-    /// Rule 1: At least 5 straight segment in a row after Start
+    /// Rule 1: At least 4 straight segment in a row after Start
     /// </summary>
     ///
     /// 
     public List<SegmentType> Rule_1(List<SegmentType> inputList)
     {
-        if (envList.Count <=5)
+        if (envList.Count <=4)
         {
             return new List<SegmentType> { SegmentType.Straight};
         }
@@ -113,13 +113,22 @@ public class SegmentRule
     }
 
     /// <summary>
-    /// At least 7 segment between 2 same turn
+    /// After a turn, it's straight
     /// </summary>
     public List<SegmentType> Rule_4(List<SegmentType> inputList)
     {
-
-        return null;
+        
+        if (envList[envList.Count-1] == SegmentType.Turn_Both ||
+            envList[envList.Count - 1] == SegmentType.Turn_Left ||
+            envList[envList.Count - 1] == SegmentType.Turn_Right
+            )
+        {
+            return new List<SegmentType>() { SegmentType.Straight };
+        }
+        return inputList;
     }
+
+    
 
 
 

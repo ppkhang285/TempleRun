@@ -7,29 +7,41 @@ namespace Utils
 {
     public static class Paths
     {
-        public static readonly string INPUT_BINDING_SETTING = "InputSystem/InputBindingSetting";
-        public static readonly string DIFFICULTY_DATA = "GameSetting/DifficultData";
-        public static readonly string SPAWN_CONFIG_DATA = "GameSetting/SpawnConfig";
+        public const string INPUT_BINDING_SETTING = "InputSystem/InputBindingSetting";
+        public const string DIFFICULTY_DATA = "GameSetting/DifficultData";
+        public const string SPAWN_CONFIG_DATA = "GameSetting/SpawnConfig";
+        public const string POWERUP_DATA = "PowerUp/PowerUpConfig";
     }
 
 
     public static class Constants
     {
 
-        public static readonly Dictionary<Enums.MoveDirection, Vector3> DIRECTION_VECTOR = new Dictionary<Enums.MoveDirection, Vector3>
+        public const float CHARACTER_MASS = 2.0f;
+        public const float CHARACTER_VERTICAL_VELOCITY = 20.0f;
+        public const float CHARACTER_JUMP_FORCE = 50.0f;
+        public const float GRAVITY = 70.0f;
+        public const float DESTROY_DISTANCE = 500.0f;
+        public const float SCORE_PER_COIN = 10.0f;
+        public const float SCORE_PER_ITEM = 50.0f;
+
+
+        public const int MAX_POWERUP_LEVEL = 5;
+
+        public static readonly Dictionary<Enums.Direction, Vector3> DIRECTION_VECTOR = new Dictionary<Enums.Direction, Vector3>
         {
-            { Enums.MoveDirection.FORWARD, Vector3.right },
-            { Enums.MoveDirection.BACKWARD, Vector3.left },
-            { Enums.MoveDirection.LEFT, Vector3.forward },
-            { Enums.MoveDirection.RIGHT, Vector3.back }
+            { Enums.Direction.FORWARD, Vector3.right },
+            { Enums.Direction.BACKWARD, Vector3.left },
+            { Enums.Direction.LEFT, Vector3.forward },
+            { Enums.Direction.RIGHT, Vector3.back }
         };
 
-        public static readonly Dictionary<Enums.MoveDirection, Quaternion> ROTATION_VECTOR = new Dictionary<Enums.MoveDirection, Quaternion>
+        public static readonly Dictionary<Enums.Direction, Quaternion> ROTATION_VECTOR = new Dictionary<Enums.Direction, Quaternion>
         {
-            { Enums.MoveDirection.FORWARD, Quaternion.Euler(0, 0, 0) },
-            { Enums.MoveDirection.BACKWARD, Quaternion.Euler(0, 180, 0) },
-            { Enums.MoveDirection.LEFT, Quaternion.Euler(0, -90, 0) },
-            { Enums.MoveDirection.RIGHT, Quaternion.Euler(0, 90, 0) }
+            { Enums.Direction.FORWARD, Quaternion.Euler(0, 0, 0) },
+            { Enums.Direction.BACKWARD, Quaternion.Euler(0, 180, 0) },
+            { Enums.Direction.LEFT, Quaternion.Euler(0, -90, 0) },
+            { Enums.Direction.RIGHT, Quaternion.Euler(0, 90, 0) }
         };
 
     }
@@ -75,15 +87,49 @@ namespace Utils
             NarrowRight,
 
         }
-        public enum MoveDirection
+        public enum Direction
         {
+            NULL,
             FORWARD,
             BACKWARD,
             LEFT,
             RIGHT
 
         }
+        public enum PowerUpType
+        {
+            None,
+            CoinMagnet,
+            CoinValues,
+            MegaCoin,
+            Invisibility
+        }
 
     }
+    public static class UtilMethods
+    {
+        public static Enums.Direction TurnDirection(Enums.Direction currDirect, bool isTurnLeft)
+        {
+            switch (currDirect)
+            {
+                case Enums.Direction.FORWARD:
+                    currDirect = isTurnLeft ? Enums.Direction.LEFT : Enums.Direction.RIGHT;
+                    break;
+
+                case Enums.Direction.BACKWARD:
+                    currDirect = isTurnLeft ? Enums.Direction.RIGHT : Enums.Direction.LEFT;
+                    break;
+                case Enums.Direction.LEFT:
+                    currDirect = isTurnLeft ? Enums.Direction.BACKWARD : Enums.Direction.FORWARD;
+                    break;
+                case Enums.Direction.RIGHT:
+                    currDirect = isTurnLeft ? Enums.Direction.FORWARD : Enums.Direction.BACKWARD;
+                    break;
+            }
+
+            return currDirect;
+        }
+    }
+   
 
 }

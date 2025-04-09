@@ -15,6 +15,9 @@ MonoBehaviour:
   biome: 2
   height: 3
   segmentTypeList:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: c8b03f88941f47a4aba0e0d550575b94, type: 2}
+  - {fileID: 11400000, guid: c4a64b426a5a1d14bb5770a3c69f0d2d, type: 2}
+  - {fileID: 11400000, guid: 4f671d95d3e764043bb5204146076e45, type: 2}
+  - {fileID: 11400000, guid: c4c312ca46bceb34eb3f32164503d0b8, type: 2}
+  - {fileID: 11400000, guid: 22f5bc4d73f3d2640b0643d0efe6b1a1, type: 2}
+  - {fileID: 11400000, guid: 58c9781d23bb35843bfe8c052e6e5203, type: 2}

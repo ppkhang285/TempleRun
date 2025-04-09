@@ -10,7 +10,7 @@ public class InputManager
     public static InputManager Instance => _instance ?? (_instance = new InputManager());
 
 
-    private InputBindingSetting inputBindingSetting;
+    //private InputBindingSetting inputBindingSetting;
     private Dictionary<InputAction, InputBinding> bindingMap;
 
     public InputManager()
@@ -38,23 +38,34 @@ public class InputManager
         }
 
     }
-    public bool GetInput(InputAction action)
+    public bool GetInput(InputAction action, bool isKeyDown = false)
     {
         if (!bindingMap.ContainsKey(action))
             return false;
 
         var binding = bindingMap[action];
 
-
+        
         // Keyboard
         if (!binding.isMouse)
         {
-            bool keyPressed = binding.key != KeyCode.None && Input.GetKeyDown(binding.key);
+            bool keyPressed = false;
+            if (!isKeyDown)
+            {
+                keyPressed = binding.key != KeyCode.None && Input.GetKey(binding.key);
+            }
+            else
+            {
+                keyPressed = binding.key != KeyCode.None && Input.GetKeyDown(binding.key);
+                
+            }
+            
             return keyPressed;
         }
         else
         {
-            return HandleMoveWithMouse(action);
+            return false;
+            //return HandleMoveWithMouse(action);
         }
         
     }
