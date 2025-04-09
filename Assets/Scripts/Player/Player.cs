@@ -17,7 +17,7 @@ public class Player : MonoBehaviour
     // Managers
 
     public CharacterPhysic characterPhysic { get; private set; }
-
+    
 
     // Attributes
 
