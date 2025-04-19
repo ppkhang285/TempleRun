@@ -2,8 +2,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Utils;
-using static Utils.Enums;
+using GameUtils;
+using XLua;
+using static GameUtils.Enums;
+
+
 
 public class Player : MonoBehaviour
 {
@@ -17,7 +20,8 @@ public class Player : MonoBehaviour
     // Managers
 
     public CharacterPhysic characterPhysic { get; private set; }
-    
+    private LuaTable script;
+
 
     // Attributes
 
@@ -39,15 +43,15 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
-       
+
         Initialize();
         animatorController.Play("Run");
-     
+
     }
 
     public void MyUpdate()
     {
-        if (canControl) 
+        if (canControl)
         {
             HandleMoving();
             HandleJump();
@@ -65,16 +69,32 @@ public class Player : MonoBehaviour
 
         HandleShadow();
         characterPhysic.Update();
-        
+
+    }
+
+    public void Say()
+    {
+        Debug.Log("Hello Lua!");
     }
 
     private void Initialize()
     {
         characterPhysic = new CharacterPhysic(transform, this);
 
+        //InitLua();
+
         Reset();
-        
+
     }
+
+    private void InitLua()
+    {
+        script = LuaManager.Instance.LoadScript("player_logic");
+        script.Set("selfUC", this); // UC: Unity Class
+
+        script.Get<LuaFunction>("Say")?.Call();
+    }
+
 
     private void HandleShadow()
     {
@@ -328,19 +348,21 @@ public class Player : MonoBehaviour
 
         runningCollider.gameObject.SetActive(true);
         slidingCollider.gameObject.SetActive(false);
+
         currentCollider = runningCollider;
 
         turnCount = 0;
         slidingTime = 1.0f;
         isSliding = false;
-        animatorController.SetBool("isSliding", false);
+
 
         isStumple = false;
         stumpleTime = 5.0f;
         canControl = true;
+        //script.Get<LuaFunction>("Reset")?.Call();
 
         gameObject.SetActive(true);
-
+        animatorController.SetBool("isSliding", false);
         //GameplayManager.Instance.Stop_Coroutine(stumpleCoroutine);
         //GameplayManager.Instance.Stop_Coroutine(rotateSmoothlyCoroutine);
         //GameplayManager.Instance.Stop_Coroutine(slideSequenceCoroutine);

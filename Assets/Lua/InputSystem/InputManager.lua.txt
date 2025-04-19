@@ -1,0 +1,78 @@
+-- InputManager.lua
+-- import
+local GameUtils = require "GameUtils"
+local InputBinding = require "InputBinding"
+local UE = CS.UnityEngine
+
+-- Meta class
+InputManager = {}
+
+-- Construtor
+function InputManager:new(o)
+    o = o or {}
+    setmetatable(o, self)
+    self.__index = self
+
+    self.bindingMap = {}
+
+    -- Load binding
+    self:LoadBinding()
+
+    --
+    return o
+    
+end
+
+function InputManager:LoadBinding()
+    local settings = UE.Resources.Load(GameUtils.Paths.INPUT_BINDING_SETTING)
+    if settings == nil then
+        UE.Debug.LogError("InputManager:LoadBinding: file is nil")
+        return
+    end
+
+   
+    for i, v in pairs(settings.bindings) do
+        if (rawget(self.bindingMap, v.action) == nil) then
+            --local action_num = GameUtils.UtilMethods.EnumToNum(v.action)
+            local isMouse = v.isMouse
+            local newBinding = InputBinding:new(nil, v.action, v.key, isMouse) 
+            self.bindingMap[v.action] = newBinding
+
+        end
+    end
+
+
+    
+    
+end
+
+function InputManager:GetInput(action, isKeyDown)
+
+    
+    
+    if not self.bindingMap[action] then
+        return false
+    end
+
+    local binding = self.bindingMap[action]
+    
+    --print(CS.UnityEngine.Input.GetKeyDown(binding.key))
+    if not binding.isMouse then
+        local keyPressed = false
+        if not isKeyDown then
+            keyPressed = (binding.key ~= CS.UnityEngine.KeyCode.None) and (CS.UnityEngine.Input.GetKey(binding.key))
+        else
+            keyPressed = (binding.key ~= CS.UnityEngine.KeyCode.None) and (CS.UnityEngine.Input.GetKeyDown(binding.key))
+        end
+        return keyPressed
+    else
+        return false
+    end
+end
+
+
+function  InputManager:say()
+    print(GameplayManager.currentDificulty)
+end
+
+return InputManager

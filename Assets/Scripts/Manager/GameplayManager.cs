@@ -2,8 +2,9 @@ using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Utils;
-using static Utils.Enums;
+using GameUtils;
+using XLua;
+using static GameUtils.Enums;
 
 
 
@@ -18,8 +19,17 @@ public class GameplayManager : MonoBehaviour
     public GameObject coinPrefab;
     public GameObject CameraRoot;
     public GameObject canvas;
-   
-    
+
+    [LuaCallCSharp]
+    public struct InspectorObjects
+    {
+        public GameObject mapRoot;
+        public GameObject playerPrefabs;
+        public GameObject playerRoot;
+        public GameObject coinPrefab;
+        public GameObject CameraRoot;
+        public GameObject canvas;
+    }
 
     // Managers
     public InputManager inputManager { get; private set; }
@@ -29,7 +39,7 @@ public class GameplayManager : MonoBehaviour
     public CameraManager cameraManager { get; private set; }
     public UIManager uiManager { get; private set; }
     // Global attributes
-    public float moving_speed { get; private set; } // Moving speed of character (moving speed of map segments)
+    // public float moving_speed { get; private set; } // Moving speed of character (moving speed of map segments)
     public Direction currentDirecion { get; private set; }
 
     public Vector3 plaerSpawnPoint = Vector3.up * 10;
@@ -39,6 +49,8 @@ public class GameplayManager : MonoBehaviour
     public bool inInvisibleState { get; private set; }
     public GameState gameState { get; private set; }
     //
+    private LuaTable script;
+    private LuaFunction updateFunc;
 
     void Awake()
     {
@@ -54,10 +66,30 @@ public class GameplayManager : MonoBehaviour
     }
     void Start()
     {
+        //
 
         SpawnPlayer();
         Inintialize();
         InitSpawnObject();
+
+        script = LuaManager.Instance.LoadScript("GameplayManager");
+        updateFunc = script.Get<LuaFunction>("Update");
+
+        // Set Inspector Objects
+        InspectorObjects inspectorObjects = new InspectorObjects
+        {
+            mapRoot = mapRoot,
+            playerPrefabs = playerPrefabs,
+            playerRoot = playerRoot,
+            coinPrefab = coinPrefab,
+            CameraRoot = CameraRoot,
+            canvas = canvas
+        };
+
+
+        script.Get<LuaFunction>("Start").Call(script, inspectorObjects);
+        
+        //
     }
 
     private void Inintialize()
@@ -78,11 +110,11 @@ public class GameplayManager : MonoBehaviour
         progressionManager = ProgressionManager.Instance;
         cameraManager = new CameraManager(CameraRoot, playerRoot);
         uiManager =  UIManager.Instance;
+        LuaManager.Instance.Init();
 
 
         // Gameplay Attribute setting
         currentDirecion = Direction.FORWARD;
-        moving_speed = 70.0f;
         currentDifficulty = 1;
 
 
@@ -91,6 +123,8 @@ public class GameplayManager : MonoBehaviour
 
     void Update()
     {
+        updateFunc?.Call(script);
+
         if (InputManager.Instance.GetInput(InputAction.Pause, true))
         {
             PauseGame();
@@ -109,15 +143,6 @@ public class GameplayManager : MonoBehaviour
     }
 
 
-
-    private void ResetToDefault()
-    {
-        currentDirecion = Direction.FORWARD;
-        moving_speed = 70.0f;
-        currentDifficulty = 1;
-        cameraManager.DefaultCamera();
-        inInvisibleState = false;
-    }
 
     public void ToggleInvisibleState()
     {
@@ -150,10 +175,10 @@ public class GameplayManager : MonoBehaviour
 
 
     // Setter
-    public void SetMovingSpeed(float speed)
-    {
-        moving_speed = speed;
-    }
+    //public void SetMovingSpeed(float speed)
+    //{
+    //    moving_speed = speed;
+    //}
 
     public void SetMoveDirection(Direction direction)
     {

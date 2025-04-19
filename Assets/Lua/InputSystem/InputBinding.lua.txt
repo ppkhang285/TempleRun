@@ -1,0 +1,26 @@
+
+local InputBinding = {}
+InputBinding.__index = InputBinding
+
+function  InputBinding:new(o, action, key, isMouse)
+    o = o or {}
+    setmetatable(o, self)
+
+ 
+    -- Parameter check
+    -- assert(xlua.is_type(data, CS.InputBinding), "InputBinding: data is not a InputBinding type")    
+    --
+    o.action = action
+    o.key = key
+    o.isMouse = isMouse
+
+    return o
+
+end
+
+
+function  InputBinding:say()
+    print(self.key, self.action)
+end
+
+return InputBinding

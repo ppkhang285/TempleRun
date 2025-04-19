@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static Utils.Enums;
-using Utils;
+using static GameUtils.Enums;
+using GameUtils;
 using UnityEngine.UIElements;
 
 

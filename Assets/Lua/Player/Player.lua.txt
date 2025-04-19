@@ -1,0 +1,70 @@
+-- Player.lua
+-- IMPORT
+local GameplayManager = require("GameplayManager")
+local Utils = require("GameUtils")
+
+--
+local UE= CS.UnityEngine
+
+-- INIT
+CharacterPhysic = {created = false}
+CharacterPhysic.__index = CharacterPhysic
+
+function CharacterPhysic:Start(transform, inspectorObjects)
+    if self.created then
+        return nil
+    end
+
+    self.created = true
+
+    self.transform = transform
+    self.runningCollider = inspectorObjects.runningCollider
+    self.slidingCollider = inspectorObjects.slidingCollider
+    self.shadowProjectorObj = inspectorObjects
+    
+end
+
+-- METHODS
+function CharacterPhysic:Initialize()
+    self.currentCollider = self.runningCollider
+    self.turnCount = 0
+    self.slidingTime = 1.0
+    self.isStumple = false
+    self.stumpleTime = 5.0
+    self.canControl = true
+
+    self.TURN_COUNT = 2
+
+    -- Coroutine
+
+    self.characterPhysic = nil --------------- 
+    self:Reset()
+
+end
+
+function  CharacterPhysic:Reset()
+    ------------ self.characterPhysic:Reset()
+    self.transform.position = GameplayManager.playerSpawnPoint
+
+    local rotation = Utils.Constants.ROTATION_VECTOR[GameplayManager.currentDirection]
+    self.transform.rotation = rotation
+
+    self.runningCollider.gameObject:SetActive(true)
+    self.slidingCollider.gameObject:SetActive(false)
+
+    self.currentCollider = self.runningCollider
+
+    self.turnCount = 0
+    self.slidingTime = 1.0
+    
+    self.isStumple = false
+    self.stumpleTime = 5.0
+    self.canControl = true
+
+    self.transform.gameObject:SetActive(true)
+
+end
+
+-- EXPORT
+
+return CharacterPhysic

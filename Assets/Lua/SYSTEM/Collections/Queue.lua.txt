@@ -1,0 +1,40 @@
+local Collections = require("Collections")
+
+-- Initialize
+local Queue = {}
+Queue.__index = Queue
+setmetatable(Queue, {__index = Collections})
+
+function Queue:new()
+    local instance = Collections.new(self)
+    setmetatable(instance, Queue)
+    return instance
+end
+
+-- METHODS
+
+-- Enqueue
+function Queue:Enqueue(item)
+    table.insert(self.items, item)
+end
+
+-- Dequeue
+function  Queue:Dequeue()
+    if self:IsEmpty() then
+        error("Queue is empty")
+    end
+
+    local item = self.items[1]
+    table.remove(self.items, 1)
+    return item
+end
+
+-- Peek
+function Queue:Peek()
+    if self:IsEmpty() then
+        error("Queue is empty")
+    end
+    return self.items[1]
+end
+
+return Queue

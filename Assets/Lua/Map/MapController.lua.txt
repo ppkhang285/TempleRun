@@ -1,0 +1,210 @@
+-- MapController.lua
+-- import
+
+local Utils = require("GameUtils")
+local List = require("List")
+local MapSegmentPool = require("MapSegmentPool")
+local MapGenerator = require("MapGenerator")
+local MapSegment = require("MapSegment")
+local CoinController = require("CoinController")
+local ItemController = require("ItemController")
+local ProgressionManager = require("ProgressionManager")
+local GameplayManager = require("GameplayManager")
+
+--
+local UE = CS.UnityEngine
+
+
+-- Init
+local MapController = {}
+MapController.__index = MapController
+
+function MapController:new(mapRoot)
+    local o = {}
+    setmetatable(o, self)
+    o:Init(mapRoot)
+    return o
+end
+
+-- METHODS
+function  MapController:Init(mapRoot)
+
+    self:LoadSpawnConfigData()
+    --
+    self.MAX_SEGMENT = 4
+    self.mapRoot = mapRoot
+    self.biomeDataDict = {}
+    self.mapSegments = List:new()
+    self.mapGenerator = MapGenerator:new(self.spawnConfigData)
+    self.mapSegmentPool = MapSegmentPool:new()
+    self.coinController = CoinController:new(self.mapRoot)
+    self.itemController = ItemController(mapRoot)
+    
+end
+
+
+function MapController:Update()
+    local moving_speed = ProgressionManager.moving_speed
+
+    self:HandleDeleteSegments()
+    self.coinController:HandleDeleteCoins()
+
+    local moveVector = - Utils.Constants.DIRECTION_VECTOR[GameplayManager.currentDificulty]
+
+    for i = 1, self.mapSegments:Size() do
+        self.mapSegments[i]:TurnInvisibleLane(GameplayManager.inInvisibleState);
+        self.mapSegments[i]:MoveSegment(moving_speed, moveVector)
+
+    end
+
+    self.coinController:MoveCoins(moving_speed, moveVector)
+    -- self.itemController:MoveItems(moving_speed, moveVector)
+
+end
+
+function MapController:LoadSpawnConfigData()
+    self.spawnConfigData = UE.Resources.Load(Utils.Paths.SPAWN_CONFIG_DATA)
+    if (self.spawnConfigData == nil) then
+        UE.Debug.Log("Cannot load SpawnConfigData:  SpawnConfigData is null")
+
+    end
+
+    UE.Debug.Log("Load SpawnConfigData successfully");
+    
+end
+
+function  MapController:HandleDeleteSegments()
+    for i = self.mapSegments.Size(), 1, -1 do
+        local distance = UE.Vector3.Distance(self.mapSegments[i].segmentTransform.position, UE.Vector3.zero)
+        if distance > Utils.Constants.DESTROY_DISTANCE then
+            local segmentObject = self.mapSegments[i].segmentTransform.gameObject
+            
+            self.mapSegmentPool:ReturnObject(segmentObject, self.mapSegments[i].biome, self.mapSegments[i].segmentType)
+            self.mapSegments:RemoveAt(i)
+        end
+    end
+end
+
+function MapController:InitEnviroment()
+    local forwardNumber = 4
+
+    -------
+end
+
+
+function MapController:SpawnStartSegment()
+    local height = self.biomeDataDict[Utils.Enums.MapBiome.Temple].height
+
+    local startSegmentPref = self.spawnConfigData.startSegment
+    local startSegmentInstance = UE.GameObject.Instantiate(startSegmentPref, UE.Vector3.zero + UE.Vector3.up * height, UE. Quaternion.identity,  self.mapRoot)
+    local startSegment = MapSegment:new(
+        Utils.Enums.SegmentType.START,
+        Utils.Enums.MapBiome.Temple,
+        startSegmentInstance.transform,
+        GameplayManager.currentDirection
+    )
+
+    self.mapSegments:Add(startSegment)
+end
+
+
+function MapController:SpawnNewSegment()
+    local generatetedType = self.mapGenerator:GeneratenewSegmentType()
+    self:SpawnNewSegment_PR(generatetedType, self.mapGenerator:GetCurrentBiome())
+end
+
+
+function  MapController:SpawnNewSegment_PR(segmentType, biome)
+    local segmentPref = self:GetSegmentPrefab(segmentType, biome)
+    local newSegments = List:new()
+
+    if (segmentPref == nil) then
+        UE.Debug.Log("Cannot spawn segment: segmentPref is null")
+        return nil
+    end
+
+    local height = self.biomeDataDict[biome].height
+
+    for i = self.mapSegments:Size(), 1, -1 do
+        if not self.mapSegments[i]:CanSpawnNeighbor() then
+            goto continue
+        end
+        local lastSegment = self.mapSegments[i]
+        lastSegment:FlagNextSpawn()
+
+        local newSegmentDirection = lastSegment:GetNeighborDirection()
+        local position = lastSegment:GetNeighborPos(segmentPref) + UE.Vector3.up * height
+        local rotaion = Utils.Constants.ROTATION_VECTOR[newSegmentDirection]
+
+        local segmentInstance = self.mapSegmentPool:GetObject(biome, segmentType, segmentPref)
+        segmentInstance.transform:SetParent(self.mapRoot)
+
+        segmentInstance.transform.position = position
+        segmentInstance.transform.rotation = rotaion
+
+        local segment = MapSegment:new(segmentType, biome, segmentInstance.transform, newSegmentDirection)
+        self:AddNewSegment(segment)
+        
+
+
+        ::continue::
+    end
+
+end
+
+function MapController:AddNewSegment(segment)
+    self.mapSegments:Add(segment)
+
+    self:HandleSpawnItem(segment)
+    self:HandleSpawnCoin(segment)
+    
+end
+
+function MapController:HandleSpawnCoin(mapSegment)
+    if ProgressionManager:CanSpawnCoin(mapSegment) == false then
+        return nil
+    end
+
+    self.coinController:SpawnCoin(mapSegment)
+    ProgressionManager:ResetCoinTimer()
+end
+
+
+function MapController:HandleSpawnItem(mapSegment)
+    if ProgressionManager:CanSpawnItem(mapSegment) == false then
+        return nil
+    end
+
+    self.itemController:SpawnItem(mapSegment)
+    ProgressionManager:ResetItemTimer()
+end
+
+
+
+function  MapController:GetSegmentPrefab(segmentType, biome)
+    local biomeData = segmentType.biomeDataDict[biome]
+    local segmentData = biomeData:GetSegmentData(segmentType);
+
+    if segmentData == nil then
+        UE.Debug.Log("Cannot get segment prefab: segmentData is null")
+        return nil
+    end
+
+    local prefab = segmentData:GetRandomPrefab()
+    return prefab
+end
+
+function MapController:Reset()
+    for i = 1, self.mapSegments:Size() do
+        self.mapSegments[i]:OnDestroy()
+    end
+
+    self.mapSegments:Clear()
+    self.mapGenerator:Clear()
+    self.mapSegmentPool:Reset()
+    self.coinController:Reset()
+end
+
+-- Export
+
+return MapController

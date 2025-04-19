@@ -2,10 +2,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static Utils.Enums;
+using XLua;
+using static GameUtils.Enums;
 
 
-
+[LuaCallCSharp]
 [CreateAssetMenu(fileName = "InputBindingSetting", menuName = "InputSystem/InputBindingSetting", order = 1)]
 public class InputBindingSetting : ScriptableObject
 {

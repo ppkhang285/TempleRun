@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static Utils.Enums;
+using static GameUtils.Enums;
 
 [CreateAssetMenu(fileName = "SpawnConfigData", menuName = "MapData/SpawnConfigData")]
 public class SpawnConfigData : ScriptableObject

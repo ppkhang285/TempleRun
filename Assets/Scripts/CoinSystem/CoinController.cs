@@ -3,7 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Utils;
+using GameUtils;
 using static UnityEngine.Rendering.HableCurve;
 
 public class CoinController

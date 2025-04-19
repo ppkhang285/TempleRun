@@ -1,0 +1,187 @@
+-- Import
+local UInputAction = CS.GameUtils.Enums.InputAction
+local CS_Enums = CS.GameUtils.Enums
+local List = require("List")
+-- Code
+
+-- Meta class
+GameUtils = {}
+
+
+-- Paths
+GameUtils.Paths = {
+    INPUT_BINDING_SETTING = "InputSystem/InputBindingSetting";
+    DIFFICULTY_DATA = "GameSetting/DifficultData";
+    SPAWN_CONFIG_DATA = "GameSetting/SpawnConfig";
+    POWERUP_DATA = "PowerUp/PowerUpConfig";
+}
+
+
+-- Enums
+GameUtils.Enums = {
+    -- Game State
+    GameState = {
+        MAIN_MENU = 0,
+        PLAYING = 1,
+        PAUSED = 2,
+        GAME_OVER = 3,
+    },
+
+    InputAction = {
+        -- MOVE_LEFT = 0,
+        -- MOVE_RIGHT = 1,
+        -- JUMP = 2,
+        -- SLIDE = 3,
+        -- PAUSE = 4,
+        -- TURN_LEFT = 5,
+        -- TURN_RIGHT = 6,
+        MOVE_LEFT = UInputAction.MoveLeft,
+        MOVE_RIGHT = UInputAction.MoveRight,
+        JUMP = UInputAction.Jump,
+        SLIDE = UInputAction.Slide,
+        PAUSE = UInputAction.Pause,
+        TURN_LEFT = UInputAction.TurnLeft,
+        TURN_RIGHT = UInputAction.TurnRight,
+    },
+
+    MapBiome = {
+        TEMPLE = 0,
+        CLIFF = 1,
+        PLANK = 2,
+    },
+
+    SegmentType = {
+        NONE = CS_Enums.SegmentType.NONE,
+        START = CS_Enums.SegmentType.START,
+        STRAIGHT = CS_Enums.SegmentType.Straight,
+        TURN_LEFT = CS_Enums.SegmentType.Turn_Left,
+        TURN_RIGHT = CS_Enums.SegmentType.Turn_Right,
+        TURN_BOTH = CS_Enums.SegmentType.Turn_Both,
+        SLIDE = CS_Enums.SegmentType.Slide,
+        JUMP = CS_Enums.SegmentType.Jump,
+        NARROW_LEFT = CS_Enums.SegmentType.NarrowLeft,
+        NARROW_RIGHT = CS_Enums.SegmentType.NarrowRight,
+    },
+
+    Direction ={
+        NULL = 0,
+        FORWARD = 1,
+        BACKWARD = 2,
+        LEFT = 3,
+        RIGHT = 4,
+
+    },
+
+    PowerUpType = {
+        NULL = 0,
+        COIN_MAGNET = 1,
+        COIN_VALUE = 2,
+        MEGA_COIN = 3,
+        INVISIBILITY = 4,
+    },
+   
+}
+
+
+GameUtils.Constants = 
+{
+    CHARACTER_VERTICAL_VELOCITY = 20.0,
+    GRAVITY = 70.0,
+    DESTROY_DISTANCE = 500.0,
+    SCORE_PER_COIN = 10.0,
+    SCORE_PER_ITEM = 50.0,
+
+    MAX_POWERUP_LEVEL = 5,
+
+    DIRECTION_VECTOR = {
+        [GameUtils.Enums.Direction.FORWARD] = CS.UnityEngine.Vector3(1, 0, 0),
+        [GameUtils.Enums.Direction.BACKWARD] = CS.UnityEngine.Vector3(-1, 0, 0),
+        [GameUtils.Enums.Direction.LEFT] = CS.UnityEngine.Vector3(0, 0, 1),
+        [GameUtils.Enums.Direction.RIGHT] = CS.UnityEngine.Vector3(0, 0, -1),
+    },
+
+    ROTATION_VECTOR = {
+        [GameUtils.Enums.Direction.FORWARD] = CS.UnityEngine.Vector3(0, 0, 0),
+        [GameUtils.Enums.Direction.BACKWARD] = CS.UnityEngine.Vector3(0, 180, 0),
+        [GameUtils.Enums.Direction.LEFT] = CS.UnityEngine.Vector3(0, -90, 0),
+        [GameUtils.Enums.Direction.RIGHT] = CS.UnityEngine.Vector3(0, 90, 0),
+    },
+
+
+
+}
+
+
+
+
+
+
+GameUtils.UtilMethods = {}
+
+function  GameUtils.UtilMethods.TurnDirection(currDirect, isTurnLeft)
+    local Direction = GameUtils.Enums.Direction
+
+    if currDirect == Direction.FORWARD then
+        currDirect = isTurnLeft and Direction.LEFT or Direction.RIGHT
+
+    elseif currDirect == Direction.BACKWARD then
+        currDirect = isTurnLeft and Direction.RIGHT or Direction.LEFT
+
+    elseif currDirect == Direction.LEFT then
+        currDirect = isTurnLeft and Direction.BACKWARD or Direction.FORWARD
+
+    elseif currDirect == Direction.RIGHT then
+        currDirect = isTurnLeft and Direction.FORWARD or Direction.BACKWARD
+    end
+
+    return currDirect
+    
+end
+
+
+function GameUtils.UtilMethods.EnumToNum(enum)
+
+    local action_str = tostring(enum) -- "Jump: 2"
+    local action_number = string.match(action_str, "%d+")
+    action_number = tonumber(action_number)
+    return action_number
+end
+
+
+function GameUtils.UtilMethods.TableDeepCopy(t, seen)
+    seen = seen or {}
+    if seen[t] then return seen[t] end
+    local copy = {}
+    seen[t] = copy
+    for k, v in pairs(t) do
+        copy[k] = type(v) == "table" and GameUtils.UtilMethods.TableDeepCopy(v, seen) or v
+    end
+    return copy
+end
+
+
+function  GameUtils.UtilMethods.CSDictToTable(dict)
+    local res = {}
+    local enumerator = dict:GetEnumerator()
+    while enumerator:MoveNext() do
+        local pair = enumerator.Current
+        local key = pair.Key
+        local value = pair.Value
+
+        res[key] = value
+
+    end
+    return res
+
+end
+
+function GameUtils.UtilMethods.CSListToList(lst)
+    local res = List:new()
+    for i = 0, lst.Count -1 do
+        res.Add(lst[i])
+    end
+
+    return res
+end
+
+return GameUtils

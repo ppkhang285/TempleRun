@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Utils;
+using GameUtils;
 
 [CreateAssetMenu(fileName = "MegaCoinData", menuName = "PowerUp/MegaCoinData")]
 public class MegaCoinData : PowerUpData

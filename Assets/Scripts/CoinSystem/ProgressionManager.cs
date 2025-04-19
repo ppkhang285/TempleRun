@@ -2,13 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
-using Utils;
-using static Utils.Enums;
+using GameUtils;
+using static GameUtils.Enums;
 
 public class ProgressionManager
 {
     private static ProgressionManager _instance;
-
+     
     public int currentCoin { get; private set; }
     public float currentDistance { get; private set; }
     public int currentDifficulty { get; private set; }

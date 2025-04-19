@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using XLua;
 
 
-namespace Utils
+
+namespace GameUtils
 {
     public static class Paths
     {
@@ -13,13 +15,11 @@ namespace Utils
         public const string POWERUP_DATA = "PowerUp/PowerUpConfig";
     }
 
-
+    [LuaCallCSharp]
     public static class Constants
     {
 
-        public const float CHARACTER_MASS = 2.0f;
         public const float CHARACTER_VERTICAL_VELOCITY = 20.0f;
-        public const float CHARACTER_JUMP_FORCE = 50.0f;
         public const float GRAVITY = 70.0f;
         public const float DESTROY_DISTANCE = 500.0f;
         public const float SCORE_PER_COIN = 10.0f;
@@ -45,8 +45,10 @@ namespace Utils
         };
 
     }
+    [LuaCallCSharp]
     public static class Enums
     {
+        
         public enum GameState
         {
             MainMenu,
@@ -55,6 +57,7 @@ namespace Utils
             GameOver
         }
 
+  
         public enum InputAction
         {
             MoveLeft,

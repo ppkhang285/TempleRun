@@ -2,8 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
-using Utils;
-using static Utils.Enums;
+using GameUtils;
+using static GameUtils.Enums;
 
 
 /// <summary>

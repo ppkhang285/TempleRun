@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
-using static Utils.Enums;
+using static GameUtils.Enums;
 
 public class SegmentRule
 {
@@ -74,7 +74,7 @@ public class SegmentRule
             SegmentType.NarrowRight
         };
 
-
+    
         if (obstacleList.Contains(envList.Last()))
         {
             inputList.RemoveAll(x => obstacleList.Contains(x));

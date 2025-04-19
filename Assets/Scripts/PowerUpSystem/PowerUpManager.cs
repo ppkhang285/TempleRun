@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using Utils;
+using GameUtils;
 using static PowerUpConfig;
-using static Utils.Enums;
+using static GameUtils.Enums;
 
 
 
@@ -67,8 +67,6 @@ public class PowerUpManager
             this.level = level;
         }
 
-       
-
     }
     public PowerUpData GetRandomItemPowerUp()
     {
@@ -126,7 +124,7 @@ public class PowerUpManager
             Debug.Log("Load PowerUpData Config successfully");
         }
         m_powerUpdataDict = config.ToDict();
-        m_itemList = config.itemTypeList.ToList();
+        //m_itemList = config.itemTypeList.ToList();
 
     }
 

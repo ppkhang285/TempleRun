@@ -1,0 +1,107 @@
+-- MapSegment.lua
+-- import
+local GameUtils = require "GameUtils"
+local UE = CS.UnityEngine
+
+
+-- Meta class
+local MapSegment = {
+    segmentType = nil,
+    biome = nil,
+    segmentTransform = nil,
+    
+    direction = nil,
+
+}
+
+-- Construtor
+function MapSegment:new(segmentType, biome, transform, direcion)
+    local o = {}
+    setmetatable(o, self)
+    o:Initialize(segmentType, biome, transform, direcion)
+
+
+    return o
+end
+
+
+-- Methods
+function MapSegment:Initialize(segmentType, biome, transform, direcion)
+    self.canSpawnNext = true
+    self.segmentType = segmentType
+    self.segmentTransform = transform
+    self.direction = direcion
+    self.biome = biome
+
+end
+
+function  MapSegment:MoveSegment(speed, direcion)
+    self.segmentTransform.position = self.segmentTransform.position + direcion * speed * UE.Time.deltaTime
+    
+end
+
+function MapSegment:OnDestroy()
+    if self.segmentTransform ~= nil then
+        if UE.Application.isPlaying then
+            UE.GameObject:Destroy(self.segmentTransform.gameObject)
+        else
+            UE.GameObject.DestroyImmediate(self.segmentTransform.gameObject);
+        end
+    end
+end
+
+
+function MapSegment:FlagNextSpawn()
+    self.canSpawnNext = false
+end
+
+
+function  MapSegment:GetNeightborPos(newPref, getTurnBothLeft)
+    local newSize = newPref.transform:GetChild(0):Find("sizeObj"):GetComponent(CS.BoxCollider).size
+    local lastSize = self.segmentTransform:GetChild(0):Find("sizeObj"):GetComponent(CS.BoxCollider).size;
+    local lastPosition = self.segmentTransform.position
+    local nexDirection = self:GetNeighborDirection(getTurnBothLeft)
+
+    local directionVector = GameUtils.Constants.DIRECTION_VECTOR[nexDirection]
+    
+    local newPosition  = lastPosition + directionVector * (newSize.x + lastSize.x) / 2;
+    newPosition.y = 0
+
+    return newPosition
+
+end
+
+
+function MapSegment:GetNeighborDirection(getTurnBothLeft)
+    local nexDirection = GameUtils.Direcion.NULL
+    if (self.segmentType == GameUtils.Enums.SegmentType.TURN_LEFT) then
+        nexDirection = GameUtils.UtilMethods.TurnDirection(self.direction, true)
+
+    elseif self.segmentType == GameUtils.Enums.SegmentType.TURN_RIGHT then
+        nexDirection = GameUtils.UtilMethods.TurnDirection(self.direction, false)
+
+    elseif  self.segmentType == GameUtils.Enums.SegmentType.TURN_BOTH then
+        nexDirection = GameUtils.UtilMethods.TurnDirection(self.direction, getTurnBothLeft)
+    else
+        nexDirection = self.direction
+    end
+
+    return nexDirection
+end
+
+
+function MapSegment:TurnInvisibleLane(isTurnOn)
+    local invisibleLane = self.segmentTransform:Find("invisibleLane")
+    if invisibleLane == nil then
+        return nil
+    end
+    invisibleLane.gameObjectl:SetActive(isTurnOn)
+
+end
+
+function  MapSegment:Clear()
+    UE.GameObject.Destroy(self.segmentTransform.gameObject)
+end
+
+-- Export
+return MapSegment

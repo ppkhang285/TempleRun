@@ -1,9 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Utils;
+using GameUtils;
 using static InputBindingSetting;
-using static Utils.Enums;
+using static GameUtils.Enums;
 public class InputManager
 {
     private static InputManager _instance;

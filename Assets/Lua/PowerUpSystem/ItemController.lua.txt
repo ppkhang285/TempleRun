@@ -1,0 +1,37 @@
+-- ItemController.lua
+-- IMPORT
+local List = require("List")
+local Utils = require("GameUtils")
+
+
+--
+local UE = CS.UnityEngine
+
+-- INIT
+local ItemController = {}
+ItemController.__index = ItemController
+
+function ItemController:new(mapRoot)
+    local o = {}
+    setmetatable(o, self)
+    o:Initialize(mapRoot)
+
+    return o
+end
+
+
+--METHODS
+function ItemController:Initialize(mapRoot)
+    self.mapRoot = mapRoot
+    self.itemObjList = List:new()
+    self.itemTypeDict ={}
+end
+
+function ItemController:SpawnItem(mapSegment)
+    local pos = mapSegment.segmentTransform.position + UE.Vector3.up * 15
+    local rotation = Utils.Constants.ROTATION_VECTOR[mapSegment.direction]
+    
+end
+
+--EXPORT
+return ItemController

@@ -1,0 +1,67 @@
+-- CoinPool.lua
+-- IMPORT
+local Queue = require("Queue")
+
+
+--
+local UE = CS.UnityEngine
+
+-- INIT
+local CoinPool = {}
+CoinPool.__index = CoinPool
+
+function CoinPool:new(coinPrefab)
+
+    if coinPrefab == nil or type(coinPrefab) ~= CS.UnityEngine.GameObject then
+        error("Invalid Coin Prefab")
+    end 
+
+    local instance = {}
+    setmetatable(instance, self)
+    instance:Initialize()
+
+    return instance
+end
+
+-- METHODS
+function CoinPool:Initialize(coinPrefab)
+    self.coinPrefab = coinPrefab
+    self.poolRoot = UE.GameObject("CoinPoolRoot")
+    self.poolRoot.transform.position = UE.Vector3(100, -1000, 0)
+    self.coinList = Queue:new()
+end
+
+function CoinPool:Reset()
+    while self.coinList:Size() > 0 do
+        local obj = self.coinList:Dequeue()
+        UE.GameObject:Destroy(obj)
+    end
+end
+
+function CoinPool:GetObject()
+    if self.coinList.Size() <=0 then
+        local coinObj = UE.GameObject.Instantiate(self.coinPrefab)
+        return coinObj
+    else
+        local coinObj = self.coinList:Dequeue()
+
+        coinObj:SetActive(true)
+        coinObj.transform:SetParent(nil)
+    
+        return coinObj
+    end
+    
+
+end
+
+function CoinPool:ReturnObject(obj)
+    obj:SetActive(false)
+    obj.transform:SetParent(self.poolRoot.transform)
+    obj.transform.localPosition = UE.Vector3.zero
+
+    self.coinList:Enqueue(obj)
+    
+end
+
+-- EXPORT
+return CoinPool

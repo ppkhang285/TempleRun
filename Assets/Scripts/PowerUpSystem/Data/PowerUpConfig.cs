@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
-using static Utils.Enums;
+using static GameUtils.Enums;
 
 
 [CreateAssetMenu(fileName = "PowerUpConfig", menuName = "PowerUp/PowerUpConfig")]

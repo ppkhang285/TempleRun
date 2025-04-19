@@ -1,0 +1,83 @@
+-- MapGenerator.lua
+-- import  
+local Utils = require("GameUtils")
+local Queue = require("Queue")
+local SegmentRule = require("SegmentRule")
+
+--
+local UE = CS.UnityEngine
+
+
+-- Init
+local MapGenerator = {}
+MapGenerator.__index = MapGenerator
+
+function MapGenerator:new(spawnConfigData)
+    local o = {}
+    setmetatable(o, self)
+    o:Initialize(spawnConfigData)
+
+    return o
+end
+
+
+-- METHODS
+function  MapGenerator:Initialize(spawnConfigData)
+    self.spawnConfigData = spawnConfigData
+    self:LoadDifficultData()
+    self:HandleBiomeDict()
+    --
+
+    self.currentSegmentQ = Queue:new()
+    self.currentBiome = self.spawnConfigData.startBiome
+    self.segmentRule = SegmentRule:new()
+    
+
+    --AddSegment()
+
+end
+
+
+function MapGenerator:LoadDifficultData()
+    self.difficultData = UE.Resources.Load(Utils.Paths.DIFFICULTY_DATA)
+    if self.difficultData == nil then
+        UE.Debug.Log("Cannot load DifficultData:  DifficultData is null")
+    end
+
+    UE.Debug.Log("Load DifficultData successfully");
+end
+
+
+function  MapGenerator:HandleBiomeDict()
+    local dict = self.spawnConfigData:GetBiomeDataDict()
+    self.biomeDataDict = Utils.UtilMethods.CSDictToTable(dict)
+
+end
+
+function MapGenerator:GetCurrentBiome()
+    return self.currentBiome
+end
+
+function MapGenerator:AddSegment(segmentType)
+    if self.currentSegmentQ.Size() > self.MAX_SEGMENT then
+        self:DeleteOldSegment()
+    end
+    self.currentSegmentQ:Enqueue(segmentType)
+
+end
+
+
+function MapGenerator:DeleteOldSegment()
+    self.currentSegmentQ:Dequeue()
+end
+
+function MapGenerator:Reset()
+    self.currentSegmentQ:Clear()
+
+    self.currentBiome = self.spawnConfigData.startBiome
+    self:AddSegment(Utils.Enums.segmentType.START)
+end
+
+-- Export
+
+return MapGenerator

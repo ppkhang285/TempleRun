@@ -1,0 +1,126 @@
+-- CharacterPhysic.lua
+-- IMPORT
+local GameplayManager = require("GameplayManager")
+local Utils = require("GameUtils")
+
+--
+local UE= CS.UnityEngine
+
+-- INIT
+local  CharacterPhysic = {}
+CharacterPhysic.__index = CharacterPhysic
+
+function  CharacterPhysic:news(transform, player)
+    local o = {}
+    setmetatable(o, self)
+    o:Initialize(transform, player)
+
+    return o
+end
+
+-- METHODS
+function CharacterPhysic:Initialize(transform, player)
+    self.characterTransform = transform
+    self.player = player
+
+    self.coyoteTime = 0.1
+    self.coyoteTimeCounter = 0
+
+    self.pullDownForce = 80
+    self.jumpForce = 60
+    self.jumpHeight = 25
+
+    self.isJumping = false
+    self.isFalling = false
+end
+
+function CharacterPhysic:Update()
+    if self.coyoteTimeCounter > 0 then
+        self.coyoteTimeCounter = UE.Time.deltaTime
+
+        if self.isFallingDown == self.isJumping then
+            -- PullingDown
+        elseif not  self.isFallingDown and self.isJumping then
+            -- Jumping Up
+        end
+        
+    end
+end
+
+
+function CharacterPhysic:JumpingUp()
+    self.characterTransform.position = self.characterTransform.position + UE.Vector3.up * self.jumpForce * UE.Time.deltaTime
+
+end
+
+function CharacterPhysic:PullingDown()
+    ------------Collided with ground
+end
+
+function CharacterPhysic:CollideWithGround()
+    local mask = UE.LayerMask:GetMask("GroundMask")
+    return UE.Physics:Boxcast(self.characterTransform.position, UE.Vector3.one * 4, UE.Vector3.down, UE.Quaternion.identity, 1.1, mask)
+
+end
+
+function  CharacterPhysic:CollideLeft()
+    local mask = UE.LayerMask:GetMask("WallMask")
+    local turnDirect = Utils.UtilMethod:TurnDirection(GameplayManager.currentDirecion, true)
+    local leftVector = Utils.Constants.DIRECTION_VECTOR[turnDirect]
+    local rayDistance = 2.1 + self.player.currentCollider.size.z / 2
+
+    return UE.Physics:Raycast(self.characterTransform.position, leftVector, rayDistance, mask)
+
+
+end
+
+function  CharacterPhysic:CollideRight()
+    local mask = UE.LayerMask:GetMask("WallMask")
+    local turnDirect = Utils.UtilMethod:TurnDirection(GameplayManager.currentDirecion, false)
+    local rightVector = Utils.Constants.DIRECTION_VECTOR[turnDirect]
+    local rayDistance = 2.1 + self.player.currentCollider.size.z / 2
+
+    return UE.Physics:Raycast(self.characterTransform.position, rightVector, rayDistance, mask)
+
+
+end
+
+function CharacterPhysic:CanTurnLeft()
+    local mask = UE.LayerMask:GetMask("WallMask")
+    local turnDirect = Utils.UtilMethod:TurnDirection(GameplayManager.currentDirecion, true)
+    local leftVector = Utils.Constants.DIRECTION_VECTOR[turnDirect]
+    local rayPos = self.characterTransform.position
+
+    return not UE.Physics:BoxCast(
+        self.characterTransform.position,
+        self.player.currentCollider.size + UE.Vector3.one,
+        leftVector,
+        UE.Quaternion.identity, 
+        50.0,
+        mask
+    )
+end
+
+function CharacterPhysic:CanTurnRight()
+    local mask = UE.LayerMask:GetMask("WallMask")
+    local turnDirect = Utils.UtilMethod:TurnDirection(GameplayManager.currentDirecion, false)
+    local rightVector = Utils.Constants.DIRECTION_VECTOR[turnDirect]
+    local rayPos = self.characterTransform.position
+
+    return not UE.Physics:BoxCast(
+        self.characterTransform.position,
+        self.player.currentCollider.size + UE.Vector3.one,
+        rightVector,
+        UE.Quaternion.identity, 
+        50.0,
+        mask
+    )
+end
+
+function CharacterPhysic:Reset()
+    self.isJumping = false
+    self.isFalling = false
+    self.coyoteTimeCounter = 0
+end
+
+-- EXPORT

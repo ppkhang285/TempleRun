@@ -1,0 +1,136 @@
+-- SegmentRule.lua
+-- import
+local UE = CS.UnityEngine
+local GameUtils = require "GameUtils"
+local List = require("List")
+
+
+-- Constructor
+local SegmentRule = {}
+SegmentRule.__index = SegmentRule
+
+function SegmentRule:new()
+    local o =  {}
+    setmetatable(o, self)
+
+    o:Initialize()
+    return o
+end
+
+
+
+-- Methods
+
+function SegmentRule:Initialize()
+    self.envList = nil
+end
+
+
+function  SegmentRule:Reset()
+    if self.envList ~= nil then
+        self.envList:Clear()
+    end
+end
+
+function SegmentRule: Filter(inputList, envList)
+    self:Reset()
+
+    self.envList = envList
+
+    local filterList = inputList:Copy()
+
+
+    
+    -- filter
+    if (self.envList == nil) then
+        error("Env list is nil")
+        return
+    end
+
+
+    --
+
+    return filterList
+
+end
+
+
+function SegmentRule:Rule_1(inputList)
+    
+    if (self.envList.Size() <=4) then
+        local res = List:new({GameUtils.Enums.SegmentType.STRAIGHT})
+        return res
+    end
+    return inputList
+end
+
+function SegmentRule:Rule_2(inputList)
+
+    local obstacleList =  List:new({ 
+        GameUtils.Enums.SegmentType.SLIDE,
+        GameUtils.Enums.SegmentType.JUMP,
+        GameUtils.Enums.SegmentType.NARROW_LEFT,
+        GameUtils.Enums.SegmentType.NARROW_RIGHT
+    })
+
+    if obstacleList.Contain(self.envList:Last()) then
+        for i = inputList:Size(), 1, -1  do
+            if obstacleList.Contain(inputList[i]) then
+                inputList:RemoveAt(i)
+            end
+        end
+    end
+
+    return inputList
+    
+end
+
+function SegmentRule:Rule_3(inputList)
+    if self.envList.Size <= 5 then
+        return inputList
+    end
+
+    local turnType = List:new({
+        GameUtils.Enums.SegmentType.TURN_LEFT,
+        GameUtils.Enums.SegmentType.TURN_RIGHT,
+        GameUtils.Enums.SegmentType.TURN_BOTH
+    })
+    local turned = false
+    for i = self.envList:Count(), self.envList.Count -5, -1 do
+        if turnType.Contain(self.envList[i]) then
+            turned = true
+        end
+    end
+
+    if turned then
+        for i = inputList.Size(), 1, -1 do
+            if turnType.Contain(inputList[i]) then
+                inputList.RemoveAt(i)
+            end
+        end
+    end
+
+    return inputList
+
+end
+
+function SegmentRule:Rule_4(inputList)
+    local turnType = List:new({
+        GameUtils.Enums.SegmentType.TURN_LEFT,
+        GameUtils.Enums.SegmentType.TURN_RIGHT,
+        GameUtils.Enums.SegmentType.TURN_BOTH
+    })
+
+    if turnType.Contain(self.envList.Last()) then
+        local res = List:new({GameUtils.Enums.SegmentType.Straight})
+        return res
+    end
+
+    return inputList
+end
+
+
+
+
+-- Export
+return SegmentRule

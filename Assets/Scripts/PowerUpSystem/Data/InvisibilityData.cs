@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Utils;
+using GameUtils;
 
 [CreateAssetMenu(fileName= "InvisibilityData", menuName = "PowerUp/InvisibilityData")]
 public class InvisibilityData : PowerUpData

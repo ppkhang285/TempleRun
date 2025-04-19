@@ -1,0 +1,23 @@
+-- PowerUp.lua
+-- IMPORT
+
+-- INIT
+local PowerUp = {}
+PowerUp.__index = PowerUp
+
+function PowerUp:new(type, data, level)
+    local o = {}
+    setmetatable(o, self)
+    o:Initialize(type, data, level)
+    return o
+end
+
+-- METHODS
+function PowerUp:Initialize(type, data, level)
+    self.type = type
+    self.data = data
+    self.level = level
+end
+
+
+-- EXPORT

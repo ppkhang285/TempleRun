@@ -1,0 +1,24 @@
+﻿
+
+<linker>
+
+	<assembly fullname="UnityEngine.PhysicsModule">
+	    <type fullname="UnityEngine.BoxCollider" preserve="all"/>
+		
+	</assembly>
+
+	<assembly fullname="Assembly-CSharp">
+	    <type fullname="InputBindingSetting+InputBinding" preserve="all"/>
+		<type fullname="InputBindingSetting" preserve="all"/>
+		<type fullname="GameUtils.Constants" preserve="all"/>
+		<type fullname="GameUtils.Enums" preserve="all"/>
+		<type fullname="GameplayManager+InspectorObjects" preserve="all"/>
+		
+	</assembly>
+
+	<assembly fullname="mscorlib">
+	    <type fullname="System.Collections.Queue" preserve="all"/>
+		
+	</assembly>
+
+</linker>

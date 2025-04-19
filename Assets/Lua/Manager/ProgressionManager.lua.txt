@@ -1,0 +1,149 @@
+-- ProgressionManager.lua
+-- import
+local UE = CS.UnityEngine
+local GameUtils = require "GameUtils"
+
+local Enums = GameUtils.Enums
+
+
+-- Meta class
+ProgressionManager = {
+    _created = false,
+    currentCoin = 0,
+    currentDistance = 0,
+    currentDificulty = 1,
+ 
+    moving_speed = 0,
+ 
+    spawnCoinTimer = 0,
+    spawnItemTimer = 0,
+ 
+    maxCoinSpawnInterval = 0,
+    minCoinSpawnInterval = 0,
+
+    maxItemSpawnInterval = 0,
+    minItemSpawnInterval = 0,
+
+    coinSpawned = false,
+    itemSpawned = false,
+
+    BASE_SPEED = 70.0
+
+}
+ProgressionManager.__index = ProgressionManager
+
+--
+function ProgressionManager:Instance()
+
+    if self._created then
+        return nil
+    end
+    self._created = true
+
+    self.maxCoinSpawnInterval = 10.0
+    self.minCoinSpawnInterval = 5
+
+    self.maxItemSpawnInterval = 17.0
+    self.minItemSpawnInterval = 10.0
+
+    self.currentDistance = 0
+    self.moving_speed = self.BASE_SPEED
+
+    self:ResetCoinTimer()
+    self:ResetItemTimer()
+
+end
+
+
+function  ProgressionManager:Update()
+
+    self.currentDistance = self.currentDistance + UE.Time.deltaTime *self.moving_speed * 0.2
+
+
+end
+
+function ProgressionManager:StartGame()
+    
+end
+
+function  ProgressionManager:Reset()
+    self.spawnCoinTimer = 10
+    self.spawnItemTimer = 20
+
+    self.currentDistance =0
+    self.currentCoin = 0
+    self.moving_speed = self.BASE_SPEED
+
+    self:ResetCoinTimer()
+    self:ResetItemTimer()
+    self:StartGame()
+end
+
+
+function ProgressionManager:ResetCoinTimer()
+    
+end
+
+function ProgressionManager:ResetItemTimer()
+    
+end
+
+function  ProgressionManager:CanSpawnCoin(segment)
+    local validSpawn = {
+        Enums.SegmentType.STRAIGHT,
+        Enums.SegmentType.SLIDE,
+        Enums.SegmentType.JUMP,
+    }
+    if not validSpawn[segment.segmentType] then
+        return false
+    end
+
+    if self.itemSpawned then return false end
+    return (self.spawnCoinTimer <= 0)
+    
+end
+
+function  ProgressionManager:CanItemCoin(segment)
+    local validSpawn = {
+        Enums.SegmentType.STRAIGHT,
+
+    }
+    if not validSpawn[segment.segmentType] then
+        return false
+    end
+
+    if self.coinSpawned then return false end
+    return (self.spawnItemTimer <= 0)
+    
+end
+
+
+function ProgressionManager:CollectCoin(coinObj)
+    --
+    self:GainCoin(1)
+end
+
+
+function ProgressionManager:GainCoin(coin)
+    self.currentCoin = self.currentCoin + coin
+    --
+end
+
+function  ProgressionManager:GetScore()
+    local multiplier = 1 + (self.currentCoin / 100)
+    local itemScore = 0
+    local score = 0
+    return score
+end
+
+
+
+
+
+
+
+
+
+
+--
+return ProgressionManager

@@ -1,0 +1,35 @@
+ManifestFileVersion: 0
+CRC: 144550651
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 6796418c157e3553b36efd75e0a1e2a4
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 5ad585dd02dfb5016c0dad519eab8f49
+  IncrementalBuildHash:
+    serializedVersion: 2
+    Hash: 6796418c157e3553b36efd75e0a1e2a4
+HashAppended: 0
+ClassTypes:
+- Class: 49
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/Lua/Manager/ProgressionManager.lua.txt
+- Assets/Lua/InputSystem/InputBinding.lua.txt
+- Assets/Lua/Map/SegmentRule.lua.txt
+- Assets/Lua/SYSTEM/Collections/Queue.lua.txt
+- Assets/Lua/SYSTEM/Collections/Collections.lua.txt
+- Assets/Lua/Map/MapController.lua.txt
+- Assets/Lua/Player/player_logic.lua.txt
+- Assets/Lua/Utils/GameUtils.lua.txt
+- Assets/Lua/Manager/GameplayManager.lua.txt
+- Assets/Lua/SYSTEM/Collections/List.lua.txt
+- Assets/Lua/MapSegment/MapSegment.lua.txt
+- Assets/Lua/Map/MapGenerator.lua.txt
+- Assets/Lua/CoinSystem/CoinPool.lua.txt
+- Assets/Lua/Map/MapSegmentPool.lua.txt
+- Assets/Lua/InputSystem/InputManager.lua.txt
+- Assets/Lua/CoinSystem/CoinController.lua.txt
+Dependencies: []

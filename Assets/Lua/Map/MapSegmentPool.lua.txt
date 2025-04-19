@@ -1,0 +1,95 @@
+-- MapSegmentPool.lua
+-- import
+local UE = CS.UnityEngine
+local Queue = require("Queue")
+-- Meta class
+local MapSegmentPool = {}
+MapSegmentPool.__index = MapSegmentPool
+
+-- Construtor
+function  MapSegmentPool:new()
+    local o = {}
+    setmetatable(o, self)
+    o:Initialize()
+    return o
+    
+end
+
+
+function  MapSegmentPool:Initialize()
+    self.rootPosition = UE.Vector3(0, -1000, 0)
+    self.poolRoot = UE.GameObject("PoolRoot");
+    self.poolRoot.transform.position = self.rootPosition
+
+    self.objectPool = {}
+
+    
+
+end
+
+function  MapSegmentPool:GetObject(biome, type, prefab) 
+    local key = tostring(biome) .. "_" .. tostring(type)
+
+    if  not self.objectPool[key] or self.objectPool[key]:Size() <= 0 then
+        if prefab == nil then
+            UE.Debug.Log("No prefab to Create Object in Pooling")
+        end
+
+        local segmentInstance = UE.GameObject:Instantiate(prefab)
+
+        return segmentInstance
+
+    end
+    local segmentObject = self.objectPool[key]:Dequeue()
+
+    self:ResetObjectState(segmentObject)
+
+    return segmentObject
+    
+    
+end
+
+function MapSegmentPool:ReturnObject(returnObject, biome, type)
+    local key = tostring(biome) .. "_" .. tostring(type)
+
+    returnObject.transform:SetParent(self.poolRoot.transform)
+    returnObject.transform.localPosition = UE.Vector3.zero
+
+    if not self.objectPool[key] then
+        self.objectPool[key] = Queue:new()
+    end
+
+    self.objectPool[key]:Enqueue(returnObject)
+
+end
+
+
+
+function  MapSegmentPool:ResetObjectState(segmentObject)
+    segmentObject.transform:SetParent(nil)
+
+    segmentObject.transform:GetChild(0):Find("spawnTrigger").gameObject:SetActive(true)
+end
+
+
+
+function MapSegmentPool:Reset()
+    for key, value in pairs(self.objectPool) do
+        local q = value
+        while q.Size() > 0 do
+            local obj = q:Dequeue()
+            if (UE.Application.isPlaying) then
+                UE.GameObject.Destroy(obj);
+            else
+                UE.GameObject.DestroyImmediate(obj);
+            end
+        end
+    end
+
+    self.objectPool = {}
+end
+
+
+
+-- Export
+return MapSegmentPool

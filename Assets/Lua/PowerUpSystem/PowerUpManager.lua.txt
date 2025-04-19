@@ -1,0 +1,101 @@
+-- PowerUpManager.lua
+-- IMPORT
+local List = require("List")
+local Utils = require("GameUtils")
+local PowerUp = require("PowerUp")
+
+--
+local UE = CS.UnityEngine
+
+-- INIT
+local PowerUpManager = {}
+PowerUpManager.__index = PowerUpManager
+
+function PowerUpManager:new()
+    local o = {}
+    setmetatable(o, self)
+    o:Initialize()
+
+    return o
+end
+
+
+
+--METHODS
+function PowerUpManager:Initialize()
+    self:LoadPowerUpConfig()
+    self:InitPowerUpDict()
+
+    self.itemCount = 0
+
+end
+
+function PowerUpManager:LoadPowerUpConfig()
+    local config = UE.Resources:Load(Utils.Paths.POWERUP_DATA)
+    if config == nil then
+        UE.Debug.LogError("Cannot load PowerUpData Config")
+    else
+        UE.Debug.LogError("Load PowerUpData Config successfully")
+    end
+
+    self.m_powerUpDataDict = config:ToDict()
+    self.m_powerUpDataDict = Utils.UtilMethods.CSDictToTable(self.m_powerUpDataDict)
+
+end
+
+
+function PowerUpManager:InitPowerUpDict()
+    self.m_powerUpDict = {}
+    self.m_itemList = List:new()
+
+    local loadDataList = self:LoadDataFromStorage()
+    for type, powerUpData in pairs(self.m_powerUpDataDict) do
+        local level = 1
+        if not loadDataList[type] then
+            level = 1
+        else
+            level = loadDataList[type]
+        end
+
+        local powerUp = PowerUp:new(type, powerUpData, level)
+        self.m_powerUpDict[type] = powerUp
+        if powerUpData.isItem then
+            self.m_itemList:Add(type)
+        end
+    end
+
+end
+
+function  PowerUpManager:LoadDataFromStorage()
+    -- local result = {}
+    -- local fakeData = {type = }
+    return {}
+end
+
+function PowerUpManager:GetRandomItemPowerUp()
+    local totalWeight = self.m_itemList:Size()
+    local index = UE.Random.Range(0, totalWeight)
+    for i = 1, self.m_itemList.Size() do
+        if index == 0 then
+            local type = self.m_itemList[i]
+            return self.m_powerUpDataDict[type]
+        end
+        index = index -1
+    end
+    return self.m_powerUpDataDict[Utils.Enums.PowerUpType.COIN_MAGNET]
+end
+
+
+function PowerUpManager:ActivatePowerUp(type)
+    self.itemCount = self.itemCount + 1
+    local level = self.m_powerUpDataDict[type].level
+    self.m_powerUpDataDict[type].data:Activate(level)
+
+end
+
+function PowerUpManager:Reset()
+    self.itemCount = 0
+end
+--EXPORT
+
+return PowerUpManager

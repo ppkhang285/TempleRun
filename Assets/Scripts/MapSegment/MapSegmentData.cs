@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static Utils.Enums;
+using static GameUtils.Enums;
 
 [CreateAssetMenu(fileName = "MapSegmentData", menuName = "MapData/MapSegmentData")]
 public class MapSegmentData: ScriptableObject

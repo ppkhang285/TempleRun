@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Utils;
-using static Utils.Enums;
+using GameUtils;
+using static GameUtils.Enums;
 public class MapSegment 
 {
     public SegmentType segmentType {  get; private set; }

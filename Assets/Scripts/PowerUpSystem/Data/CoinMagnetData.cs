@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Utils;
+using GameUtils;
 
 
 [CreateAssetMenu(fileName = "CoinMagnetData", menuName = "PowerUp/CoinMagnetData")]

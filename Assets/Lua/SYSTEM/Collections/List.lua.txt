@@ -1,0 +1,103 @@
+local Collections = require("Collections")
+
+-- Initialize
+local List = {}
+List.__index = List
+setmetatable(List, {__index = Collections})
+
+function List:new(o)
+    local instance = Collections:new(o)
+    setmetatable(instance, List)
+    return instance
+end
+--  METHODS
+
+-- Add
+-- Add new item to end of list
+function List:Add(item)
+    table.insert(self.items, item)
+end
+
+-- AddAt
+-- Add new item at position
+function List:AddAt(item, pos)
+    if pos < 1 or pos > self:Size()+1 then
+        error("Index out of bound")
+        return
+    end
+
+    table.insert(self.items, pos, item)
+end
+
+-- Get
+-- Get item at position
+function List:Get(pos)
+    if pos < 1 or pos > self:Size() then
+        error("Index out of bound")
+    end
+
+    return self.items[pos]
+end
+
+
+-- Last
+function List:Last()
+    if #self.items > 0 then
+        return self.items[#self.items]
+    end
+    return nil
+end
+
+
+-- Set
+-- Set item at position
+function List:Set(pos, value)
+    if pos < 1 or pos > self:Size() then
+        error("Index out of bound")
+    end
+
+    self.items[pos] = value
+end
+
+
+-- RemoveAt
+-- Remove Item at pos
+function  List:RemoveAt(pos)
+    if pos < 1 or pos > self:Size() then
+        error("Index out of bound")
+    end
+
+    table.remove(self.items, pos)
+    
+end
+
+function List:Remove(value)
+    for i = self:Size(), 1, -1 do
+        if self.items[i] == value then
+            self.items:RemoveAt(i)
+            return nil
+        end
+    end
+
+    error("Value in exist to Remove from List")
+end
+
+
+function List:__index(key)
+    if type(key) == "number" then
+        return self:Get(key)
+    end
+    return List[key] 
+end
+
+-- Metamethod for assignment (list[i] = value)
+function List:__newindex(key, value)
+    if type(key) == "number" then
+        self:Set(key, value)
+    else
+        rawset(self, key, value)
+    end
+end
+
+
+return List

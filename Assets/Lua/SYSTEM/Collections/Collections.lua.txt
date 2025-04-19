@@ -1,0 +1,72 @@
+local Collections = {}
+Collections.__index = Collections
+
+function Collections:new(o)
+    local instance = {items = o or {}}
+    setmetatable(instance, self)
+    return instance
+end
+
+
+-- IsEmpty
+-- Check if a Collection is Empty
+function Collections:IsEmpty()
+    return #self.items == 0
+end
+
+
+-- Size
+-- Return size of Collection
+function Collections:Size()
+    return #self.items
+end
+
+
+-- Contain
+function Collections:Contain(value)
+    for i,v in ipairs(self.items) do
+        if v == value then
+            return true
+        end
+    end
+
+    return false
+end
+
+    
+
+
+-- Copy
+function Collections:Copy()
+
+    local copy = self:new()
+    local function DeepCopyTable(origin, seen)
+        seen = seen or {}
+        if seen[origin] then
+            return seen[origin]
+        end
+
+        local newTable = {}
+        seen[origin] = newTable
+        
+        for key, value in pairs(origin) do
+            if type(value) == "table" then
+                newTable[key] = DeepCopyTable(value, seen)
+            else
+                newTable[key] = value
+            end
+        end
+        return newTable
+    end
+
+    copy.items = DeepCopyTable(self.items, {})
+    return copy
+
+end
+
+-- Clear
+function  Collections:Clear()
+    self.items = {}
+end
+
+return Collections

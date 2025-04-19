@@ -1,0 +1,98 @@
+-- GameplayManager.lua
+-- import
+local GameUtils = require "GameUtils"
+local InputManager = require "InputManager"
+local List = require("List")
+local Queue = require("Queue")
+local MapController = require("MapController")
+local ProgressionManager = require("ProgressionManager")
+--
+
+local Constants = GameUtils.Constants
+local Enums = GameUtils.Enums
+local Vector3 = CS.UnityEngine.Vector3
+
+
+
+-- Meta class
+GameplayManager = {}
+GameplayManager.__index = GameplayManager
+
+
+function GameplayManager:Start(inspectorObjects)
+    self:InitInspector(inspectorObjects)
+    self:Init()
+
+end
+
+
+
+function  GameplayManager:InitInspector(inspectorObjects)
+    self.mapRoot = inspectorObjects.mapRoot
+    self.playerRoot = inspectorObjects.playerRoot
+    self.playerPrefabs = inspectorObjects.playerPrefabs
+    self.coinPrefab = inspectorObjects.coinPrefab
+    self.CameraRoot = inspectorObjects.CameraRoot
+    self.canvas = inspectorObjects.canvas
+    
+end
+
+function GameplayManager:Init()
+    -- Init stats
+    self.currentDirection = Enums.Direction.FORWARD
+    self.playerSpawnPoint = Vector3.up * 10
+    self.player = nil
+    self.inInvisibleState = false
+    self.currentDificulty = 1
+    self.gameState = Enums.GameState.MAIN_MENU
+
+    
+    -- Setup Managers
+    self.inputManager = InputManager:new(nil)
+    self.mapController = MapController:new(self.mapRoot)
+    self.powerManager = nil
+    ProgressionManager:Instance()
+    self.cameraManager = nil
+    self.uiManager = nil
+
+    --
+    
+end
+
+function GameplayManager:Update()
+
+    if (self.inputManager:GetInput(Enums.InputAction.PAUSE, true)) then
+       self:PauseGame() 
+    end
+
+    if self.gameState ==Enums.GameState.PLAYING then
+        self.mapController:Update()
+        ProgressionManager:Update()
+        ----------
+    end
+
+end
+
+
+function GameplayManager:StartGame()
+    if self.gameState == Enums.GameState.MAIN_MENU or self.gameState == Enums.GameState.GAME_OVER then
+        self.gameState = Enums.GameState.PLAYING
+        -- self.cameraManager:GameplayCamera()
+    end
+end
+
+function GameplayManager:PauseGame()
+    if self.gameState == Enums.GameState.PLAYING then
+        -- Update UI
+        self.gameState = Enums.GameState.PAUSED
+    end
+end
+
+function GameplayManager:ContinueGame()
+    if self.gameState == Enums.GameState.PAUSED then
+        -- StartCoroutine    
+    end 
+end
+
+return GameplayManager
+

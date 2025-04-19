@@ -1,0 +1,182 @@
+-- CoinPool.lua
+-- IMPORT
+local List = require("List")
+local CoinPool = require("CoinPool")
+local Utils = require("GameUtils")
+--
+local UE = CS.UnityEngine
+
+-- INIT
+local CoinController = {}
+CoinController.__index = CoinController
+
+function CoinController:new(mapRoot)
+    local o = {}
+    setmetatable(o, self)
+    o:Initialize()
+
+
+    return o
+
+end
+
+CoinController.State = {
+    Idle = 0,
+    Pulling = 1,
+}
+
+-- METHODS
+function CoinController:Initialize(mapRoot)
+    self.pullingSpeed = 50
+    self.padding = 1
+    self.MIN_COIN = 5
+    self.MAX_COIN = 10
+
+    self:LoadCoinPrefabs()
+    self.mapRoot = mapRoot
+    self.coinPool = CoinPool:new(self.coinPrefab)
+    self.coinList = List:new()
+    self.coinStates = {}
+end
+
+function CoinController:MoveCoins(speed, direction)
+    for i = 1, self.coinList:Count() do
+        local coinObj = self.coinList:Get(i)
+        if self.coinStates[coinObj:GetInstanceID()] == nil then
+            goto continue
+        end
+        
+        if self.coinStates[coinObj:GetInstanceID()] == self.State.Idle then
+            coinObj.transform.position = coinObj.transform.position + direction * speed * UE.Time.deltaTime;
+        
+        else
+            --Pulled by player
+        end
+
+        ::continue::
+    end
+end
+
+function CoinController:FlagPulling(coinObject)
+    if not (self.coinStates[coinObject:GetInstanceID()] == nil) then
+        return nil
+    end
+
+    self.coinStates[coinObject:GetInstanceID()] = self.State.Pulling 
+    
+end
+
+function  CoinController:LoadCoinPrefabs()
+    self.coinPrefab = GameplayManager.coinPrefab
+end
+
+function CoinController: SpawnCoin(mapSegment)
+    if mapSegment == nil then
+        UE.Debug.Log("Map Segment is null when spawning coin")
+        return nil
+    end
+
+    local coinPosList = List:new()
+end
+
+
+function CoinController:DespawnCoin(coinObj)
+    self.coinList:Remove(coinObj)
+    self.coinPool:ReturnObject(coinObj)
+
+    self.coinStates[coinObj.GetInstanceID()] = nil
+end
+
+function CoinController:DespawnCoinAt(index)
+    local coinObj = self.coinList[index]
+    self:DespawnCoin(coinObj)
+end
+
+function CoinController:HandleDeleteCoins()
+    for i = self.coinList:Size(), 1, -1 do
+        local distance  = UE.Vector3:Distance(self.coinList[i].transform.position, UE.Vector3.zero)
+        if distance > Utils.Constants.DESTROY_DISTANCE then
+            self:DespawnCoinAt(i)
+        end
+    end
+end
+
+function CoinController:Pattern_Straight(segment)
+    if segment == nil then
+        UE.Debug.Log("GameObject is null")
+    end
+    local segmentObj = segment.segmentTransform.gameObject
+    local result = List:new()
+
+    local landSize = segmentObj.transform:GetChild(0):Find("groundTrigger"):GetComponent(UE.BoxCollider).size;
+    local coinSize = self.coinPreb:GetComponent(UE.BoxCollider).size
+
+    local maxCoin = math.floor((landSize.x + self.padding) / (coinSize.x + self.padding))
+    maxCoin =  math.min(maxCoin, self.MAX_COIN)
+
+    local lane = {-1, 0, 1}
+    local randomIndex = UE.Random:Range(1, 4)
+    
+    local baseX = - landSize.x / 2 + coinSize.x /2
+    local z = lane[randomIndex] * (landSize.z / 3 - coinSize.z /2)
+
+    result:Add(UE.Vector3(baseX, 0 ,z))
+
+    for i = 2, maxCoin do
+        local currPos = result:Last() + UE.Vector3.right * (coinSize.x + self.padding)
+        result:Add(currPos)
+    end
+
+    return result
+end
+
+
+function CoinController:Pattern_Jump(segment)
+    if segment == nil then
+        UE.Debug.Log("GameObject is null")
+    end
+    local segmentObj = segment.segmentTransform.gameObject
+    local result = List:new()
+
+    local landSize = segmentObj.transform:GetChild(0):Find("groundTrigger"):GetComponent(UE.BoxCollider).size;
+    
+    local colliderPos = UE.Vector3.zero
+    if segmentObj.transform:GetChild(0):Find("deathTrigger") then
+        colliderPos = segmentObj.transform:GetChild(0):Find("deathTrigger"):GetComponent(UE.BoxCollider).center;
+    else
+        colliderPos = segmentObj.transform:GetChild(0):Find("stumpleTrigger"):GetComponent(UE.BoxCollider).center;
+    end
+    
+    local coinSize = self.coinPreb:GetComponent(UE.BoxCollider).size
+
+    local maxCoin = math.floor((landSize.x + self.padding) / (coinSize.x + self.padding))
+    maxCoin =  math.min(maxCoin, self.MAX_COIN)
+
+    local lane = {-1, 0, 1}
+    local randomIndex = UE.Random:Range(1, 4)
+    
+    local baseX = - landSize.x / 2 + coinSize.x /2
+    local z = lane[randomIndex] * (landSize.z / 3 - coinSize.z /2)
+
+    result:Add(UE.Vector3(baseX, 0 ,z))
+
+    for i = 2, maxCoin do
+        local currPos = result:Last() + UE.Vector3.right * (coinSize.x + self.padding)
+        currPos.y = -0.01 * (currPos.x - colliderPos.x) * (currPos.x - colliderPos.x) + 12
+        result:Add(currPos)
+    end
+
+    return result
+end
+
+function  CoinController:Reset()
+    self.coinPool:Reset()
+    for i = self.coinList:Size(), 1, -1 do
+        local obj = self.coinList[i]
+        self.coinList:Remove(obj)
+        UE.GameObject:Destroy(obj)
+    end
+end
+
+-- EXPORT
+return CoinController
