@@ -1,9 +1,9 @@
 -- ProgressionManager.lua
 -- import
 local UE = CS.UnityEngine
-local GameUtils = require "GameUtils"
-
-local Enums = GameUtils.Enums
+local Utils = require "GameUtils"
+local Constants = Utils.Constants
+local Enums = Utils.Enums
 
 
 -- Meta class
@@ -103,7 +103,7 @@ function  ProgressionManager:CanSpawnCoin(segment)
     
 end
 
-function  ProgressionManager:CanItemCoin(segment)
+function  ProgressionManager:CanSpawnItem(segment)
     local validSpawn = {
         Enums.SegmentType.STRAIGHT,
 
@@ -119,30 +119,22 @@ end
 
 
 function ProgressionManager:CollectCoin(coinObj)
-    --
+    GameplayManager.mapController.coinController:DespawnCoin(coinObj)
     self:GainCoin(1)
 end
 
 
 function ProgressionManager:GainCoin(coin)
     self.currentCoin = self.currentCoin + coin
-    --
+    -- UIManager.UPdateHUDPanel
 end
 
 function  ProgressionManager:GetScore()
     local multiplier = 1 + (self.currentCoin / 100)
-    local itemScore = 0
-    local score = 0
+    local itemScore = GameplayManager.powerManager.itemCount * Constants.SCORE_PER_ITEM
+    local score = itemScore + self.currentDistance + self.currentCoin * Constants.SCORE_PER_COIN * multiplier
     return score
 end
-
-
-
-
-
-
-
-
 
 
 --

@@ -12,7 +12,8 @@ CoinPool.__index = CoinPool
 
 function CoinPool:new(coinPrefab)
 
-    if coinPrefab == nil or type(coinPrefab) ~= CS.UnityEngine.GameObject then
+
+    if coinPrefab == nil  then
         error("Invalid Coin Prefab")
     end 
 

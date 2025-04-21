@@ -1,16 +1,16 @@
 -- Player.lua
 -- IMPORT
-local GameplayManager = require("GameplayManager")
+--local GameplayManager = require("GameplayManager")
 local Utils = require("GameUtils")
-
+local CharacterPhysic = require("CharacterPhysic")
 --
 local UE= CS.UnityEngine
 
 -- INIT
-CharacterPhysic = {created = false}
-CharacterPhysic.__index = CharacterPhysic
+Player = {created = false}
+Player.__index = Player
 
-function CharacterPhysic:Start(transform, inspectorObjects)
+function Player:Start(transform, inspectorObjects)
     if self.created then
         return nil
     end
@@ -21,11 +21,11 @@ function CharacterPhysic:Start(transform, inspectorObjects)
     self.runningCollider = inspectorObjects.runningCollider
     self.slidingCollider = inspectorObjects.slidingCollider
     self.shadowProjectorObj = inspectorObjects
-    
+    self.animatorController = inspectorObjects.animatorController
 end
 
 -- METHODS
-function CharacterPhysic:Initialize()
+function Player:Initialize()
     self.currentCollider = self.runningCollider
     self.turnCount = 0
     self.slidingTime = 1.0
@@ -37,13 +37,15 @@ function CharacterPhysic:Initialize()
 
     -- Coroutine
 
-    self.characterPhysic = nil --------------- 
+    self.characterPhysic = CharacterPhysic:new(self.transform, self)
     self:Reset()
+
+    self.animatorController:Play("Run")
 
 end
 
-function  CharacterPhysic:Reset()
-    ------------ self.characterPhysic:Reset()
+function  Player:Reset()
+    self.characterPhysic:Reset()
     self.transform.position = GameplayManager.playerSpawnPoint
 
     local rotation = Utils.Constants.ROTATION_VECTOR[GameplayManager.currentDirection]
@@ -56,15 +58,101 @@ function  CharacterPhysic:Reset()
 
     self.turnCount = 0
     self.slidingTime = 1.0
-    
+    self.isSliding = false
+
     self.isStumple = false
     self.stumpleTime = 5.0
     self.canControl = true
 
     self.transform.gameObject:SetActive(true)
 
+
 end
+
+
+function Player:MyUpdate()
+    
+end
+
+function Player:HandleShadow()
+    
+end
+
+function Player:HandleMoving()
+    
+end
+
+function Player:HandleJump()
+    if GameplayManager.inputManager:GetInput(Utils.Enums.InputAction.JUMP, true) then
+        self.isSliding = false
+        self.animatorController:SetBool("isSliding", false)
+
+        self.runningCollider.gameObject:SetActive(true)
+        self.slidingCollider.gameObject:SetActive(false)
+        self.currentCollider = sel.runningCollider
+
+        self.characterPhysic:Jump()
+        
+    end
+end
+
+function Player:HandleSlide()
+    
+end
+
+function Player:HandleTurn()
+    
+end
+
+function Player:RotateSmootly(targetRotation)
+    
+end
+
+function Player:HandleAutoTurn()
+    
+end
+
+function Player:StumpleCooldown()
+    
+end
+
+function Player:OnTriggerEnter(other)
+    if other:CompareTag("SpawnTrigger") then
+        GameplayManager:SpawnSegment()
+        other.gameObject:SetActive(false)
+        self.turnCount = self.turnCount -1
+    
+    elseif other.CompareTag("InstantDeathTrigger") then
+        self:OnDeath()
+    
+    elseif other.CompareTag("DeathTrigger") and not GameplayManager.inInvisibleState then
+        self:OnDeath()
+    -- stumple: elseif  then
+    
+    elseif other.CompareTag("Coin") then
+        GameplayManager.progressionManager:CollectCoin(other.gameObject)
+
+
+    elseif other.CompareTag("Item") then
+        self:OnCollideWithItem(other)
+    end
+
+end
+
+
+function Player:OnCollideWithItem(other)
+    --GameplayManager.mapController.itemController:PickupItem(other.gameObject)
+end
+
+function Player:OnDeath()
+    self.transform.gameObject:SetActive(false)
+    GameplayManager:GameOver()
+end
+
+
+
+
 
 -- EXPORT
 
-return CharacterPhysic
+return Player

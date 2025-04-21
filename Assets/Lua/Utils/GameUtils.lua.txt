@@ -45,9 +45,9 @@ GameUtils.Enums = {
     },
 
     MapBiome = {
-        TEMPLE = 0,
-        CLIFF = 1,
-        PLANK = 2,
+        TEMPLE = CS_Enums.MapBiome.Temple,
+        CLIFF = CS_Enums.MapBiome.Cliff,
+        PLANK = CS_Enums.MapBiome.Plank
     },
 
     SegmentType = {
@@ -101,10 +101,10 @@ GameUtils.Constants =
     },
 
     ROTATION_VECTOR = {
-        [GameUtils.Enums.Direction.FORWARD] = CS.UnityEngine.Vector3(0, 0, 0),
-        [GameUtils.Enums.Direction.BACKWARD] = CS.UnityEngine.Vector3(0, 180, 0),
-        [GameUtils.Enums.Direction.LEFT] = CS.UnityEngine.Vector3(0, -90, 0),
-        [GameUtils.Enums.Direction.RIGHT] = CS.UnityEngine.Vector3(0, 90, 0),
+        [GameUtils.Enums.Direction.FORWARD] = CS.UnityEngine.Quaternion.Euler(0, 0, 0),
+        [GameUtils.Enums.Direction.BACKWARD] = CS.UnityEngine.Quaternion.Euler(0, 180, 0),
+        [GameUtils.Enums.Direction.LEFT] = CS.UnityEngine.Quaternion.Euler(0, -90, 0),
+        [GameUtils.Enums.Direction.RIGHT] = CS.UnityEngine.Quaternion.Euler(0, 90, 0),
     },
 
 
@@ -177,11 +177,18 @@ end
 
 function GameUtils.UtilMethods.CSListToList(lst)
     local res = List:new()
-    for i = 0, lst.Count -1 do
+    for i = 0, (lst.Count -1) do
         res.Add(lst[i])
     end
 
     return res
 end
+
+function GameUtils.UtilMethods.PrintTable(tb)
+    for k,v in pairs(tb) do
+    print(k,v)
+    end
+end
+
 
 return GameUtils

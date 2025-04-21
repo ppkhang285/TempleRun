@@ -35,7 +35,8 @@ function  MapSegmentPool:GetObject(biome, type, prefab)
             UE.Debug.Log("No prefab to Create Object in Pooling")
         end
 
-        local segmentInstance = UE.GameObject:Instantiate(prefab)
+   
+        local segmentInstance = UE.GameObject.Instantiate(prefab)
 
         return segmentInstance
 

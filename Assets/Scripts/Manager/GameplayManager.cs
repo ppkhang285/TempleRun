@@ -68,9 +68,9 @@ public class GameplayManager : MonoBehaviour
     {
         //
 
-        SpawnPlayer();
+        //SpawnPlayer();
         Inintialize();
-        InitSpawnObject();
+        //InitSpawnObject();
 
         script = LuaManager.Instance.LoadScript("GameplayManager");
         updateFunc = script.Get<LuaFunction>("Update");
@@ -104,12 +104,12 @@ public class GameplayManager : MonoBehaviour
 
         }
 
-        inputManager = InputManager.Instance;
-        mapController = new MapController(mapRoot.transform);
-        powerUpManager = new PowerUpManager();
-        progressionManager = ProgressionManager.Instance;
+        //inputManager = InputManager.Instance;
+        //mapController = new MapController(mapRoot.transform);
+        //powerUpManager = new PowerUpManager();
+        //progressionManager = ProgressionManager.Instance;
         cameraManager = new CameraManager(CameraRoot, playerRoot);
-        uiManager =  UIManager.Instance;
+        uiManager = UIManager.Instance;
         LuaManager.Instance.Init();
 
 
@@ -125,18 +125,18 @@ public class GameplayManager : MonoBehaviour
     {
         updateFunc?.Call(script);
 
-        if (InputManager.Instance.GetInput(InputAction.Pause, true))
-        {
-            PauseGame();
+        //if (InputManager.Instance.GetInput(InputAction.Pause, true))
+        //{
+        //    PauseGame();
             
-        }
-        if (gameState == GameState.Playing)
-        {
-            mapController.Update();
-            player.MyUpdate();
-            cameraManager.Update();
-            progressionManager.Update();
-        }
+        //}
+        //if (gameState == GameState.Playing)
+        //{
+        //    mapController.Update();
+        //    player.MyUpdate();
+        //    cameraManager.Update();
+        //    progressionManager.Update();
+        //}
 
 
 

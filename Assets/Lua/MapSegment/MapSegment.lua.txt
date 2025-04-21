@@ -5,15 +5,8 @@ local UE = CS.UnityEngine
 
 
 -- Meta class
-local MapSegment = {
-    segmentType = nil,
-    biome = nil,
-    segmentTransform = nil,
-    
-    direction = nil,
-
-}
-
+local MapSegment = {}
+MapSegment.__index = MapSegment
 -- Construtor
 function MapSegment:new(segmentType, biome, transform, direcion)
     local o = {}
@@ -55,10 +48,14 @@ function MapSegment:FlagNextSpawn()
     self.canSpawnNext = false
 end
 
+function MapSegment:CanSpawnNeighbor()
+    return self.canSpawnNext
+end
 
-function  MapSegment:GetNeightborPos(newPref, getTurnBothLeft)
-    local newSize = newPref.transform:GetChild(0):Find("sizeObj"):GetComponent(CS.BoxCollider).size
-    local lastSize = self.segmentTransform:GetChild(0):Find("sizeObj"):GetComponent(CS.BoxCollider).size;
+function  MapSegment:GetNeighborPos(newPref, getTurnBothLeft)
+
+    local newSize = newPref.transform:GetChild(0):Find("sizeObj"):GetComponent(typeof(UE.BoxCollider)).size
+    local lastSize = self.segmentTransform:GetChild(0):Find("sizeObj"):GetComponent(typeof(UE.BoxCollider)).size;
     local lastPosition = self.segmentTransform.position
     local nexDirection = self:GetNeighborDirection(getTurnBothLeft)
 
@@ -73,7 +70,7 @@ end
 
 
 function MapSegment:GetNeighborDirection(getTurnBothLeft)
-    local nexDirection = GameUtils.Direcion.NULL
+    local nexDirection = GameUtils.Enums.Direction.NULL
     if (self.segmentType == GameUtils.Enums.SegmentType.TURN_LEFT) then
         nexDirection = GameUtils.UtilMethods.TurnDirection(self.direction, true)
 
@@ -95,7 +92,7 @@ function MapSegment:TurnInvisibleLane(isTurnOn)
     if invisibleLane == nil then
         return nil
     end
-    invisibleLane.gameObjectl:SetActive(isTurnOn)
+    invisibleLane.gameObject:SetActive(isTurnOn)
 
 end
 

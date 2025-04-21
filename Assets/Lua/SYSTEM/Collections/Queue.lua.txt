@@ -37,4 +37,17 @@ function Queue:Peek()
     return self.items[1]
 end
 
+--ToList
+function Queue:ToList()
+    local List = require("List")
+    local lst = List:new()
+
+    for i,v in ipairs(self.items) do
+        lst:Add(v)
+    end
+
+    return lst
+
+end
+
 return Queue

@@ -3,7 +3,7 @@
 local Utils = require("GameUtils")
 local Queue = require("Queue")
 local SegmentRule = require("SegmentRule")
-
+local List = require("List")
 --
 local UE = CS.UnityEngine
 
@@ -27,13 +27,14 @@ function  MapGenerator:Initialize(spawnConfigData)
     self:LoadDifficultData()
     self:HandleBiomeDict()
     --
-
     self.currentSegmentQ = Queue:new()
     self.currentBiome = self.spawnConfigData.startBiome
     self.segmentRule = SegmentRule:new()
-    
+    --
+    self.MAX_SEGMENT = 11
+    --
 
-    --AddSegment()
+    self:AddSegment(Utils.Enums.SegmentType.START)
 
 end
 
@@ -48,6 +49,7 @@ function MapGenerator:LoadDifficultData()
 end
 
 
+
 function  MapGenerator:HandleBiomeDict()
     local dict = self.spawnConfigData:GetBiomeDataDict()
     self.biomeDataDict = Utils.UtilMethods.CSDictToTable(dict)
@@ -58,8 +60,65 @@ function MapGenerator:GetCurrentBiome()
     return self.currentBiome
 end
 
+function MapGenerator:GenerateNewSegmentType()
+
+    local nextSegmentType = self:ProceduralGenerate()
+
+    self:AddSegment(nextSegmentType)
+    return nextSegmentType
+end
+
+function MapGenerator:ProceduralGenerate()
+    local segmentList = List:new()
+    local biomeData = self.biomeDataDict[self.currentBiome]
+
+    for i = 0, biomeData.segmentTypeList.Count -1  do
+        segmentList:Add(biomeData.segmentTypeList[i].segmentType)
+    end
+
+    segmentList = self.segmentRule:Filter(segmentList, self.currentSegmentQ:ToList())
+
+    local nexSegmentType =  self:GetRandomType(segmentList)
+    return nexSegmentType
+
+end
+
+function MapGenerator:GetRandomType(segmentList)
+    local weightSum = 0
+    local biomeProfile
+    for i = 0, self.difficultData.profiles.Count -1 do
+        if self.difficultData.profiles[i].profile.difficulty ==GameplayManager.currentDificulty then
+            biomeProfile = self.difficultData.profiles[i].profile
+        end
+    end
+
+    
+    local segmentWeightDict = biomeProfile:GetSegmentWeightDict()
+    segmentWeightDict = Utils.UtilMethods.CSDictToTable(segmentWeightDict)
+    
+    for i = 1, segmentList:Size() do
+        weightSum = weightSum + segmentWeightDict[segmentList[i]]
+    end
+
+    local randomIndex = UE.Random.Range(0, weightSum)
+    for i = 1, segmentList:Size() do
+        randomIndex = randomIndex -  segmentWeightDict[segmentList[i]]
+        if randomIndex <= 0 then
+            return segmentList[i]
+        end
+    end
+
+    return Utils.Enums.SegmentType.NONE
+end
+
+
+
+
+
+
+
 function MapGenerator:AddSegment(segmentType)
-    if self.currentSegmentQ.Size() > self.MAX_SEGMENT then
+    if self.currentSegmentQ:Size() > self.MAX_SEGMENT then
         self:DeleteOldSegment()
     end
     self.currentSegmentQ:Enqueue(segmentType)

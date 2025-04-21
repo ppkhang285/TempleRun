@@ -1,6 +1,6 @@
 -- CharacterPhysic.lua
 -- IMPORT
-local GameplayManager = require("GameplayManager")
+--local GameplayManager = require("GameplayManager")
 local Utils = require("GameUtils")
 
 --
@@ -39,9 +39,9 @@ function CharacterPhysic:Update()
         self.coyoteTimeCounter = UE.Time.deltaTime
 
         if self.isFallingDown == self.isJumping then
-            -- PullingDown
+            self:PullingDown()
         elseif not  self.isFallingDown and self.isJumping then
-            -- Jumping Up
+            self:JumpingUp()
         end
         
     end
@@ -54,7 +54,17 @@ function CharacterPhysic:JumpingUp()
 end
 
 function CharacterPhysic:PullingDown()
-    ------------Collided with ground
+        if self:CollideWithGround() then
+            if self.isJumping and self.isFallingDown then
+                self.isJumping = false
+                self.isFallingDown = false
+            end
+            self.coyoteTimeCounter = self.coyoteTime
+        
+        else
+            self.characterTransform.position = self.characterTransform.position + UE.Vector3.down * self.pullDownForce * UE.Time.deltaTime
+        end
+
 end
 
 function CharacterPhysic:CollideWithGround()

@@ -9,7 +9,7 @@ local MapSegment = require("MapSegment")
 local CoinController = require("CoinController")
 local ItemController = require("ItemController")
 local ProgressionManager = require("ProgressionManager")
-local GameplayManager = require("GameplayManager")
+--local GameplayManager = require("GameplayManager")
 
 --
 local UE = CS.UnityEngine
@@ -33,12 +33,12 @@ function  MapController:Init(mapRoot)
     --
     self.MAX_SEGMENT = 4
     self.mapRoot = mapRoot
-    self.biomeDataDict = {}
+    self.biomeDataDict = Utils.UtilMethods.CSDictToTable(self.spawnConfigData:GetBiomeDataDict())
     self.mapSegments = List:new()
     self.mapGenerator = MapGenerator:new(self.spawnConfigData)
     self.mapSegmentPool = MapSegmentPool:new()
     self.coinController = CoinController:new(self.mapRoot)
-    self.itemController = ItemController(mapRoot)
+    self.itemController = ItemController:new(mapRoot)
     
 end
 
@@ -74,7 +74,7 @@ function MapController:LoadSpawnConfigData()
 end
 
 function  MapController:HandleDeleteSegments()
-    for i = self.mapSegments.Size(), 1, -1 do
+    for i = self.mapSegments:Size(), 1, -1 do
         local distance = UE.Vector3.Distance(self.mapSegments[i].segmentTransform.position, UE.Vector3.zero)
         if distance > Utils.Constants.DESTROY_DISTANCE then
             local segmentObject = self.mapSegments[i].segmentTransform.gameObject
@@ -88,12 +88,18 @@ end
 function MapController:InitEnviroment()
     local forwardNumber = 4
 
-    -------
+    self:SpawnStartSegment()
+    
+    for i = 1, forwardNumber do
+        self:SpawnNewSegment()
+    end
 end
 
 
 function MapController:SpawnStartSegment()
-    local height = self.biomeDataDict[Utils.Enums.MapBiome.Temple].height
+
+
+    local height = self.biomeDataDict[Utils.Enums.MapBiome.TEMPLE].height
 
     local startSegmentPref = self.spawnConfigData.startSegment
     local startSegmentInstance = UE.GameObject.Instantiate(startSegmentPref, UE.Vector3.zero + UE.Vector3.up * height, UE. Quaternion.identity,  self.mapRoot)
@@ -109,7 +115,7 @@ end
 
 
 function MapController:SpawnNewSegment()
-    local generatetedType = self.mapGenerator:GeneratenewSegmentType()
+    local generatetedType = self.mapGenerator:GenerateNewSegmentType()
     self:SpawnNewSegment_PR(generatetedType, self.mapGenerator:GetCurrentBiome())
 end
 
@@ -125,6 +131,7 @@ function  MapController:SpawnNewSegment_PR(segmentType, biome)
 
     local height = self.biomeDataDict[biome].height
 
+   -- Utils.UtilMethods.PrintTable(self.mapSegments[1])
     for i = self.mapSegments:Size(), 1, -1 do
         if not self.mapSegments[i]:CanSpawnNeighbor() then
             goto continue
@@ -142,6 +149,7 @@ function  MapController:SpawnNewSegment_PR(segmentType, biome)
         segmentInstance.transform.position = position
         segmentInstance.transform.rotation = rotaion
 
+       
         local segment = MapSegment:new(segmentType, biome, segmentInstance.transform, newSegmentDirection)
         self:AddNewSegment(segment)
         
@@ -182,7 +190,7 @@ end
 
 
 function  MapController:GetSegmentPrefab(segmentType, biome)
-    local biomeData = segmentType.biomeDataDict[biome]
+    local biomeData = self.biomeDataDict[biome]
     local segmentData = biomeData:GetSegmentData(segmentType);
 
     if segmentData == nil then

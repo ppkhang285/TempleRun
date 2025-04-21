@@ -40,7 +40,7 @@ function CoinController:Initialize(mapRoot)
 end
 
 function CoinController:MoveCoins(speed, direction)
-    for i = 1, self.coinList:Count() do
+    for i = 1, self.coinList:Size() do
         local coinObj = self.coinList:Get(i)
         if self.coinStates[coinObj:GetInstanceID()] == nil then
             goto continue

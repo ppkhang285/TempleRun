@@ -91,7 +91,7 @@ public class LuaManager
 
     public LuaTable LoadScript(string scriptName)
     {
-
+        Debug.Log($"return require '{scriptName}'");
         LuaTable script = LuaEnv.DoString($"return require '{scriptName}'")[0] as LuaTable;
         if (script == null)
         {
