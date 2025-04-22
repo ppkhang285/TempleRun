@@ -2,7 +2,7 @@
 -- import
 require("Player")
 
-local GameUtils = require "GameUtils"
+local Utils = require "GameUtils"
 local InputManager = require "InputManager"
 local List = require("List")
 local Queue = require("Queue")
@@ -11,10 +11,10 @@ local ProgressionManager = require("ProgressionManager")
 
 --
 
-local Constants = GameUtils.Constants
-local Enums = GameUtils.Enums
+local Constants = Utils.Constants
+local Enums = Utils.Enums
 local Vector3 = CS.UnityEngine.Vector3
-
+local UE = CS.UnityEngine
 
 
 -- Meta class
@@ -26,7 +26,7 @@ function GameplayManager:Start(inspectorObjects)
     self:InitInspector(inspectorObjects)
     self:Init()
     self:InitSpawnObject()
-
+    self:SpawnPlayer()
 end
 
 
@@ -67,6 +67,15 @@ function  GameplayManager:InitSpawnObject()
     self.mapController:InitEnviroment()
 end
 
+function GameplayManager:SpawnPlayer()
+    local playerObj = UE.GameObject.Instantiate(self.playerPrefabs, self.playerSpawnPoint, UE.Quaternion.identity)
+    playerObj.transform:SetParent(self.playerRoot.transform, true)
+end
+
+function  GameplayManager:SpawnSegment()
+    self.mapController:SpawnNewSegment()
+end
+
 function GameplayManager:Update()
 
     if (self.inputManager:GetInput(Enums.InputAction.PAUSE, true)) then
@@ -76,7 +85,7 @@ function GameplayManager:Update()
     if self.gameState ==Enums.GameState.PLAYING then
         self.mapController:Update()
         ProgressionManager:Update()
-        Player:MyUpdate()
+        Player:Update()
         ----------
     end
 
@@ -101,6 +110,12 @@ function GameplayManager:ContinueGame()
     if self.gameState == Enums.GameState.PAUSED then
         -- StartCoroutine    
     end 
+end
+
+function GameplayManager:GameOver()
+    UE.Debug.Log("Game Over")
+    self.gameState = Utils.Enums.GameState.GAME_OVER
+    -- uiManager.OnGameOver
 end
 
 return GameplayManager

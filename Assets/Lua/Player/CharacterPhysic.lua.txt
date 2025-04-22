@@ -10,7 +10,7 @@ local UE= CS.UnityEngine
 local  CharacterPhysic = {}
 CharacterPhysic.__index = CharacterPhysic
 
-function  CharacterPhysic:news(transform, player)
+function  CharacterPhysic:new(transform, player)
     local o = {}
     setmetatable(o, self)
     o:Initialize(transform, player)
@@ -75,29 +75,28 @@ end
 
 function  CharacterPhysic:CollideLeft()
     local mask = UE.LayerMask:GetMask("WallMask")
-    local turnDirect = Utils.UtilMethod:TurnDirection(GameplayManager.currentDirecion, true)
+    local turnDirect = Utils.UtilMethods.TurnDirection(GameplayManager.currentDirection, true)
     local leftVector = Utils.Constants.DIRECTION_VECTOR[turnDirect]
     local rayDistance = 2.1 + self.player.currentCollider.size.z / 2
 
-    return UE.Physics:Raycast(self.characterTransform.position, leftVector, rayDistance, mask)
+    return UE.Physics.Raycast(self.characterTransform.position, leftVector, rayDistance, mask)
 
 
 end
 
 function  CharacterPhysic:CollideRight()
     local mask = UE.LayerMask:GetMask("WallMask")
-    local turnDirect = Utils.UtilMethod:TurnDirection(GameplayManager.currentDirecion, false)
+    local turnDirect = Utils.UtilMethods.TurnDirection(GameplayManager.currentDirection, false)
     local rightVector = Utils.Constants.DIRECTION_VECTOR[turnDirect]
     local rayDistance = 2.1 + self.player.currentCollider.size.z / 2
-
-    return UE.Physics:Raycast(self.characterTransform.position, rightVector, rayDistance, mask)
+    return UE.Physics.Raycast(self.characterTransform.position, rightVector, rayDistance, mask)
 
 
 end
 
 function CharacterPhysic:CanTurnLeft()
     local mask = UE.LayerMask:GetMask("WallMask")
-    local turnDirect = Utils.UtilMethod:TurnDirection(GameplayManager.currentDirecion, true)
+    local turnDirect = Utils.UtilMethods:TurnDirection(GameplayManager.currentDirection, true)
     local leftVector = Utils.Constants.DIRECTION_VECTOR[turnDirect]
     local rayPos = self.characterTransform.position
 
@@ -113,7 +112,7 @@ end
 
 function CharacterPhysic:CanTurnRight()
     local mask = UE.LayerMask:GetMask("WallMask")
-    local turnDirect = Utils.UtilMethod:TurnDirection(GameplayManager.currentDirecion, false)
+    local turnDirect = Utils.UtilMethods:TurnDirection(GameplayManager.currentDirecion, false)
     local rightVector = Utils.Constants.DIRECTION_VECTOR[turnDirect]
     local rayPos = self.characterTransform.position
 
@@ -134,3 +133,4 @@ function CharacterPhysic:Reset()
 end
 
 -- EXPORT
+return CharacterPhysic

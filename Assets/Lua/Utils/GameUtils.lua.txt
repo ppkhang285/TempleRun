@@ -133,7 +133,6 @@ function  GameUtils.UtilMethods.TurnDirection(currDirect, isTurnLeft)
     elseif currDirect == Direction.RIGHT then
         currDirect = isTurnLeft and Direction.FORWARD or Direction.BACKWARD
     end
-
     return currDirect
     
 end

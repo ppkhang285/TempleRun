@@ -15,13 +15,16 @@ function Player:Start(transform, inspectorObjects)
         return nil
     end
 
+
+
     self.created = true
 
     self.transform = transform
     self.runningCollider = inspectorObjects.runningCollider
     self.slidingCollider = inspectorObjects.slidingCollider
-    self.shadowProjectorObj = inspectorObjects
+    self.shadowProjectorObj = inspectorObjects.shadowProjectorObj
     self.animatorController = inspectorObjects.animatorController
+    self:Initialize()
 end
 
 -- METHODS
@@ -70,8 +73,10 @@ function  Player:Reset()
 end
 
 
-function Player:MyUpdate()
-    
+function Player:Update()
+    if self.canControl then
+        self:HandleMoving()
+    end
 end
 
 function Player:HandleShadow()
@@ -79,7 +84,15 @@ function Player:HandleShadow()
 end
 
 function Player:HandleMoving()
-    
+    local moveDirection = Utils.Constants.DIRECTION_VECTOR[GameplayManager.currentDirection]
+
+    if GameplayManager.inputManager:GetInput(Utils.Enums.InputAction.MOVE_LEFT) and not self.characterPhysic:CollideLeft() then
+        local rotation = Utils.Constants.ROTATION_VECTOR[Utils.Enums.Direction.LEFT]
+        self.transform.position = self.transform.position + rotation * moveDirection *Utils.Constants.CHARACTER_VERTICAL_VELOCITY * UE.Time.deltaTime
+    elseif GameplayManager.inputManager:GetInput(Utils.Enums.InputAction.MOVE_RIGHT) and not self.characterPhysic:CollideRight() then   
+        local rotation = Utils.Constants.ROTATION_VECTOR[Utils.Enums.Direction.RIGHT]
+        self.transform.position = self.transform.position + rotation * moveDirection *Utils.Constants.CHARACTER_VERTICAL_VELOCITY * UE.Time.deltaTime
+    end
 end
 
 function Player:HandleJump()
@@ -89,7 +102,7 @@ function Player:HandleJump()
 
         self.runningCollider.gameObject:SetActive(true)
         self.slidingCollider.gameObject:SetActive(false)
-        self.currentCollider = sel.runningCollider
+        self.currentCollider = self.runningCollider
 
         self.characterPhysic:Jump()
         
@@ -120,20 +133,21 @@ function Player:OnTriggerEnter(other)
     if other:CompareTag("SpawnTrigger") then
         GameplayManager:SpawnSegment()
         other.gameObject:SetActive(false)
+       
         self.turnCount = self.turnCount -1
     
-    elseif other.CompareTag("InstantDeathTrigger") then
+    elseif other:CompareTag("InstantDeathTrigger") then
         self:OnDeath()
     
-    elseif other.CompareTag("DeathTrigger") and not GameplayManager.inInvisibleState then
+    elseif other:CompareTag("DeathTrigger") and not GameplayManager.inInvisibleState then
         self:OnDeath()
     -- stumple: elseif  then
     
-    elseif other.CompareTag("Coin") then
+    elseif other:CompareTag("Coin") then
         GameplayManager.progressionManager:CollectCoin(other.gameObject)
 
 
-    elseif other.CompareTag("Item") then
+    elseif other:CompareTag("Item") then
         self:OnCollideWithItem(other)
     end
 

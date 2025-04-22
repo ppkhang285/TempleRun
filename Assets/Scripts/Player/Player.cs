@@ -20,7 +20,7 @@ public class Player : MonoBehaviour
     // Managers
 
     public CharacterPhysic characterPhysic { get; private set; }
-    private LuaTable script;
+    
 
 
     // Attributes
@@ -41,36 +41,70 @@ public class Player : MonoBehaviour
     private Coroutine rotateSmoothlyCoroutine;
     private Coroutine stumpleCoroutine;
 
+    // Lua
+    private LuaTable script;
+    private LuaFunction startFunc;
+    private LuaFunction onTriggerEnterFunc;
+
+    private struct InspectorObjects
+    {
+        public BoxCollider runningCollider;
+        public BoxCollider slidingCollider;
+        public GameObject shadowProjectorObj;
+        public Animator animatorController;
+    }
+
     private void Start()
     {
 
-        Initialize();
-        animatorController.Play("Run");
+        //Initialize();
+        //animatorController.Play("Run");
 
-    }
+        script = LuaManager.Instance.LoadScript("Player");
+        startFunc = script.Get<LuaFunction>("Start");
+        onTriggerEnterFunc = script.Get<LuaFunction>("OnTriggerEnter");
 
-    public void MyUpdate()
-    {
-        if (canControl)
+
+        InspectorObjects inspectorObjects = new InspectorObjects
         {
-            HandleMoving();
-            HandleJump();
-            //if (GameplayManager.Instance.inInvisibleState)
-            //{
-            //    HandleAutoTurn();
-            //}
-            //else
-            //{
-            //    HandleTurn();
-            //}
-            HandleAutoTurn();
-            HandleSlide();
-        }
+            runningCollider = runningCollider,
+            slidingCollider = slidingCollider,
+            shadowProjectorObj = shadowProjectorObj,
+            animatorController = animatorController
+        };
 
-        HandleShadow();
-        characterPhysic.Update();
+        startFunc?.Call(script, transform, inspectorObjects);
+
 
     }
+
+
+
+
+    //public void MyUpdate()
+    //{
+
+   
+        //if (canControl)
+        //{
+        //    HandleMoving();
+        //    HandleJump();
+        //    //if (GameplayManager.Instance.inInvisibleState)
+        //    //{
+        //    //    HandleAutoTurn();
+        //    //}
+        //    //else
+        //    //{
+        //    //    HandleTurn();
+        //    //}
+        //    HandleAutoTurn();
+        //    HandleSlide();
+        //}
+
+        //HandleShadow();
+        //characterPhysic.Update();
+
+    //}
 
     public void Say()
     {
@@ -87,13 +121,7 @@ public class Player : MonoBehaviour
 
     }
 
-    private void InitLua()
-    {
-        script = LuaManager.Instance.LoadScript("player_logic");
-        script.Set("selfUC", this); // UC: Unity Class
 
-        script.Get<LuaFunction>("Say")?.Call();
-    }
 
 
     private void HandleShadow()
@@ -272,46 +300,48 @@ public class Player : MonoBehaviour
 
     public void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("SpawnTrigger"))
-        {
-           // Debug.Log("Spawn");
-            GameplayManager.Instance.SpawnSegment();
-            other.gameObject.SetActive(false);
-            turnCount -= 1;
-        }
-        else if (other.CompareTag("InstantDeathTrigger"))
-        {
-         
-            OnDeath();
-        }
-        else if (other.CompareTag("DeathTrigger") && !GameplayManager.Instance.inInvisibleState)
-        {
-          
-            OnDeath();
-        }
-        else if (other.CompareTag("StumpleTrigger"))
-        {
-            other.gameObject.SetActive(false);
-            if (isStumple)
-            {
-                OnDeath();
-            }
+        onTriggerEnterFunc?.Call(script, other);
 
-            else
-            {
-                isStumple = true;
-                stumpleCoroutine = GameplayManager.Instance.RunCoroutine(StumpleCooldown());
-            }
-        }
-       else if (other.CompareTag("Coin"))
-        {
-            
-            GameplayManager.Instance.progressionManager.CollectCoin(other.gameObject);
-        }
-        else if (other.CompareTag("Item"))
-        {
-            OnCollidWithItem(other);
-        }
+        // if (other.CompareTag("SpawnTrigger"))
+        // {
+        //    // Debug.Log("Spawn");
+        //     GameplayManager.Instance.SpawnSegment();
+        //     other.gameObject.SetActive(false);
+        //     turnCount -= 1;
+        // }
+        // else if (other.CompareTag("InstantDeathTrigger"))
+        // {
+
+        //     OnDeath();
+        // }
+        // else if (other.CompareTag("DeathTrigger") && !GameplayManager.Instance.inInvisibleState)
+        // {
+
+        //     OnDeath();
+        // }
+        // else if (other.CompareTag("StumpleTrigger"))
+        // {
+        //     other.gameObject.SetActive(false);
+        //     if (isStumple)
+        //     {
+        //         OnDeath();
+        //     }
+
+        //     else
+        //     {
+        //         isStumple = true;
+        //         stumpleCoroutine = GameplayManager.Instance.RunCoroutine(StumpleCooldown());
+        //     }
+        // }
+        //else if (other.CompareTag("Coin"))
+        // {
+
+        //     GameplayManager.Instance.progressionManager.CollectCoin(other.gameObject);
+        // }
+        // else if (other.CompareTag("Item"))
+        // {
+        //     OnCollidWithItem(other);
+        // }
     }
 
     private void OnCollidWithItem(Collider other)
